@@ -105,6 +105,9 @@ class DataUpdateCommand extends ContainerAwareCommand
             $website = "https://api.telegram.org/bot" . $botToken;
             $channelId = "@your_channel_id";
             $url = $website."/sendmessage?chat_id=".$channelId."&text=".urlencode($logText);
+            $telegram_result = (json_decode(file_get_contents($url), true));
+            $message_id = $telegram_result["result"]["message_id"];
+            $url = $website."/pinChatMessage?chat_id=".$channelId."&message_id=".$message_id;
             file_get_contents($url);
         } else {
             $logText = $logText . "\n" . 'No fixtures/results added or updated.' . "\n";
