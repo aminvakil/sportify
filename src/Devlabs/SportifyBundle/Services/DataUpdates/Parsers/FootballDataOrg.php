@@ -58,6 +58,14 @@ class FootballDataOrg
             if ($fixture->status === 'FINISHED') {
                 $parsedFixture['home_team_goals'] = $fixture->score->fullTime->homeTeam;
                 $parsedFixture['away_team_goals'] = $fixture->score->fullTime->awayTeam;
+                if ($fixture->score->extraTime->homeTeam != null) {
+                    $parsedFixture['home_team_goals'] = $parsedFixture['home_team_goals'] - $fixture->score->extraTime->homeTeam;
+                    $parsedFixture['away_team_goals'] = $parsedFixture['away_team_goals'] - $fixture->score->extraTime->awayTeam;
+                }
+                if ($fixture->score->penalties->homeTeam != null) {
+                    $parsedFixture['home_team_goals'] = $parsedFixture['home_team_goals'] - $fixture->score->penalties->homeTeam;
+                    $parsedFixture['away_team_goals'] = $parsedFixture['away_team_goals'] - $fixture->score->penalties->awayTeam;
+                }
             } else {
                 $parsedFixture['home_team_goals'] = null;
                 $parsedFixture['away_team_goals'] = null;
