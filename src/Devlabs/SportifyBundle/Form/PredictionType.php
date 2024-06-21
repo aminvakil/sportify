@@ -59,11 +59,17 @@ class PredictionType extends AbstractType
             ))
             ->add('homeGoals', IntegerType::class, array(
                 'label' => false,
-                'error_bubbling' => true
+                'error_bubbling' => true,
+                'attr' => [
+                    'min' => 0
+                ]
             ))
             ->add('awayGoals', IntegerType::class, array(
                 'label' => false,
-                'error_bubbling' => true
+                'error_bubbling' => true,
+                'attr' => [
+                    'min' => 0
+                ]
             ))
             ->add('action', HiddenType::class, array(
                 'data' => $this->buttonAction,
