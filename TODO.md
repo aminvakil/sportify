@@ -15,7 +15,7 @@
 
 ## Next steps
 
-1. Investigate and fix `/login` and `/register/` page failures.
+1. Add tests for `/login` and `/register/`, then investigate and fix the page failures.
 2. Decide the next backend upgrade step after the package review.
 3. Keep frontend upgrade work separate from PHP/Symfony upgrade work.
 
