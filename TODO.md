@@ -10,14 +10,13 @@
 - Basic integration workflow test exists for tournaments, users, predictions, scoring, standings, and helper/repository calls.
 - GitHub Actions CI workflow is in place and green on main.
 - Symfony deprecation notices have been reduced to the remaining vendor-level batch.
+- Composer package constraints have been reviewed for the current Symfony 3.4/PHP 7.4 baseline; unused `sensio/generator-bundle` was removed and `doctrine/doctrine-cache-bundle` is no longer a direct dependency.
+- Remaining abandoned packages are tied to the legacy Symfony 3.4 stack and should be handled as separate migrations.
 
 ## Next steps
 
-1. Review Composer package constraints for stale/abandoned packages while staying compatible with Symfony 3.4 and PHP 7.4.
-   - Run full clean Docker verification.
-   - Fix only issues related to dependency/package constraint changes.
-2. Decide the next backend upgrade step after the package review.
-3. Keep frontend upgrade work separate from PHP/Symfony upgrade work.
+1. Decide the next backend upgrade step after the package review.
+2. Keep frontend upgrade work separate from PHP/Symfony upgrade work.
 
 ## Always verify each step
 
