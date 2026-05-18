@@ -1,0 +1,60 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set Docker Compose user ids
+        run: |
+          echo "UID=$(id -u)" >> "$GITHUB_ENV"
+          echo "GID=$(id -g)" >> "$GITHUB_ENV"
+
+      - name: Prepare Symfony parameters
+        run: cp docker/symfony/parameters.yml app/config/parameters.yml
+
+      - name: Build Docker images
+        run: docker compose build
+
+      - name: Install PHP dependencies
+        run: docker compose run --rm php composer install --no-interaction --no-progress
+
+      - name: Build frontend assets
+        run: |
+          docker compose run --rm node npm install
+          docker compose run --rm node bower install
+          docker compose run --rm node gulp
+
+      - name: Run Symfony and Doctrine smoke checks
+        run: |
+          docker compose run --rm php php bin/console cache:clear --env=test
+          docker compose run --rm php php bin/console doctrine:database:create --if-not-exists
+          docker compose run --rm php php bin/console doctrine:schema:validate --skip-sync
+          docker compose run --rm php php bin/console doctrine:schema:update --force
+
+      - name: Run PHPUnit
+        run: docker compose run --rm php vendor/bin/simple-phpunit --testsuite 'Project Test Suite'
+
+      - name: HTTP smoke test
+        run: |
+          docker compose up -d php
+          for i in $(seq 1 10); do
+            if curl -fsSI --max-time 10 http://localhost:8000/app_dev.php/; then
+              exit 0
+            fi
+            sleep 2
+          done
+          docker compose logs php
+          exit 1
+
