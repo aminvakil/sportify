@@ -34,6 +34,7 @@ security:
 
         main:
             pattern: ^/
+            logout_on_user_change: true
             form_login:
                 provider: fos_userbundle
                 csrf_token_generator: security.csrf.token_manager

@@ -30,7 +30,6 @@ framework:
         engines: ['twig']
     default_locale:  "%locale%"
     trusted_hosts:   ~
-    trusted_proxies: ~
     session:
         # http://symfony.com/doc/current/reference/configuration/framework.html#handler-id
         handler_id:  session.handler.native_file
@@ -162,7 +161,7 @@ bazinga_hateoas:
     metadata:
         cache: file
         file_cache:
-            dir: %kernel.cache_dir%/hateoas
+            dir: "%kernel.cache_dir%/hateoas"
 
 fos_oauth_server:
     db_driver: orm
