@@ -21,20 +21,30 @@
 
 ## Always verify each step
 
+Local verification should mirror `.github/workflows/ci.yml`, with an explicit clean reset before and after:
+
 ```sh
 docker compose down -v
 cp docker/symfony/parameters.yml app/config/parameters.yml
+# CI also replaces football_api.token with the FOOTBALL_DATA_API_TOKEN secret before running.
 docker compose build
 docker compose run --rm php composer install --no-interaction --no-progress
 docker compose run --rm node npm install
 docker compose run --rm node bower install
 docker compose run --rm node gulp
 docker compose run --rm php php bin/console cache:clear --env=test
+docker compose run --rm php php bin/console cache:clear --env=dev
 docker compose run --rm php php bin/console doctrine:database:create --if-not-exists
 docker compose run --rm php php bin/console doctrine:schema:validate --skip-sync
 docker compose run --rm php php bin/console doctrine:schema:update --force
+docker compose run --rm php php bin/console doctrine:schema:validate
 docker compose run --rm php vendor/bin/simple-phpunit --testsuite 'Project Test Suite'
 docker compose up -d php
-curl -I --max-time 10 http://localhost:8000/app_dev.php/
+for i in $(seq 1 10); do
+  if curl -fsSI --max-time 10 http://localhost:8000/app_dev.php/; then
+    break
+  fi
+  sleep 2
+done
 docker compose down -v
 ```
