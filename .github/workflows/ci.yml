@@ -2,6 +2,8 @@ name: CI
 
 on:
   push:
+    branches:
+      - main
   pull_request:
 
 permissions:
@@ -9,6 +11,7 @@ permissions:
 
 jobs:
   test:
+    if: github.event_name == 'push' || github.event.pull_request.user.login == github.repository_owner
     runs-on: ubuntu-latest
     timeout-minutes: 30
 
@@ -22,7 +25,12 @@ jobs:
           echo "GID=$(id -g)" >> "$GITHUB_ENV"
 
       - name: Prepare Symfony parameters
-        run: cp docker/symfony/parameters.yml app/config/parameters.yml
+        env:
+          FOOTBALL_DATA_API_TOKEN: ${{ secrets.FOOTBALL_DATA_API_TOKEN }}
+        run: |
+          test -n "$FOOTBALL_DATA_API_TOKEN"
+          cp docker/symfony/parameters.yml app/config/parameters.yml
+          sed -i "s/football_api.token: check_the_README_file/football_api.token: '$FOOTBALL_DATA_API_TOKEN'/" app/config/parameters.yml
 
       - name: Build Docker images
         run: docker compose build
