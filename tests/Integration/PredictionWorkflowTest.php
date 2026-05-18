@@ -2,38 +2,12 @@
 
 namespace Tests\Integration;
 
-use Devlabs\SportifyBundle\Entity\Match;
+require_once __DIR__.'/DatabaseTestCase.php';
+
 use Devlabs\SportifyBundle\Entity\Prediction;
-use Devlabs\SportifyBundle\Entity\Team;
-use Devlabs\SportifyBundle\Entity\Tournament;
-use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\Tools\SchemaTool;
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
-class PredictionWorkflowTest extends KernelTestCase
+class PredictionWorkflowTest extends DatabaseTestCase
 {
-    /** @var EntityManager */
-    private $em;
-
-    protected function setUp()
-    {
-        self::bootKernel();
-
-        $this->em = self::$kernel->getContainer()->get('doctrine')->getManager();
-        $this->resetDatabase();
-    }
-
-    protected function tearDown()
-    {
-        if ($this->em) {
-            $this->em->close();
-        }
-
-        $this->em = null;
-
-        parent::tearDown();
-    }
-
     public function testTournamentUsersPredictionsAndResultsWorkflow()
     {
         $tournament = $this->createTournament('Integration Cup');
@@ -103,90 +77,5 @@ class PredictionWorkflowTest extends KernelTestCase
             ->initUrlParams('empty', 'empty', 'empty', 'empty');
         $this->assertSame($exactUser->getId(), $historyParams['user_id']);
         $this->assertSame('all', $historyParams['tournament_id']);
-    }
-
-    private function resetDatabase()
-    {
-        $connection = $this->em->getConnection();
-        $schemaManager = $connection->getSchemaManager();
-
-        $connection->executeQuery('SET FOREIGN_KEY_CHECKS=0');
-        foreach ($schemaManager->listTableNames() as $tableName) {
-            $connection->executeQuery('DROP TABLE IF EXISTS '.$connection->quoteIdentifier($tableName));
-        }
-        $connection->executeQuery('SET FOREIGN_KEY_CHECKS=1');
-
-        $metadata = $this->em->getMetadataFactory()->getAllMetadata();
-        $schemaTool = new SchemaTool($this->em);
-        $schemaTool->createSchema($metadata);
-    }
-
-    private function createUser($username)
-    {
-        $userManager = self::$kernel->getContainer()->get('fos_user.user_manager');
-        $user = $userManager->createUser();
-        $user->setUsername($username);
-        $user->setEmail($username.'@example.com');
-        $user->setPlainPassword('test-password');
-        $user->setEnabled(true);
-
-        $userManager->updateUser($user);
-
-        return $user;
-    }
-
-    private function createTournament($name)
-    {
-        $tournament = new Tournament();
-        $tournament->setName($name);
-        $tournament->setStartDate(new \DateTime('-1 week'));
-        $tournament->setEndDate(new \DateTime('+1 week'));
-
-        $this->em->persist($tournament);
-        $this->em->flush();
-
-        return $tournament;
-    }
-
-    private function createTeam($name, Tournament $tournament)
-    {
-        $team = new Team();
-        $team->setName($name);
-        $team->addTournament($tournament);
-
-        $this->em->persist($team);
-        $this->em->flush();
-
-        return $team;
-    }
-
-    private function createMatch(Tournament $tournament, Team $homeTeam, Team $awayTeam, \DateTime $datetime, $homeGoals = null, $awayGoals = null)
-    {
-        $match = new Match();
-        $match->setTournamentId($tournament);
-        $match->setHomeTeamId($homeTeam);
-        $match->setAwayTeamId($awayTeam);
-        $match->setDatetime($datetime);
-        $match->setHomeGoals($homeGoals);
-        $match->setAwayGoals($awayGoals);
-
-        $this->em->persist($match);
-        $this->em->flush();
-
-        return $match;
-    }
-
-    private function createPrediction($user, Match $match, $homeGoals, $awayGoals)
-    {
-        $prediction = new Prediction();
-        $prediction->setUserId($user);
-        $prediction->setMatchId($match);
-        $prediction->setHomeGoals($homeGoals);
-        $prediction->setAwayGoals($awayGoals);
-
-        $this->em->persist($prediction);
-        $this->em->flush();
-
-        return $prediction;
     }
 }
