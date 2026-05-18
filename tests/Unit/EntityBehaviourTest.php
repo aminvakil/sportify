@@ -10,7 +10,7 @@ use Devlabs\SportifyBundle\Entity\Team;
 use Devlabs\SportifyBundle\Entity\Tournament;
 use Devlabs\SportifyBundle\Entity\User;
 
-class EntityBehaviourTest extends \PHPUnit_Framework_TestCase
+class EntityBehaviourTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @dataProvider scoreLineProvider
