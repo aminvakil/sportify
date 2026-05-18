@@ -65,6 +65,7 @@ jobs:
             fi
             sleep 2
           done
+          curl -sS --max-time 10 http://localhost:8000/app_dev.php/ | head -80
           docker compose logs php
           exit 1
 
