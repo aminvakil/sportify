@@ -20,10 +20,11 @@ services:
     command: php -S 0.0.0.0:8000 -t web app_dev.php
     healthcheck:
       test: ["CMD-SHELL", "curl -fsS http://127.0.0.1:8000/app_dev.php/ >/dev/null || exit 1"]
-      interval: 5s
+      interval: 5m
       timeout: 5s
       retries: 20
       start_period: 5s
+      start_interval: 5s
 
   node:
     build:
