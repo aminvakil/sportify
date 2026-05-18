@@ -6,17 +6,16 @@
 - Symfony has been upgraded to 3.4 LTS.
 - Basic integration workflow test exists for tournaments, users, predictions, scoring, standings, and helper/repository calls.
 - GitHub Actions CI workflow has been committed and pushed.
+- Symfony deprecation notices have been reduced to the remaining vendor-level batch.
 
 ## Next steps
 
-1. Continue reducing Symfony 3.4 deprecations in small focused steps.
-2. Make required services public or adjust access patterns only where warnings/tests require it.
-3. Bump Docker PHP from 7.0 to 7.1.
+1. Bump Docker PHP from 7.0 to 7.1.
    - Run full clean Docker verification.
    - Fix only PHP 7.1-related failures.
-4. Repeat for PHP 7.2, 7.3, and 7.4.
-5. After PHP 7.4 is stable, review Composer package constraints for stale/abandoned packages.
-6. Keep frontend upgrade work separate from PHP/Symfony upgrade work.
+2. Repeat for PHP 7.2, 7.3, and 7.4.
+3. After PHP 7.4 is stable, review Composer package constraints for stale/abandoned packages.
+4. Keep frontend upgrade work separate from PHP/Symfony upgrade work.
 
 ## Always verify each step
 

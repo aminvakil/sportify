@@ -21,7 +21,7 @@ abstract class DatabaseTestCase extends KernelTestCase
     {
         self::bootKernel();
 
-        $this->em = self::$kernel->getContainer()->get('doctrine')->getManager();
+        $this->em = self::$kernel->getContainer()->get('test.doctrine.orm.entity_manager');
         $this->resetDatabase();
     }
 
@@ -54,14 +54,16 @@ abstract class DatabaseTestCase extends KernelTestCase
 
     protected function createUser($username, $enabled = true)
     {
-        $userManager = self::$kernel->getContainer()->get('fos_user.user_manager');
-        $user = $userManager->createUser();
+        $user = new \Devlabs\SportifyBundle\Entity\User();
         $user->setUsername($username);
+        $user->setUsernameCanonical($username);
         $user->setEmail($username.'@example.com');
-        $user->setPlainPassword('test-password');
+        $user->setEmailCanonical($username.'@example.com');
+        $user->setPassword('test-password');
         $user->setEnabled($enabled);
 
-        $userManager->updateUser($user);
+        $this->em->persist($user);
+        $this->em->flush();
 
         return $user;
     }

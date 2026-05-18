@@ -50,6 +50,7 @@ jobs:
           docker compose run --rm php php bin/console doctrine:database:create --if-not-exists
           docker compose run --rm php php bin/console doctrine:schema:validate --skip-sync
           docker compose run --rm php php bin/console doctrine:schema:update --force
+          docker compose run --rm php php bin/console doctrine:schema:validate
 
       - name: Run PHPUnit
         run: docker compose run --rm php vendor/bin/simple-phpunit --testsuite 'Project Test Suite'
