@@ -15,8 +15,9 @@
 
 ## Next steps
 
-1. Decide the next backend upgrade step after the package review.
-2. Keep frontend upgrade work separate from PHP/Symfony upgrade work.
+1. Add tests for `/login` and `/register/`, then investigate and fix the page failures.
+2. Decide the next backend upgrade step after the package review.
+3. Keep frontend upgrade work separate from PHP/Symfony upgrade work.
 
 ## Always verify each step
 
@@ -40,5 +41,7 @@ docker compose run --rm php php bin/console doctrine:schema:validate
 docker compose run --rm php vendor/bin/simple-phpunit --testsuite 'Project Test Suite'
 docker compose up --wait php
 curl -fsSI --max-time 10 http://localhost:8000/
+curl -fsSI --max-time 10 http://localhost:8000/css/style.css
+curl -fsSI --max-time 10 http://localhost:8000/js/all-scripts.js
 docker compose down -v
 ```
