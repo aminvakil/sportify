@@ -47,6 +47,7 @@ jobs:
       - name: Run Symfony and Doctrine smoke checks
         run: |
           docker compose run --rm php php bin/console cache:clear --env=test
+          docker compose run --rm php php bin/console cache:clear --env=dev
           docker compose run --rm php php bin/console doctrine:database:create --if-not-exists
           docker compose run --rm php php bin/console doctrine:schema:validate --skip-sync
           docker compose run --rm php php bin/console doctrine:schema:update --force

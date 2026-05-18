@@ -17,7 +17,7 @@ services:
         condition: service_healthy
     ports:
       - "8000:8000"
-    command: php -S 0.0.0.0:8000 -t web web/app_dev.php
+    command: php -S 0.0.0.0:8000 -t web app_dev.php
 
   node:
     build:
