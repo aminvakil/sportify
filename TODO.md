@@ -4,18 +4,20 @@
 
 - Docker development setup exists and has been verified.
 - Symfony has been upgraded to 3.4 LTS.
+- Docker PHP has been upgraded incrementally from 7.0 to 7.4.
+- Composer dependencies have been updated to latest versions within existing constraints.
+- Generated Symfony requirements/config checker files are synced with the current installed SensioDistributionBundle version.
 - Basic integration workflow test exists for tournaments, users, predictions, scoring, standings, and helper/repository calls.
-- GitHub Actions CI workflow has been committed and pushed.
+- GitHub Actions CI workflow is in place and green on main.
 - Symfony deprecation notices have been reduced to the remaining vendor-level batch.
 
 ## Next steps
 
-1. Bump Docker PHP from 7.0 to 7.1.
+1. Review Composer package constraints for stale/abandoned packages while staying compatible with Symfony 3.4 and PHP 7.4.
    - Run full clean Docker verification.
-   - Fix only PHP 7.1-related failures.
-2. Repeat for PHP 7.2, 7.3, and 7.4.
-3. After PHP 7.4 is stable, review Composer package constraints for stale/abandoned packages.
-4. Keep frontend upgrade work separate from PHP/Symfony upgrade work.
+   - Fix only issues related to dependency/package constraint changes.
+2. Decide the next backend upgrade step after the package review.
+3. Keep frontend upgrade work separate from PHP/Symfony upgrade work.
 
 ## Always verify each step
 
