@@ -1,0 +1,9 @@
+.git
+vendor
+node_modules
+lib
+var/cache
+var/logs
+var/sessions
+npm-debug.log
+.DS_Store

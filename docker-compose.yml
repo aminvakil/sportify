@@ -1,0 +1,51 @@
+services:
+  php:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    working_dir: /app
+    user: "${UID:-1000}:${GID:-1000}"
+    environment:
+      COMPOSER_HOME: /tmp/composer
+      COMPOSER_MEMORY_LIMIT: -1
+      COMPOSER_FUND: 0
+      SYMFONY_ENV: dev
+    volumes:
+      - .:/app
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8000:8000"
+    command: php -S 0.0.0.0:8000 -t web web/app_dev.php
+
+  node:
+    build:
+      context: .
+      dockerfile: docker/node/Dockerfile
+    working_dir: /app
+    user: "${UID:-1000}:${GID:-1000}"
+    environment:
+      HOME: /tmp
+    volumes:
+      - .:/app
+
+  db:
+    image: mysql:5.7
+    environment:
+      MYSQL_DATABASE: sportify
+      MYSQL_USER: sportify
+      MYSQL_PASSWORD: sportify
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3306:3306"
+    volumes:
+      - db-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-P", "3306", "-usportify", "-psportify"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+volumes:
+  db-data:
