@@ -4,7 +4,7 @@ namespace Tests\Unit;
 
 use Devlabs\SportifyBundle\Services\DataUpdates\Parsers\FootballDataOrg;
 
-class FootballDataOrgParserTest extends \PHPUnit_Framework_TestCase
+class FootballDataOrgParserTest extends \PHPUnit\Framework\TestCase
 {
     public function testParseTeamsMapsApiObjectsToImportRows()
     {
