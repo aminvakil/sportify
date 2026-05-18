@@ -39,7 +39,7 @@ docker compose run --rm php php bin/console doctrine:schema:validate --skip-sync
 docker compose run --rm php php bin/console doctrine:schema:update --force
 docker compose run --rm php php bin/console doctrine:schema:validate
 docker compose run --rm php vendor/bin/simple-phpunit --testsuite 'Project Test Suite'
-docker compose up --wait --wait-timeout 60 php
+docker compose up --wait php
 curl -fsSI --max-time 10 http://localhost:8000/app_dev.php/
 docker compose down -v
 ```

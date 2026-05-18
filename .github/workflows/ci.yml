@@ -58,6 +58,6 @@ jobs:
 
       - name: HTTP smoke test
         run: |
-          docker compose up --wait --wait-timeout 60 php
+          docker compose up --wait php
           curl -fsSI --max-time 10 http://localhost:8000/app_dev.php/
 
