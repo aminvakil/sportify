@@ -7,6 +7,8 @@
   "dependencies": {
     "laravel-elixir": "^3.0.0",
     "material-datetime-picker": "^1.0.1",
-    "browser-sync": "2.26.7"
+    "browser-sync": "2.26.7",
+    "browser-sync-client": "2.26.6",
+    "browser-sync-ui": "2.26.4"
   }
 }
