@@ -15,9 +15,10 @@
 
 ## Next steps
 
-1. Add tests for `/login` and `/register/`, then investigate and fix the page failures.
-2. Decide the next backend upgrade step after the package review.
-3. Keep frontend upgrade work separate from PHP/Symfony upgrade work.
+1. Add an httpd service to `docker-compose.yml` so Docker serves the app like a real web server, then revert the temporary static-file bypass in `web/app_dev.php`.
+2. Add tests for `/login` and `/register/`, then investigate and fix the page failures.
+3. Decide the next backend upgrade step after the package review.
+4. Keep frontend upgrade work separate from PHP/Symfony upgrade work.
 
 ## Always verify each step
 
