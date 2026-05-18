@@ -17,14 +17,14 @@ services:
         condition: service_healthy
     ports:
       - "8000:8000"
-    command: php -S 0.0.0.0:8000 -t web app_dev.php
+    command: php -S 0.0.0.0:8000 -t web /app/web/app_dev.php
     healthcheck:
-      test: ["CMD-SHELL", "curl -fsS http://127.0.0.1:8000/app_dev.php/ >/dev/null || exit 1"]
+      test: ["CMD-SHELL", "curl -fsS http://127.0.0.1:8000/ >/dev/null || exit 1"]
       interval: 5m
       timeout: 5s
       retries: 20
       start_period: 5s
-      start_interval: 5s
+      start_interval: 20s
 
   node:
     build:

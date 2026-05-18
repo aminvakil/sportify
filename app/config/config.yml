@@ -170,7 +170,7 @@ fos_oauth_server:
     refresh_token_class: Devlabs\SportifyBundle\Entity\OAuthRefreshToken
     auth_code_class:     Devlabs\SportifyBundle\Entity\OAuthAuthCode
     service:
-        user_provider: fos_user.user_manager
+        user_provider: fos_user.user_provider.username_email
         options:
             access_token_lifetime: 7776000 # 90 days in seconds
 
