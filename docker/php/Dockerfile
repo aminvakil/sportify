@@ -1,6 +1,6 @@
 FROM composer:2.2.25 AS composer
 
-FROM php:7.0-cli
+FROM php:7.1-cli
 
 RUN set -eux; \
     printf '%s\n' \
