@@ -1,0 +1,10 @@
+Devlabs\SportifyBundle\Entity\Prediction:
+    properties:
+        homeGoals:
+            - Type:
+                type: integer
+                message: 'The value {{ value }} is not a valid {{ type }}.'
+        awayGoals:
+            - Type:
+                type: integer
+                message: 'The value {{ value }} is not a valid {{ type }}.'
