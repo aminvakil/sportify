@@ -19,6 +19,7 @@
 - Web controller routes have been moved from annotations to YAML routing.
 - App validation constraints have been moved from annotations to YAML, and Symfony validator annotation loading is disabled.
 - The app bootstrap no longer manually registers Doctrine's annotation autoloader.
+- `doctrine/annotations` is no longer a direct dependency; it remains installed transitively through Doctrine ORM/common/persistence, JMS serializer, and Hateoas.
 - Current abandoned packages in `composer.lock`: `doctrine/annotations`, `doctrine/cache`, `doctrine/doctrine-cache-bundle`, `doctrine/reflection`, `swiftmailer/swiftmailer`, and `symfony/swiftmailer-bundle`.
 
 ## Next steps
