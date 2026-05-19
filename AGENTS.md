@@ -5,7 +5,7 @@
 This is a legacy Symfony application being upgraded incrementally.
 
 Current baseline:
-- Symfony 3.4 LTS
+- Symfony 4.4 LTS
 - PHP 7.4 in Docker
 - Apache httpd 2.4 in Docker serving `web/` and proxying dynamic requests to PHP
 - MySQL 5.7 in Docker
@@ -61,8 +61,7 @@ curl -I --max-time 10 http://localhost:8000/
 ## Upgrade strategy
 
 Preferred path:
-1. Keep Symfony 3.4 test suite passing.
-2. Resolve low-risk Symfony 3.4 deprecations.
-3. Move PHP one minor version at a time: 7.0 -> 7.1 -> 7.2 -> 7.3 -> 7.4.
-4. Only after PHP 7.4 is stable, consider larger dependency/framework upgrades.
-5. Keep frontend modernization separate from PHP/Symfony upgrades.
+1. Keep Symfony 4.4 test suite passing.
+2. Resolve low-risk Symfony 4.4 deprecations.
+3. Upgrade blockers before moving to Symfony 5.4.
+4. Keep frontend modernization separate from PHP/Symfony upgrades.
