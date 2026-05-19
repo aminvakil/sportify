@@ -23,13 +23,40 @@
 - `doctrine/annotations` is no longer a direct dependency; it remains installed transitively through Doctrine ORM/common/persistence, JMS serializer, and Hateoas.
 - `symfony/mailer` is not installable on the current `symfony/symfony:3.4.*` baseline because Symfony Mailer 4.4+/5.4 requires newer Symfony components; current email usage is FOSUserBundle registration/resetting through `fos_user.mailer.twig_swift`.
 - Current abandoned packages in `composer.lock`: `doctrine/annotations`, `doctrine/cache`, `doctrine/doctrine-cache-bundle`, `doctrine/reflection`, `swiftmailer/swiftmailer`, and `symfony/swiftmailer-bundle`.
+- Backend upgrade path toward Symfony 7.4 LTS has been outlined below.
 
 ## Next steps
 
 1. Keep remaining `doctrine/annotations` work separate because Doctrine ORM mappings and API docs still rely on annotations; plan that migration before a Symfony major upgrade.
 2. Defer `symfony/swiftmailer-bundle`/`swiftmailer/swiftmailer` replacement until the app is on a Symfony version that can install `symfony/mailer`, unless a custom non-Symfony FOSUserBundle mailer is explicitly chosen first.
 3. Keep frontend upgrade work separate from PHP/Symfony upgrade work.
-4. Plan the backend upgrade path toward Symfony 7.4 LTS as the long-term framework target.
+4. Follow the backend upgrade path toward Symfony 7.4 LTS as the long-term framework target.
+
+## Backend upgrade path
+
+Keep each item as its own PR and verify from a clean Docker state before moving on.
+
+1. Prepare the Symfony 3.4 baseline for Symfony 4.4:
+   - Keep reducing app-level deprecations until the test suite is clean except for unavoidable vendor notices.
+   - Remove remaining app dependencies on Doctrine annotations where practical, while keeping ORM/API-doc migrations separate.
+   - Audit legacy bundles with `composer why-not` before changing framework constraints.
+2. Upgrade dependency blockers before the first Symfony major bump:
+   - Replace or remove packages that do not have a viable Symfony 4.4+ path, especially FOSOAuthServerBundle, FOSUserBundle, FOSRestBundle/JMS/Hateoas/Nelmio API docs, and Swiftmailer integration.
+   - Keep each replacement scoped to one subsystem and covered by functional tests.
+3. Move Symfony one LTS at a time:
+   - Symfony 3.4 -> 4.4 on PHP 7.4.
+   - Symfony 4.4 -> 5.4 on PHP 7.4.
+   - Upgrade Docker PHP to the minimum supported version before Symfony 6.4.
+   - Symfony 5.4 -> 6.4.
+   - Upgrade Docker PHP to the minimum supported version before Symfony 7.4.
+   - Symfony 6.4 -> 7.4.
+4. Defer structural modernization until a framework step requires it:
+   - Do not migrate the directory layout, frontend toolchain, or auth/API architecture opportunistically.
+   - Prefer compatibility shims and small route/config changes over broad rewrites.
+5. After each LTS step:
+   - Run the full Docker verification flow below.
+   - Review abandoned packages and deprecations again.
+   - Update this TODO with the new baseline and the next blocker.
 
 ## Always verify each step
 
