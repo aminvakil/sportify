@@ -24,6 +24,7 @@ The project is intentionally old. Do not modernize broad areas unless the curren
 - Do not commit secrets, API tokens, local `parameters.yml`, `vendor/`, `node_modules/`, `lib/`, generated assets, or cache/log files.
 - Do not push unless explicitly asked.
 - Keep PR descriptions concise; do not add a detailed summary unless asked.
+- For changes limited to `AGENTS.md` and/or `TODO.md`, do not run local Docker verification or wait for CI unless explicitly asked.
 
 ## Verification rule
 
@@ -49,7 +50,7 @@ docker compose run --rm php php bin/console doctrine:schema:update --force
 docker compose run --rm php vendor/bin/simple-phpunit --testsuite 'Project Test Suite'
 docker compose up --wait httpd
 curl -I --max-time 10 http://localhost:8000/
-docker compose down -v
+# Leave Docker running after local verification so the user can test manually.
 ```
 
 ## Upgrade strategy
