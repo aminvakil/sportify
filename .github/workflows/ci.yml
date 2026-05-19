@@ -58,7 +58,7 @@ jobs:
 
       - name: HTTP smoke test
         run: |
-          docker compose up --wait php
+          docker compose up --wait httpd
           curl -fsSI --max-time 10 http://localhost:8000/
           curl -fsSI --max-time 10 http://localhost:8000/css/style.css
           curl -fsSI --max-time 10 http://localhost:8000/js/all-scripts.js

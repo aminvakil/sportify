@@ -3,6 +3,7 @@
 ## Current status
 
 - Docker development setup exists and has been verified.
+- Docker httpd service serves `web/` static files and proxies dynamic requests to PHP.
 - Symfony has been upgraded to 3.4 LTS.
 - Docker PHP has been upgraded incrementally from 7.0 to 7.4.
 - Composer dependencies have been updated to latest versions within existing constraints.
@@ -15,10 +16,9 @@
 
 ## Next steps
 
-1. Add an httpd service to `docker-compose.yml` so Docker serves the app like a real web server, then revert the temporary static-file bypass in `web/app_dev.php`.
-2. Add tests for `/login` and `/register/`, then investigate and fix the page failures.
-3. Decide the next backend upgrade step after the package review.
-4. Keep frontend upgrade work separate from PHP/Symfony upgrade work.
+1. Add tests for `/login` and `/register/`, then investigate and fix the page failures.
+2. Decide the next backend upgrade step after the package review.
+3. Keep frontend upgrade work separate from PHP/Symfony upgrade work.
 
 ## Always verify each step
 
@@ -40,7 +40,7 @@ docker compose run --rm php php bin/console doctrine:schema:validate --skip-sync
 docker compose run --rm php php bin/console doctrine:schema:update --force
 docker compose run --rm php php bin/console doctrine:schema:validate
 docker compose run --rm php vendor/bin/simple-phpunit --testsuite 'Project Test Suite'
-docker compose up --wait php
+docker compose up --wait httpd
 curl -fsSI --max-time 10 http://localhost:8000/
 curl -fsSI --max-time 10 http://localhost:8000/css/style.css
 curl -fsSI --max-time 10 http://localhost:8000/js/all-scripts.js

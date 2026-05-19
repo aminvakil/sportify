@@ -1,14 +1,5 @@
 <?php
 
-if (PHP_SAPI === 'cli-server') {
-    $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-    $file = false === $path ? false : realpath(__DIR__.$path);
-
-    if (false !== $file && 0 === strpos($file, __DIR__.DIRECTORY_SEPARATOR) && is_file($file) && '.php' !== substr($file, -4)) {
-        return false;
-    }
-}
-
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Debug\Debug;
 
