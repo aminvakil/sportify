@@ -5,6 +5,7 @@ namespace Devlabs\SportifyBundle\Services\DataUpdates;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Doctrine\ORM\EntityManager;
+use Devlabs\SportifyBundle\Entity\ApiMapping;
 use Devlabs\SportifyBundle\Entity\Tournament;
 
 /**
@@ -40,7 +41,7 @@ class Manager
      */
     public function updateTeamsByTournament(Tournament $tournament)
     {
-        $apiMapping = $this->em->getRepository('DevlabsSportifyBundle:ApiMapping')
+        $apiMapping = $this->em->getRepository(ApiMapping::class)
             ->getByEntityAndApiProvider($tournament, 'Tournament', $this->footballApi);
 
         if (!$apiMapping) {
@@ -71,7 +72,7 @@ class Manager
         $status['total_updated'] = 0;
 
         // get all tournaments
-        $tournaments = $this->em->getRepository('DevlabsSportifyBundle:Tournament')->findAll();
+        $tournaments = $this->em->getRepository(Tournament::class)->findAll();
 
         // return if no tournaments in db
         if (!$tournaments) {
@@ -80,7 +81,7 @@ class Manager
 
         // iterate the following actions for each tournament
         foreach ($tournaments as $tournament) {
-            $apiMapping = $this->em->getRepository('DevlabsSportifyBundle:ApiMapping')
+            $apiMapping = $this->em->getRepository(ApiMapping::class)
                 ->getByEntityAndApiProvider($tournament, 'Tournament', $this->footballApi);
 
             // skip tournament if finished or there is no API mapping for it

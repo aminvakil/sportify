@@ -17,7 +17,7 @@ class UserRepository extends \Doctrine\ORM\EntityRepository
     {
         return $this->getEntityManager()->createQueryBuilder()
             ->select('u')
-            ->from('DevlabsSportifyBundle:User', 'u')
+            ->from(User::class, 'u')
             ->where('u.enabled = 1')
             ->orderBy('u.email', 'ASC')
             ->getQuery()
@@ -35,7 +35,7 @@ class UserRepository extends \Doctrine\ORM\EntityRepository
         $qb = $this->getEntityManager()->createQueryBuilder();
         $usersWithPredictions = $qb
             ->select(['u.id'])
-            ->from('DevlabsSportifyBundle:User', 'u')
+            ->from(User::class, 'u')
             ->join('u.predictions', 'p')
             ->where('u.enabled = 1')
             ->andWhere('p.matchId = :match_id')
@@ -50,7 +50,7 @@ class UserRepository extends \Doctrine\ORM\EntityRepository
         if ($usersWithPredictions) {
             return $qb
                 ->select('u')
-                ->from('DevlabsSportifyBundle:User', 'u')
+                ->from(User::class, 'u')
                 ->join('u.scores', 's')
                 ->where('u.enabled = 1')
                 ->andWhere('s.tournamentId = :tournament_id')
@@ -65,7 +65,7 @@ class UserRepository extends \Doctrine\ORM\EntityRepository
         } else {
             return $qb
                 ->select('u')
-                ->from('DevlabsSportifyBundle:User', 'u')
+                ->from(User::class, 'u')
                 ->join('u.scores', 's')
                 ->where('u.enabled = 1')
                 ->andWhere('s.tournamentId = :tournament_id')

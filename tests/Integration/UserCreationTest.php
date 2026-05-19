@@ -4,6 +4,8 @@ namespace Tests\Integration;
 
 require_once __DIR__.'/DatabaseTestCase.php';
 
+use Devlabs\SportifyBundle\Entity\User;
+
 class UserCreationTest extends DatabaseTestCase
 {
     public function testCreateUserPersistsAllRequiredFields()
@@ -11,7 +13,7 @@ class UserCreationTest extends DatabaseTestCase
         $user = $this->createUser('alice_test');
 
         $this->em->clear();
-        $fetched = $this->em->getRepository('DevlabsSportifyBundle:User')->find($user->getId());
+        $fetched = $this->em->getRepository(User::class)->find($user->getId());
 
         $this->assertNotNull($fetched);
         $this->assertSame('alice_test', $fetched->getUsername());
@@ -26,7 +28,7 @@ class UserCreationTest extends DatabaseTestCase
         $user = $this->createUser('bob_disabled', false);
 
         $this->em->clear();
-        $fetched = $this->em->getRepository('DevlabsSportifyBundle:User')->find($user->getId());
+        $fetched = $this->em->getRepository(User::class)->find($user->getId());
 
         $this->assertNotNull($fetched);
         $this->assertFalse($fetched->isEnabled());
@@ -37,7 +39,7 @@ class UserCreationTest extends DatabaseTestCase
         $enabled = $this->createUser('enabled_user');
         $disabled = $this->createUser('disabled_user', false);
 
-        $allEnabled = $this->em->getRepository('DevlabsSportifyBundle:User')->getAllEnabled();
+        $allEnabled = $this->em->getRepository(User::class)->getAllEnabled();
         $enabledIds = array_map(function ($u) { return $u->getId(); }, $allEnabled);
 
         $this->assertContains($enabled->getId(), $enabledIds);

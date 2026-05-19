@@ -15,7 +15,7 @@ class TeamController extends BaseApiController
 {
     protected $entityName = 'Team';
     protected $fqEntityClass = Team::class;
-    protected $repositoryName = 'DevlabsSportifyBundle:Team';
+    protected $repositoryName = Team::class;
     protected $fqEntityFormClass = TeamEntityType::class;
 
     /**

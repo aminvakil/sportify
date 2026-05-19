@@ -21,7 +21,7 @@ class ScoreRepository extends \Doctrine\ORM\EntityRepository
     {
         return $this->getEntityManager()->createQueryBuilder()
             ->select('s')
-            ->from('DevlabsSportifyBundle:Score', 's')
+            ->from(Score::class, 's')
             ->where('s.userId = :user_id')
             ->andWhere('s.tournamentId = :tournament_id')
             ->setParameters(array('user_id' => $user->getId(), 'tournament_id' => $tournament->getId()))
@@ -40,7 +40,7 @@ class ScoreRepository extends \Doctrine\ORM\EntityRepository
     {
         return $this->getEntityManager()->createQueryBuilder()
             ->select('s')
-            ->from('DevlabsSportifyBundle:Score', 's')
+            ->from(Score::class, 's')
             ->join('s.userId', 'u')
             ->where('s.tournamentId = :tournament_id')
             ->orderBy('s.points', 'DESC')
@@ -62,7 +62,7 @@ class ScoreRepository extends \Doctrine\ORM\EntityRepository
     {
         return $this->getEntityManager()->createQueryBuilder()
             ->select('s')
-            ->from('DevlabsSportifyBundle:Score', 's')
+            ->from(Score::class, 's')
             ->where('s.tournamentId = :tournament_id')
             ->orderBy('s.posNew', 'ASC')
             ->setParameters(array('tournament_id' => $tournament->getId()))
@@ -80,7 +80,7 @@ class ScoreRepository extends \Doctrine\ORM\EntityRepository
     {
         $queryResult = $this->getEntityManager()->createQueryBuilder()
             ->select('s')
-            ->from('DevlabsSportifyBundle:Score', 's')
+            ->from(Score::class, 's')
             ->where('s.userId = :user_id')
             ->setParameters(array('user_id' => $user->getId()))
             ->getQuery()
@@ -108,7 +108,7 @@ class ScoreRepository extends \Doctrine\ORM\EntityRepository
     {
         $queryResult = $this->getEntityManager()->createQueryBuilder()
             ->select('s')
-            ->from('DevlabsSportifyBundle:Score', 's')
+            ->from(Score::class, 's')
             ->orderBy('s.posNew', 'ASC')
             ->getQuery()
             ->getResult();

@@ -4,7 +4,11 @@ namespace Tests\Integration;
 
 require_once __DIR__.'/DatabaseTestCase.php';
 
+use Devlabs\SportifyBundle\Entity\Match;
 use Devlabs\SportifyBundle\Entity\Prediction;
+use Devlabs\SportifyBundle\Entity\Score;
+use Devlabs\SportifyBundle\Entity\Tournament;
+use Devlabs\SportifyBundle\Entity\User;
 
 class PredictionWorkflowTest extends DatabaseTestCase
 {
@@ -27,7 +31,7 @@ class PredictionWorkflowTest extends DatabaseTestCase
         $this->createPrediction($exactUser, $finishedMatch, 2, 1);
         $this->createPrediction($outcomeUser, $finishedMatch, 1, 0);
 
-        $predictionRepository = $this->em->getRepository('DevlabsSportifyBundle:Prediction');
+        $predictionRepository = $this->em->getRepository(Prediction::class);
         $notScored = $predictionRepository->getFinishedNotScored($exactUser);
         $this->assertArrayHasKey($finishedMatch->getId(), $notScored);
 
@@ -36,11 +40,11 @@ class PredictionWorkflowTest extends DatabaseTestCase
 
         $this->em->clear();
 
-        $finishedMatch = $this->em->getRepository('DevlabsSportifyBundle:Match')->find($finishedMatch->getId());
-        $upcomingMatch = $this->em->getRepository('DevlabsSportifyBundle:Match')->find($upcomingMatch->getId());
-        $exactUser = $this->em->getRepository('DevlabsSportifyBundle:User')->find($exactUser->getId());
-        $outcomeUser = $this->em->getRepository('DevlabsSportifyBundle:User')->find($outcomeUser->getId());
-        $tournament = $this->em->getRepository('DevlabsSportifyBundle:Tournament')->find($tournament->getId());
+        $finishedMatch = $this->em->getRepository(Match::class)->find($finishedMatch->getId());
+        $upcomingMatch = $this->em->getRepository(Match::class)->find($upcomingMatch->getId());
+        $exactUser = $this->em->getRepository(User::class)->find($exactUser->getId());
+        $outcomeUser = $this->em->getRepository(User::class)->find($outcomeUser->getId());
+        $tournament = $this->em->getRepository(Tournament::class)->find($tournament->getId());
 
         $exactPrediction = $predictionRepository->getOneByUserAndMatch($exactUser, $finishedMatch);
         $outcomePrediction = $predictionRepository->getOneByUserAndMatch($outcomeUser, $finishedMatch);
@@ -52,7 +56,7 @@ class PredictionWorkflowTest extends DatabaseTestCase
         $this->assertSame(2, $exactPrediction->getResultHomeGoals());
         $this->assertSame(1, $exactPrediction->getResultAwayGoals());
 
-        $scoreRepository = $this->em->getRepository('DevlabsSportifyBundle:Score');
+        $scoreRepository = $this->em->getRepository(Score::class);
         $exactScore = $scoreRepository->getByUserAndTournament($exactUser, $tournament);
         $outcomeScore = $scoreRepository->getByUserAndTournament($outcomeUser, $tournament);
 

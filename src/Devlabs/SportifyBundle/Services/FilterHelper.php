@@ -5,6 +5,8 @@ namespace Devlabs\SportifyBundle\Services;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Doctrine\ORM\EntityManager;
+use Devlabs\SportifyBundle\Entity\Tournament;
+use Devlabs\SportifyBundle\Entity\User;
 use Devlabs\SportifyBundle\Form\FilterType;
 
 /**
@@ -39,20 +41,20 @@ class FilterHelper
             // use the selected tournament as object, based on id URL: {tournament} route parameter
             $formSourceData['tournament_selected'] = ($urlParams['tournament_id'] === 'all')
                 ? null
-                : $this->em->getRepository('DevlabsSportifyBundle:Tournament')->findOneById($urlParams['tournament_id']);
+                : $this->em->getRepository(Tournament::class)->findOneById($urlParams['tournament_id']);
 
             // get user's joined tournaments
-            $formSourceData['tournament_choices'] = $this->em->getRepository('DevlabsSportifyBundle:Tournament')
+            $formSourceData['tournament_choices'] = $this->em->getRepository(Tournament::class)
                 ->getJoined($user);
         }
 
         if (in_array('user', $fields)) {
             // use the selected user as object, based on id URL: {user_id} route parameter
-            $formSourceData['user_selected'] = $this->em->getRepository('DevlabsSportifyBundle:User')
+            $formSourceData['user_selected'] = $this->em->getRepository(User::class)
                 ->findOneById($urlParams['user_id']);
 
             // get list of enabled users
-            $formSourceData['user_choices'] = $this->em->getRepository('DevlabsSportifyBundle:User')
+            $formSourceData['user_choices'] = $this->em->getRepository(User::class)
                 ->getAllEnabled();
         }
 

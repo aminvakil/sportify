@@ -2,6 +2,7 @@
 
 namespace Devlabs\SportifyBundle\Controller;
 
+use Devlabs\SportifyBundle\Entity\Match;
 use Devlabs\SportifyBundle\Entity\Prediction;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -50,9 +51,9 @@ class MatchesController extends Controller
         }
 
         // get not finished matches and the user's predictions for them
-        $matches = $em->getRepository('DevlabsSportifyBundle:Match')
+        $matches = $em->getRepository(Match::class)
             ->getNotScored($user, $urlParams['tournament_id'], $urlParams['date_from'], $modifiedDateTo);
-        $predictions = $em->getRepository('DevlabsSportifyBundle:Prediction')
+        $predictions = $em->getRepository(Prediction::class)
             ->getNotScored($user, $urlParams['tournament_id'], $urlParams['date_from'], $modifiedDateTo);
 
         $matchForms = array();
@@ -98,12 +99,12 @@ class MatchesController extends Controller
         $em = $this->getDoctrine()->getManager();
 
         // get the submitted form's match object
-        $match = $em->getRepository('DevlabsSportifyBundle:Match')
+        $match = $em->getRepository(Match::class)
             ->findOneById($request->request->get('prediction')['matchId']);
 
         // set the prediction object based on whether it's new or existing one
         if ($request->request->get('prediction')['id']) {
-            $prediction = $em->getRepository('DevlabsSportifyBundle:Prediction')
+            $prediction = $em->getRepository(Prediction::class)
                 ->findOneById($request->request->get('prediction')['id']);
             $prediction->setHomeGoals($request->request->get('prediction')['homeGoals']);
             $prediction->setAwayGoals($request->request->get('prediction')['awayGoals']);
@@ -149,7 +150,7 @@ class MatchesController extends Controller
         $formsArray = $request->request->get('matches');
 
         foreach ($formsArray as $submittedForm) {
-            $match = $em->getRepository('DevlabsSportifyBundle:Match')
+            $match = $em->getRepository(Match::class)
                 ->findOneById($submittedForm['matchId']);
 
             // skip to next form if this match has started or data is invalid
@@ -166,7 +167,7 @@ class MatchesController extends Controller
                 $prediction->setHomeGoals($submittedForm['homeGoals']);
                 $prediction->setAwayGoals($submittedForm['awayGoals']);
             } elseif ($submittedForm['action'] === 'EDIT') {
-                $prediction = $em->getRepository('DevlabsSportifyBundle:Prediction')
+                $prediction = $em->getRepository(Prediction::class)
                     ->getOneByUserAndMatch($user, $match);
                 $prediction->setHomeGoals($submittedForm['homeGoals']);
                 $prediction->setAwayGoals($submittedForm['awayGoals']);

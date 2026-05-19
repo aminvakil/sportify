@@ -18,7 +18,7 @@ class TournamentRepository extends \Doctrine\ORM\EntityRepository
     {
         return $this->getEntityManager()->createQueryBuilder()
             ->select('t')
-            ->from('DevlabsSportifyBundle:Tournament', 't')
+            ->from(Tournament::class, 't')
             ->join('t.scores', 's')
             ->where('s.userId = :user_id')
             ->setParameters(array('user_id' => $user->getId()))
@@ -37,7 +37,7 @@ class TournamentRepository extends \Doctrine\ORM\EntityRepository
     {
         $query = $this->getEntityManager()->createQueryBuilder()
             ->select('t')
-            ->from('DevlabsSportifyBundle:Tournament', 't')
+            ->from(Tournament::class, 't')
             ->setMaxResults(1);
 
         try {

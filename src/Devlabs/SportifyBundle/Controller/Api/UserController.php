@@ -16,7 +16,7 @@ class UserController extends BaseApiController
 {
     protected $entityName = 'User';
     protected $fqEntityClass = User::class;
-    protected $repositoryName = 'DevlabsSportifyBundle:User';
+    protected $repositoryName = User::class;
     protected $fqEntityFormClass = UserType::class;
 
     /**

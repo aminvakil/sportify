@@ -22,7 +22,7 @@ class PredictionChampionRepository extends \Doctrine\ORM\EntityRepository
     {
         $query = $this->getEntityManager()->createQueryBuilder()
             ->select('p')
-            ->from('DevlabsSportifyBundle:PredictionChampion', 'p')
+            ->from(PredictionChampion::class, 'p')
             ->where('p.userId = :user_id')
             ->andWhere('p.tournamentId = :tournament_id')
             ->setParameters(array(
@@ -48,7 +48,7 @@ class PredictionChampionRepository extends \Doctrine\ORM\EntityRepository
     {
         return $this->getEntityManager()->createQueryBuilder()
             ->select('p')
-            ->from('DevlabsSportifyBundle:PredictionChampion', 'p')
+            ->from(PredictionChampion::class, 'p')
             ->where('p.scoreAdded IS NULL OR p.scoreAdded = 0')
             ->andWhere('p.tournamentId = :tournament_id')
             ->setParameters(array('tournament_id' => $tournament->getId()))

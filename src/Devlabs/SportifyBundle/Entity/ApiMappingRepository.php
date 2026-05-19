@@ -22,7 +22,7 @@ class ApiMappingRepository extends \Doctrine\ORM\EntityRepository
     {
         $query =  $this->getEntityManager()->createQueryBuilder()
             ->select('am')
-            ->from('DevlabsSportifyBundle:ApiMapping', 'am')
+            ->from(ApiMapping::class, 'am')
             ->where('am.entityType = :entity_type')
             ->andWhere('am.apiName = :api_name')
             ->andWhere('am.apiObjectId = :api_object_id')
@@ -54,7 +54,7 @@ class ApiMappingRepository extends \Doctrine\ORM\EntityRepository
     {
         $query =  $this->getEntityManager()->createQueryBuilder()
             ->select('am')
-            ->from('DevlabsSportifyBundle:ApiMapping', 'am')
+            ->from(ApiMapping::class, 'am')
             ->where('am.entityId = :entity_id')
             ->andWhere('am.entityType = :entity_type')
             ->andWhere('am.apiName = :api_name')

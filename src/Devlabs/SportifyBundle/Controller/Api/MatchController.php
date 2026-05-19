@@ -4,6 +4,7 @@ namespace Devlabs\SportifyBundle\Controller\Api;
 
 use Devlabs\SportifyBundle\Controller\Base\BaseApiController;
 use Devlabs\SportifyBundle\Entity\Match;
+use Devlabs\SportifyBundle\Entity\Prediction;
 use Devlabs\SportifyBundle\Form\MatchEntityType;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
@@ -15,7 +16,7 @@ class MatchController extends BaseApiController
 {
     protected $entityName = 'Match';
     protected $fqEntityClass = Match::class;
-    protected $repositoryName = 'DevlabsSportifyBundle:Match';
+    protected $repositoryName = Match::class;
     protected $fqEntityFormClass = MatchEntityType::class;
 
     /**
@@ -72,7 +73,7 @@ class MatchController extends BaseApiController
         }
 
         $prediction = $this->getDoctrine()->getManager()
-            ->getRepository('DevlabsSportifyBundle:Prediction')
+            ->getRepository(Prediction::class)
             ->findOneBy(array(
                 'matchId' => $id,
                 'userId' => $user->getId()

@@ -38,7 +38,7 @@ class Importer
         foreach ($teams as $teamData) {
             $apiObjectId = $teamData['team_id'];
 
-            $apiMapping = $this->em->getRepository('DevlabsSportifyBundle:ApiMapping')
+            $apiMapping = $this->em->getRepository(ApiMapping::class)
                 ->getByEntityTypeAndApiObjectId('Team', $footballApi, $apiObjectId);
 
             if (!$apiMapping) {
@@ -58,7 +58,7 @@ class Importer
                 $this->em->persist($apiMapping);
             } else {
                 // get Team from DB
-                $team = $this->em->getRepository('DevlabsSportifyBundle:Team')
+                $team = $this->em->getRepository(Team::class)
                     ->find($apiMapping->getEntityId());
 
                 // add Tournament to Team's tournaments list if NOT already present
@@ -98,23 +98,23 @@ class Importer
         foreach ($fixtures as $fixtureData) {
             $apiMatchId = $fixtureData['match_id'];
 
-            $matchApiMapping = $this->em->getRepository('DevlabsSportifyBundle:ApiMapping')
+            $matchApiMapping = $this->em->getRepository(ApiMapping::class)
                 ->getByEntityTypeAndApiObjectId('Match', $footballApi, $apiMatchId);
 
             if (!$matchApiMapping) {
                 $apiHomeTeamId = $fixtureData['home_team_id'];
                 $apiAwayTeamId = $fixtureData['away_team_id'];
 
-                $homeTeamId = $this->em->getRepository('DevlabsSportifyBundle:ApiMapping')
+                $homeTeamId = $this->em->getRepository(ApiMapping::class)
                     ->getByEntityTypeAndApiObjectId('Team', $footballApi, $apiHomeTeamId)
                     ->getEntityId();
-                $awayTeamId = $this->em->getRepository('DevlabsSportifyBundle:ApiMapping')
+                $awayTeamId = $this->em->getRepository(ApiMapping::class)
                     ->getByEntityTypeAndApiObjectId('Team', $footballApi, $apiAwayTeamId)
                     ->getEntityId();
 
-                $homeTeam = $this->em->getRepository('DevlabsSportifyBundle:Team')
+                $homeTeam = $this->em->getRepository(Team::class)
                     ->findOneById($homeTeamId);
-                $awayTeam = $this->em->getRepository('DevlabsSportifyBundle:Team')
+                $awayTeam = $this->em->getRepository(Team::class)
                     ->findOneById($awayTeamId);
 
                 $datetime = \DateTime::createFromFormat('Y-m-d H:i:s', $fixtureData['match_local_time']);
@@ -139,7 +139,7 @@ class Importer
 
             } else {
                 // get match from db
-                $match = $this->em->getRepository('DevlabsSportifyBundle:Match')
+                $match = $this->em->getRepository(Match::class)
                     ->findOneById($matchApiMapping->getEntityId());
 
                 $matchUpdated = false;

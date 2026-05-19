@@ -2,6 +2,8 @@
 
 namespace Devlabs\SportifyBundle\Controller;
 
+use Devlabs\SportifyBundle\Entity\Score;
+use Devlabs\SportifyBundle\Entity\Tournament;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -27,12 +29,12 @@ class StandingsController extends Controller
          */
         if ($tournament_id === 'empty') {
             $formSourceData['tournament_selected'] = ($request->cookies->has('tournament'))
-                ? $em->getRepository('DevlabsSportifyBundle:Tournament')
+                ? $em->getRepository(Tournament::class)
                     ->findOneById($request->cookies->get('tournament'))
-                : $em->getRepository('DevlabsSportifyBundle:Tournament')
+                : $em->getRepository(Tournament::class)
                     ->getFirst();
         } else {
-            $formSourceData['tournament_selected'] = $em->getRepository('DevlabsSportifyBundle:Tournament')
+            $formSourceData['tournament_selected'] = $em->getRepository(Tournament::class)
                 ->findOneById($tournament_id);
         }
 
@@ -41,12 +43,12 @@ class StandingsController extends Controller
          * (usually happens when invalid 'tournament id' is passed)
          */
         if (!$formSourceData['tournament_selected']) {
-            $formSourceData['tournament_selected'] = $em->getRepository('DevlabsSportifyBundle:Tournament')
+            $formSourceData['tournament_selected'] = $em->getRepository(Tournament::class)
                 ->getFirst();
         }
 
         // get all tournaments as source data for form choices
-        $formSourceData['tournament_choices'] = $em->getRepository('DevlabsSportifyBundle:Tournament')
+        $formSourceData['tournament_choices'] = $em->getRepository(Tournament::class)
             ->findAll();
 
         // get the filter helper service
@@ -73,7 +75,7 @@ class StandingsController extends Controller
 
         if ($formSourceData['tournament_selected']) {
             // get scores standings for a given tournament
-            $allScores = $em->getRepository('DevlabsSportifyBundle:Score')
+            $allScores = $em->getRepository(Score::class)
                 ->getByTournamentOrderByPosNew($formSourceData['tournament_selected']);
 
             // set cookie for tournament selected with 90-day expire period
@@ -114,12 +116,12 @@ class StandingsController extends Controller
          */
         if ($tournament_id === 'empty') {
             $formSourceData['tournament_selected'] = ($request->cookies->has('tournament'))
-                ? $em->getRepository('DevlabsSportifyBundle:Tournament')
+                ? $em->getRepository(Tournament::class)
                     ->findOneById($request->cookies->get('tournament'))
-                : $em->getRepository('DevlabsSportifyBundle:Tournament')
+                : $em->getRepository(Tournament::class)
                     ->getFirst();
         } else {
-            $formSourceData['tournament_selected'] = $em->getRepository('DevlabsSportifyBundle:Tournament')
+            $formSourceData['tournament_selected'] = $em->getRepository(Tournament::class)
                 ->findOneById($tournament_id);
         }
 
@@ -128,12 +130,12 @@ class StandingsController extends Controller
          * (usually happens when invalid 'tournament id' is passed)
          */
         if (!$formSourceData['tournament_selected']) {
-            $formSourceData['tournament_selected'] = $em->getRepository('DevlabsSportifyBundle:Tournament')
+            $formSourceData['tournament_selected'] = $em->getRepository(Tournament::class)
                 ->getFirst();
         }
 
         // get all tournaments as source data for form choices
-        $formSourceData['tournament_choices'] = $em->getRepository('DevlabsSportifyBundle:Tournament')
+        $formSourceData['tournament_choices'] = $em->getRepository(Tournament::class)
             ->findAll();
 
         // get the filter helper service
@@ -160,7 +162,7 @@ class StandingsController extends Controller
 
         if ($formSourceData['tournament_selected']) {
             // get scores standings for a given tournament
-            $allScores = $em->getRepository('DevlabsSportifyBundle:Score')
+            $allScores = $em->getRepository(Score::class)
                 ->getByTournamentOrderByPosNew($formSourceData['tournament_selected']);
 
             // set cookie for tournament selected with 90-day expire period

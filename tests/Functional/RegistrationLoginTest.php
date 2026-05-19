@@ -2,6 +2,7 @@
 
 namespace Tests\Functional;
 
+use Devlabs\SportifyBundle\Entity\User;
 use Doctrine\ORM\Tools\SchemaTool;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
@@ -30,7 +31,7 @@ class RegistrationLoginTest extends WebTestCase
         $client->followRedirect();
         $this->assertTrue($client->getResponse()->isSuccessful());
 
-        $user = $em->getRepository('DevlabsSportifyBundle:User')->findOneBy(array('email' => $email));
+        $user = $em->getRepository(User::class)->findOneBy(array('email' => $email));
         $this->assertNotNull($user);
         $this->assertTrue($user->isEnabled());
         $this->assertNull($user->getConfirmationToken());

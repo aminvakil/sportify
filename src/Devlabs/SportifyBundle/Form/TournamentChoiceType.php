@@ -2,6 +2,7 @@
 
 namespace Devlabs\SportifyBundle\Form;
 
+use Devlabs\SportifyBundle\Entity\Tournament;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -30,7 +31,7 @@ class TournamentChoiceType extends AbstractType
 
         $builder
             ->add('id', EntityType::class, array(
-                'class' => 'DevlabsSportifyBundle:Tournament',
+                'class' => Tournament::class,
                 'choices' => $this->choices,
                 'data' => $this->data,
                 'choice_label' => 'name',

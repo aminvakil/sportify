@@ -83,7 +83,7 @@ class TournamentsHelper
     public function actionOnFormSubmit(Form $form, User $user)
     {
         $formData = $form->getData();
-        $tournament = $this->em->getRepository('DevlabsSportifyBundle:Tournament')
+        $tournament = $this->em->getRepository(Tournament::class)
             ->findOneById($formData['id']);
 
         // prepare the queries for tournament join/leave (add/delete row in `scores` table)
@@ -123,7 +123,7 @@ class TournamentsHelper
      */
     public function leaveTournament(User $user, Tournament $tournament)
     {
-        $score = $this->em->getRepository('DevlabsSportifyBundle:Score')
+        $score = $this->em->getRepository(Score::class)
             ->getByUserAndTournament($user, $tournament);
         $this->em->remove($score);
 

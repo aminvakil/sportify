@@ -18,7 +18,7 @@ class PredictionRepository extends \Doctrine\ORM\EntityRepository
     {
         $query = $this->getEntityManager()->createQueryBuilder()
             ->select('p')
-            ->from('DevlabsSportifyBundle:Prediction', 'p')
+            ->from(Prediction::class, 'p')
             ->join('p.matchId', 'm')
             ->join('m.homeTeamId', 'tm')
             ->join('m.tournamentId', 't')
@@ -70,7 +70,7 @@ class PredictionRepository extends \Doctrine\ORM\EntityRepository
     {
         $query = $this->getEntityManager()->createQueryBuilder()
             ->select('p')
-            ->from('DevlabsSportifyBundle:Prediction', 'p')
+            ->from(Prediction::class, 'p')
             ->join('p.matchId', 'm')
             ->join('m.homeTeamId', 'tm')
             ->join('m.tournamentId', 't')
@@ -119,7 +119,7 @@ class PredictionRepository extends \Doctrine\ORM\EntityRepository
     {
         $queryResult = $this->getEntityManager()->createQueryBuilder()
             ->select('p')
-            ->from('DevlabsSportifyBundle:Prediction', 'p')
+            ->from(Prediction::class, 'p')
             ->join('p.matchId', 'm')
             ->where('p.scoreAdded IS NULL OR p.scoreAdded = 0')
             ->andWhere('m.homeGoals IS NOT NULL AND m.awayGoals IS NOT NULL')
@@ -155,7 +155,7 @@ class PredictionRepository extends \Doctrine\ORM\EntityRepository
     {
         return $this->getEntityManager()->createQueryBuilder()
             ->select('p')
-            ->from('DevlabsSportifyBundle:Prediction', 'p')
+            ->from(Prediction::class, 'p')
             ->where('p.userId = :user_id')
             ->andWhere('p.matchId = :match_id')
             ->setParameters(array('user_id' => $user->getId(), 'match_id' => $match->getId()))
@@ -174,7 +174,7 @@ class PredictionRepository extends \Doctrine\ORM\EntityRepository
     {
         return $this->getEntityManager()->createQueryBuilder()
             ->select('p')
-            ->from('DevlabsSportifyBundle:Prediction', 'p')
+            ->from(Prediction::class, 'p')
             ->join('p.matchId', 'm')
             ->where('p.userId = :user_id')
             ->andWhere('p.scoreAdded = 1 AND p.points = :points_exact')
@@ -200,7 +200,7 @@ class PredictionRepository extends \Doctrine\ORM\EntityRepository
     {
         $query = $this->getEntityManager()->createQueryBuilder()
             ->select('p')
-            ->from('DevlabsSportifyBundle:Prediction', 'p')
+            ->from(Prediction::class, 'p')
             ->join('p.matchId', 'm')
             ->join('m.homeTeamId', 'h_tm')
             ->join('m.awayTeamId', 'a_tm')

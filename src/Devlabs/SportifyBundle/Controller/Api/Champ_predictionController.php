@@ -13,6 +13,6 @@ class Champ_predictionController extends BaseApiController
 {
     protected $entityName = 'PredictionChampion';
     protected $fqEntityClass = PredictionChampion::class;
-    protected $repositoryName = 'DevlabsSportifyBundle:PredictionChampion';
+    protected $repositoryName = PredictionChampion::class;
     protected $fqEntityFormClass = PredictionChampionEntityType::class;
 }

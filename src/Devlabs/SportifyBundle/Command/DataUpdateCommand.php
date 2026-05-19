@@ -2,6 +2,7 @@
 
 namespace Devlabs\SportifyBundle\Command;
 
+use Devlabs\SportifyBundle\Entity\Score;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -66,7 +67,7 @@ class DataUpdateCommand extends ContainerAwareCommand
                 $tournamentsModified = $this->getContainer()
                     ->get('app.score_updater')->updateAll();
 
-                $scores = $em->getRepository('DevlabsSportifyBundle:Score')
+                $scores = $em->getRepository(Score::class)
                     ->getAllHashed();
 
                 $dataUpdated = true;

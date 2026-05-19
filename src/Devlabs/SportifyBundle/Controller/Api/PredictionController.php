@@ -17,7 +17,7 @@ class PredictionController extends BaseApiController
 {
     protected $entityName = 'Prediction';
     protected $fqEntityClass = Prediction::class;
-    protected $repositoryName = 'DevlabsSportifyBundle:Prediction';
+    protected $repositoryName = Prediction::class;
     protected $fqEntityFormClass = PredictionType::class;
 
     /**

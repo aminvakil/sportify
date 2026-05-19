@@ -131,7 +131,7 @@ class AdminController extends Controller
         $adminHelper = $this->container->get('app.admin.helper');
 
         // get all tournaments
-        $tournaments = $em->getRepository('DevlabsSportifyBundle:Tournament')
+        $tournaments = $em->getRepository(Tournament::class)
             ->findAll();
 
         // create Tournament forms
@@ -174,7 +174,7 @@ class AdminController extends Controller
 
         // set the ApiMapping object based on whether it's new or existing one
         if ($request->request->get('api_mapping')['id']) {
-            $apiMapping = $em->getRepository('DevlabsSportifyBundle:ApiMapping')
+            $apiMapping = $em->getRepository(ApiMapping::class)
                 ->findOneById($request->request->get('api_mapping')['id']);
         } else {
             $apiMapping = new ApiMapping();
@@ -212,7 +212,7 @@ class AdminController extends Controller
         $adminHelper = $this->container->get('app.admin.helper');
 
         // get all tournaments
-        $tournaments = $em->getRepository('DevlabsSportifyBundle:Tournament')
+        $tournaments = $em->getRepository(Tournament::class)
             ->findAll();
 
         // add an 'empty' placeholder for a new tournament to be created
@@ -254,7 +254,7 @@ class AdminController extends Controller
 
         // set the tournament object based on whether it's new or existing one
         if ($request->request->get('tournament_entity')['id']) {
-            $tournament = $em->getRepository('DevlabsSportifyBundle:Tournament')
+            $tournament = $em->getRepository(Tournament::class)
                 ->findOneById($request->request->get('tournament_entity')['id']);
         } else {
             $tournament = new Tournament();
@@ -296,7 +296,7 @@ class AdminController extends Controller
         $adminHelper = $this->container->get('app.admin.helper');
 
         // get all teams
-        $teams = $em->getRepository('DevlabsSportifyBundle:Team')
+        $teams = $em->getRepository(Team::class)
             ->findAll();
 
         // add an 'empty' placeholder for a new team to be created
@@ -338,7 +338,7 @@ class AdminController extends Controller
 
         // set the team object based on whether it's new or existing one
         if ($request->request->get('team_entity')['id']) {
-            $team = $em->getRepository('DevlabsSportifyBundle:Team')
+            $team = $em->getRepository(Team::class)
                 ->findOneById($request->request->get('team_entity')['id']);
         } else {
             $team = new Team();
@@ -382,13 +382,13 @@ class AdminController extends Controller
          */
         if ($tournament_id === 'empty') {
             $formSourceData['tournament_selected'] = ($request->cookies->has('tournament'))
-                ? $em->getRepository('DevlabsSportifyBundle:Tournament')
+                ? $em->getRepository(Tournament::class)
                     ->findOneById($request->cookies->get('tournament'))
-                : $em->getRepository('DevlabsSportifyBundle:Tournament')
+                : $em->getRepository(Tournament::class)
                     ->getFirst();
             $urlParams['tournament_id'] = $formSourceData['tournament_selected']->getId();
         } else {
-            $formSourceData['tournament_selected'] = $em->getRepository('DevlabsSportifyBundle:Tournament')
+            $formSourceData['tournament_selected'] = $em->getRepository(Tournament::class)
                 ->findOneById($tournament_id);
         }
 
@@ -397,12 +397,12 @@ class AdminController extends Controller
          * (usually happens when invalid 'tournament id' is passed)
          */
         if (!$formSourceData['tournament_selected']) {
-            $formSourceData['tournament_selected'] = $em->getRepository('DevlabsSportifyBundle:Tournament')
+            $formSourceData['tournament_selected'] = $em->getRepository(Tournament::class)
                 ->getFirst();
         }
 
         // get all tournaments as source data for form choices
-        $formSourceData['tournament_choices'] = $em->getRepository('DevlabsSportifyBundle:Tournament')
+        $formSourceData['tournament_choices'] = $em->getRepository(Tournament::class)
             ->findAll();
 
         // get the filter helper service
@@ -424,7 +424,7 @@ class AdminController extends Controller
         }
 
         // get matches for selected tournament
-        $matches = $em->getRepository('DevlabsSportifyBundle:Match')
+        $matches = $em->getRepository(Match::class)
             ->getAllByTournamentAndTimeRange($formSourceData['tournament_selected'], $urlParams['date_from'], $modifiedDateTo);
 
         // add an 'empty' placeholder for a new match to be created
@@ -468,12 +468,12 @@ class AdminController extends Controller
 
         $urlParams = $adminHelper->MatchesInitUrlParams($tournament_id, $date_from, $date_to);
 
-        $tournament = $em->getRepository('DevlabsSportifyBundle:Tournament')
+        $tournament = $em->getRepository(Tournament::class)
             ->findOneById($tournament_id);
 
         // set the match object based on whether it's new or existing one
         if ($request->request->get('match_entity')['id']) {
-            $match = $em->getRepository('DevlabsSportifyBundle:Match')
+            $match = $em->getRepository(Match::class)
                 ->findOneById($request->request->get('match_entity')['id']);
         } else {
             $match = new Match();
@@ -481,9 +481,9 @@ class AdminController extends Controller
         }
 
         // prep data for use in Match object setter methods
-        $homeTeam = $em->getRepository('DevlabsSportifyBundle:Team')
+        $homeTeam = $em->getRepository(Team::class)
             ->findOneById($request->request->get('match_entity')['homeTeamId']['id']);
-        $awayTeam = $em->getRepository('DevlabsSportifyBundle:Team')
+        $awayTeam = $em->getRepository(Team::class)
             ->findOneById($request->request->get('match_entity')['awayTeamId']['id']);
         $datetime = \DateTime::createFromFormat('Y-m-d H:i', $request->request->get('match_entity')['datetime']);
         $notificationSent = (array_key_exists('notificationSent', $request->request->get('match_entity')))

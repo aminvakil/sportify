@@ -3,6 +3,7 @@
 namespace Devlabs\SportifyBundle\Controller;
 
 use Devlabs\SportifyBundle\Entity\Score;
+use Devlabs\SportifyBundle\Entity\Tournament;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
@@ -28,9 +29,9 @@ class TournamentsController extends Controller
         $tournamentsHelper = $this->container->get('app.tournaments.helper');
 
         // get all and joined tournaments lists
-        $tournaments = $em->getRepository('DevlabsSportifyBundle:Tournament')
+        $tournaments = $em->getRepository(Tournament::class)
             ->findAll();
-        $tournamentsJoined = $em->getRepository('DevlabsSportifyBundle:Tournament')
+        $tournamentsJoined = $em->getRepository(Tournament::class)
             ->getJoined($user);
 
         $forms = array();

@@ -13,6 +13,6 @@ class ScoreController extends BaseApiController
 {
     protected $entityName = 'Score';
     protected $fqEntityClass = Score::class;
-    protected $repositoryName = 'DevlabsSportifyBundle:Score';
+    protected $repositoryName = Score::class;
     protected $fqEntityFormClass = ScoreEntityType::class;
 }

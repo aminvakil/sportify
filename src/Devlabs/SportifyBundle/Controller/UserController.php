@@ -2,6 +2,7 @@
 
 namespace Devlabs\SportifyBundle\Controller;
 
+use Devlabs\SportifyBundle\Entity\OAuthAccessToken;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Devlabs\SportifyBundle\Form\UserType;
@@ -58,7 +59,7 @@ class UserController extends Controller
         }
 
         $accessToken = $this->getDoctrine()->getManager()
-            ->getRepository('DevlabsSportifyBundle:OAuthAccessToken')
+            ->getRepository(OAuthAccessToken::class)
             ->getLastNotExpired($user);
 
         $formData = array();
