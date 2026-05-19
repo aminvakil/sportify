@@ -6,7 +6,6 @@ use FOS\RestBundle\Controller\FOSRestController;
 use FOS\RestBundle\Routing\ClassResourceInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\Common\Persistence\ObjectManager;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
 /**
@@ -117,13 +116,15 @@ abstract class BaseApiController extends FOSRestController implements ClassResou
      *     }
      * )
      *
-     * @Security("has_role('ROLE_ADMIN')")
-     *
      * @param Request $request
      * @return \FOS\RestBundle\View\View
      */
     public function postAction(Request $request)
     {
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            return $this->view(null, 403);
+        }
+
         // if user is not logged in, return unauthorized
         if (!is_object($user = $this->getUser())) {
             return $this->getUnauthorizedView();
@@ -155,14 +156,16 @@ abstract class BaseApiController extends FOSRestController implements ClassResou
      *     }
      * )
      *
-     * @Security("has_role('ROLE_ADMIN')")
-     *
      * @param Request $request
      * @param $id
      * @return \FOS\RestBundle\View\View
      */
     public function putAction(Request $request, $id)
     {
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            return $this->view(null, 403);
+        }
+
         // if user is not logged in, return unauthorized
         if (!is_object($user = $this->getUser())) {
             return $this->getUnauthorizedView();
@@ -201,14 +204,16 @@ abstract class BaseApiController extends FOSRestController implements ClassResou
      *     }
      * )
      *
-     * @Security("has_role('ROLE_ADMIN')")
-     *
      * @param Request $request
      * @param $id
      * @return \FOS\RestBundle\View\View
      */
     public function patchAction(Request $request, $id)
     {
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            return $this->view(null, 403);
+        }
+
         // if user is not logged in, return unauthorized
         if (!is_object($user = $this->getUser())) {
             return $this->getUnauthorizedView();
@@ -244,13 +249,15 @@ abstract class BaseApiController extends FOSRestController implements ClassResou
      *     }
      * )
      *
-     * @Security("has_role('ROLE_ADMIN')")
-     *
      * @param $id
      * @return \FOS\RestBundle\View\View
      */
     public function deleteAction($id)
     {
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            return $this->view(null, 403);
+        }
+
         // if user is not logged in, return unauthorized
         if (!is_object($user = $this->getUser())) {
             return $this->getUnauthorizedView();
