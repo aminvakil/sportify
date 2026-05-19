@@ -6,7 +6,8 @@ This is a legacy Symfony application being upgraded incrementally.
 
 Current baseline:
 - Symfony 3.4 LTS
-- PHP 7.0 in Docker
+- PHP 7.4 in Docker
+- Apache httpd 2.4 in Docker serving `web/` and proxying dynamic requests to PHP
 - MySQL 5.7 in Docker
 - Composer 2.2.x in Docker
 - Node 6 / npm 3 / Bower / Gulp 3 in Docker
@@ -45,8 +46,8 @@ docker compose run --rm php php bin/console doctrine:database:create --if-not-ex
 docker compose run --rm php php bin/console doctrine:schema:validate --skip-sync
 docker compose run --rm php php bin/console doctrine:schema:update --force
 docker compose run --rm php vendor/bin/simple-phpunit --testsuite 'Project Test Suite'
-docker compose up -d php
-curl -I --max-time 10 http://localhost:8000/app_dev.php/
+docker compose up --wait httpd
+curl -I --max-time 10 http://localhost:8000/
 docker compose down -v
 ```
 
