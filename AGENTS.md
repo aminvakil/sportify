@@ -24,6 +24,7 @@ The project is intentionally old. Do not modernize broad areas unless the curren
 - Do not commit secrets, API tokens, local `parameters.yml`, `vendor/`, `node_modules/`, `lib/`, generated assets, or cache/log files.
 - Do not push unless explicitly asked.
 - Keep PR descriptions concise; do not add a detailed summary unless asked.
+- For user-facing web changes, verify the affected flow in a real local browser in addition to command-line smoke checks.
 - For changes limited to `AGENTS.md` and/or `TODO.md`, do not run local Docker verification or wait for CI unless explicitly asked.
 
 ## Verification rule

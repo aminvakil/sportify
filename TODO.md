@@ -14,11 +14,15 @@
 - Symfony deprecation notices have been reduced to the remaining vendor-level batch.
 - Composer package constraints have been reviewed for the current Symfony 3.4/PHP 7.4 baseline; unused `sensio/generator-bundle` was removed and `doctrine/doctrine-cache-bundle` is no longer a direct dependency.
 - Remaining abandoned packages are tied to the legacy Symfony 3.4 stack and should be handled as separate migrations.
+- Current abandoned packages in `composer.lock`: `doctrine/annotations`, `doctrine/cache`, `doctrine/doctrine-cache-bundle`, `doctrine/reflection`, `sensio/distribution-bundle`, `sensio/framework-extra-bundle`, `sensiolabs/security-checker`, `swiftmailer/swiftmailer`, and `symfony/swiftmailer-bundle`.
 
 ## Next steps
 
-1. Decide the next backend upgrade step after the package review.
-2. Keep frontend upgrade work separate from PHP/Symfony upgrade work.
+1. Remove `sensio/distribution-bundle` and its transitive `sensiolabs/security-checker` after replacing/removing the Composer script handlers and generated requirements/config checker flow.
+2. Investigate whether `doctrine/doctrine-cache-bundle` can be removed or upgraded indirectly by adjusting `doctrine/doctrine-bundle` within the Symfony 3.4/PHP 7.4 constraints.
+3. Keep `sensio/framework-extra-bundle`/`doctrine/annotations` work separate because controllers currently rely on annotation routes/security; plan that migration before a Symfony major upgrade.
+4. Keep `symfony/swiftmailer-bundle`/`swiftmailer/swiftmailer` migration separate; replacing it with `symfony/mailer` likely belongs with a later Symfony upgrade.
+5. Keep frontend upgrade work separate from PHP/Symfony upgrade work.
 
 ## Always verify each step
 
