@@ -3,7 +3,6 @@
 namespace Devlabs\SportifyBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass="Devlabs\SportifyBundle\Entity\PredictionRepository")
@@ -37,19 +36,11 @@ class Prediction
 
     /**
      * @ORM\Column(type="integer", name="home_goals")
-     * @Assert\Type(
-     *     type="integer",
-     *     message="The value {{ value }} is not a valid {{ type }}."
-     * )
      */
     private $homeGoals;
 
     /**
      * @ORM\Column(type="integer", name="away_goals")
-     * @Assert\Type(
-     *     type="integer",
-     *     message="The value {{ value }} is not a valid {{ type }}."
-     * )
      */
     private $awayGoals;
 
