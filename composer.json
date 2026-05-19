@@ -9,9 +9,6 @@
         "classmap": [
             "app/AppKernel.php",
             "app/AppCache.php"
-        ],
-        "files": [
-            "app/DoctrinePersistenceAliases.php"
         ]
     },
     "autoload-dev": {
