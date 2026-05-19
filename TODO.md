@@ -14,7 +14,7 @@
 - Symfony deprecation notices have been reduced to the remaining vendor-level batch.
 - `symfony/monolog-bundle` has been upgraded to 3.6, removing it from the Symfony 4.4 blocker list.
 - `symfony/swiftmailer-bundle` has been upgraded to 3.3 and Swiftmailer to 6.3, removing it from the Symfony 4.4 blocker list while keeping full Mailer replacement deferred.
-- `jms/serializer-bundle` has been upgraded to 2.4, removing the last package-level `composer why-not symfony/symfony 4.4.*` blocker.
+- `jms/serializer-bundle` has been upgraded to 3.10 and `willdurand/hateoas-bundle` to 2.6, removing them from the Symfony 5.4 blocker list and removing the old `doctrine/common ~2` constraint from Hateoas.
 - `symfony/phpunit-bridge` has been upgraded to 4.4, with `SYMFONY_PHPUNIT_VERSION=6.5` pinned for the legacy PHPUnit test suite.
 - Composer package constraints have been reviewed for the current Symfony 4.4/PHP 7.4 baseline; unused `sensio/generator-bundle` was removed and `doctrine/doctrine-cache-bundle` is no longer a direct dependency.
 - Remaining abandoned packages are tied to legacy dependencies and should be handled as separate migrations.
@@ -27,7 +27,8 @@
 - `doctrine/annotations` is no longer a direct dependency; it remains installed transitively through Doctrine ORM/common/persistence, JMS serializer, and Hateoas.
 - Current email usage is FOSUserBundle registration/resetting through `fos_user.mailer.twig_swift`; full Mailer replacement is still deferred.
 - Current abandoned packages in `composer.lock`: `doctrine/annotations`, `doctrine/cache`, `doctrine/doctrine-cache-bundle`, `doctrine/reflection`, `swiftmailer/swiftmailer`, and `symfony/swiftmailer-bundle`.
-- `composer why-not symfony/symfony 5.4.*` now lists the root Symfony constraint plus DoctrineBundle/cache, FOSOAuthServerBundle, FOSRestBundle, FOSUserBundle, JMS SerializerBundle, NelmioApiDocBundle, Hateoas, `doctrine/persistence`, and `symfony/contracts` blockers.
+- `composer why-not symfony/symfony 5.4.*` now lists the root Symfony constraint plus DoctrineBundle/cache, FOSOAuthServerBundle, FOSRestBundle, FOSUserBundle, NelmioApiDocBundle, `doctrine/persistence`, and `symfony/contracts` blockers.
+- `doctrine/doctrine-bundle:2.7.2` is currently blocked by the root DoctrineBundle constraint, `doctrine/orm <2.11`, and `doctrine/persistence 1.3`.
 - Symfony 4.4 test output currently reports 6 direct, 26 indirect, and 58 other deprecation notices.
 - Backend upgrade path toward Symfony 7.4 LTS has been outlined below.
 
