@@ -4,7 +4,7 @@
 
 - Docker development setup exists and has been verified.
 - Docker httpd service serves `web/` static files and proxies dynamic requests to PHP.
-- Symfony has been upgraded to 3.4 LTS.
+- Symfony has been upgraded to 4.4 LTS.
 - Docker PHP has been upgraded incrementally from 7.0 to 7.4.
 - Composer dependencies have been updated to latest versions within existing constraints.
 - SensioDistributionBundle, its Composer script handlers, the generated requirements/config checker flow, and transitive sensiolabs/security-checker have been removed.
@@ -15,17 +15,20 @@
 - `symfony/monolog-bundle` has been upgraded to 3.6, removing it from the Symfony 4.4 blocker list.
 - `symfony/swiftmailer-bundle` has been upgraded to 3.3 and Swiftmailer to 6.3, removing it from the Symfony 4.4 blocker list while keeping full Mailer replacement deferred.
 - `jms/serializer-bundle` has been upgraded to 2.4, removing the last package-level `composer why-not symfony/symfony 4.4.*` blocker.
-- Composer package constraints have been reviewed for the current Symfony 3.4/PHP 7.4 baseline; unused `sensio/generator-bundle` was removed and `doctrine/doctrine-cache-bundle` is no longer a direct dependency.
-- Remaining abandoned packages are tied to the legacy Symfony 3.4 stack and should be handled as separate migrations.
-- `doctrine/doctrine-cache-bundle` cannot be removed while staying on Symfony 3.4 because the latest compatible `doctrine/doctrine-bundle` 1.x requires it; `doctrine/doctrine-bundle` 2.x removes that dependency but requires Symfony 4.3+.
+- `symfony/phpunit-bridge` has been upgraded to 4.4, with `SYMFONY_PHPUNIT_VERSION=6.5` pinned for the legacy PHPUnit test suite.
+- Composer package constraints have been reviewed for the current Symfony 4.4/PHP 7.4 baseline; unused `sensio/generator-bundle` was removed and `doctrine/doctrine-cache-bundle` is no longer a direct dependency.
+- Remaining abandoned packages are tied to legacy dependencies and should be handled as separate migrations.
+- `doctrine/doctrine-cache-bundle` remains installed transitively through `doctrine/doctrine-bundle` 1.x; upgrading DoctrineBundle to 2.x should be handled separately before Symfony 5.4.
 - SensioFrameworkExtraBundle has been removed; former admin-only security annotations are explicit controller checks.
 - Web controller routes have been moved from annotations to YAML routing.
 - App validation constraints have been moved from annotations to YAML, and Symfony validator annotation loading is disabled.
 - The leftover `Team` unique-entity validation annotation has been moved to YAML.
 - The app bootstrap no longer manually registers Doctrine's annotation autoloader.
 - `doctrine/annotations` is no longer a direct dependency; it remains installed transitively through Doctrine ORM/common/persistence, JMS serializer, and Hateoas.
-- `symfony/mailer` is not installable on the current `symfony/symfony:3.4.*` baseline because Symfony Mailer 4.4+/5.4 requires newer Symfony components; current email usage is FOSUserBundle registration/resetting through `fos_user.mailer.twig_swift`.
+- Current email usage is FOSUserBundle registration/resetting through `fos_user.mailer.twig_swift`; full Mailer replacement is still deferred.
 - Current abandoned packages in `composer.lock`: `doctrine/annotations`, `doctrine/cache`, `doctrine/doctrine-cache-bundle`, `doctrine/reflection`, `swiftmailer/swiftmailer`, and `symfony/swiftmailer-bundle`.
+- `composer why-not symfony/symfony 5.4.*` now lists the root Symfony constraint plus DoctrineBundle/cache, FOSOAuthServerBundle, FOSRestBundle, FOSUserBundle, JMS SerializerBundle, NelmioApiDocBundle, Hateoas, `doctrine/persistence`, and `symfony/contracts` blockers.
+- Symfony 4.4 test output currently reports 6 direct, 26 indirect, and 58 other deprecation notices.
 - Backend upgrade path toward Symfony 7.4 LTS has been outlined below.
 
 ## Next steps
@@ -39,15 +42,14 @@
 
 Keep each item as its own PR and verify from a clean Docker state before moving on.
 
-1. Prepare the Symfony 3.4 baseline for Symfony 4.4:
+1. Prepare the Symfony 4.4 baseline for Symfony 5.4:
    - Keep reducing app-level deprecations until the test suite is clean except for unavoidable vendor notices.
    - Remove remaining app dependencies on Doctrine annotations where practical, while keeping ORM/API-doc migrations separate.
    - Audit legacy bundles with `composer why-not` before changing framework constraints.
-2. Upgrade dependency blockers before the first Symfony major bump:
-   - Replace or remove packages that do not have a viable Symfony 4.4+ path, especially FOSOAuthServerBundle, FOSUserBundle, FOSRestBundle/JMS/Hateoas/Nelmio API docs, and Swiftmailer integration.
+2. Upgrade dependency blockers before the next Symfony major bump:
+   - Replace or remove packages that do not have a viable Symfony 5.4+ path, especially FOSOAuthServerBundle, FOSUserBundle, FOSRestBundle/JMS/Hateoas/Nelmio API docs, DoctrineBundle/cache, and Swiftmailer integration.
    - Keep each replacement scoped to one subsystem and covered by functional tests.
 3. Move Symfony one LTS at a time:
-   - Symfony 3.4 -> 4.4 on PHP 7.4.
    - Symfony 4.4 -> 5.4 on PHP 7.4.
    - Upgrade Docker PHP to the minimum supported version before Symfony 6.4.
    - Symfony 5.4 -> 6.4.
