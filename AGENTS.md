@@ -17,6 +17,10 @@ The project is intentionally old. Do not modernize broad areas unless the curren
 ## Working rules
 
 - Make minimal, focused changes per step.
+- Always make changes on a branch other than `main`; never make changes directly on `main`.
+- Commit and push changes to that branch, create a pull request, and check whether the PR tests pass.
+- If PR tests fail, investigate, fix the failure on the same branch, push the fix, and re-check the PR tests.
+- Do not merge PRs; the user will handle merging.
 - Do not combine unrelated upgrades.
 - Do not refactor opportunistically.
 - Keep Docker as the source of truth for local verification.
