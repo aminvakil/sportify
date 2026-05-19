@@ -9,6 +9,7 @@
 - Composer dependencies have been updated to latest versions within existing constraints.
 - Generated Symfony requirements/config checker files are synced with the current installed SensioDistributionBundle version.
 - Basic integration workflow test exists for tournaments, users, predictions, scoring, standings, and helper/repository calls.
+- Functional coverage exists for `/login` and `/register/`; the registration page loads on the Symfony 3.4/FOSUserBundle baseline.
 - GitHub Actions CI workflow is in place and green on main.
 - Symfony deprecation notices have been reduced to the remaining vendor-level batch.
 - Composer package constraints have been reviewed for the current Symfony 3.4/PHP 7.4 baseline; unused `sensio/generator-bundle` was removed and `doctrine/doctrine-cache-bundle` is no longer a direct dependency.
@@ -16,9 +17,8 @@
 
 ## Next steps
 
-1. Add tests for `/login` and `/register/`, then investigate and fix the page failures.
-2. Decide the next backend upgrade step after the package review.
-3. Keep frontend upgrade work separate from PHP/Symfony upgrade work.
+1. Decide the next backend upgrade step after the package review.
+2. Keep frontend upgrade work separate from PHP/Symfony upgrade work.
 
 ## Always verify each step
 
@@ -44,5 +44,5 @@ docker compose up --wait httpd
 curl -fsSI --max-time 10 http://localhost:8000/
 curl -fsSI --max-time 10 http://localhost:8000/css/style.css
 curl -fsSI --max-time 10 http://localhost:8000/js/all-scripts.js
-docker compose down -v
+# Leave Docker running after local verification so the app can be tested manually.
 ```
