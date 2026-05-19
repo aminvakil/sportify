@@ -28,7 +28,6 @@ Debug::enable();
 define('WEB_DIRECTORY', __DIR__);
 
 $kernel = new AppKernel('dev', true);
-$kernel->loadClassCache();
 $request = Request::createFromGlobals();
 $response = $kernel->handle($request);
 $response->send();
