@@ -3,7 +3,6 @@
 namespace Devlabs\SportifyBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Devlabs\SportifyBundle\Entity\ApiMapping;
 use Devlabs\SportifyBundle\Entity\Tournament;
@@ -12,11 +11,6 @@ use Devlabs\SportifyBundle\Entity\Match;
 
 class AdminController extends Controller
 {
-    /**
-     * @Route("/admin/{action}", name="admin_index",
-     *     defaults={"action" = "index"},
-     *     requirements={"action" : "index"})
-     */
     public function indexAction()
     {
         // if user is not logged in, redirect to login page
@@ -31,9 +25,6 @@ class AdminController extends Controller
         return $this->render('Admin/index.html.twig');
     }
 
-    /**
-     * @Route("/admin/data_updates", name="admin_data_updates")
-     */
     public function dataUpdatesAction()
     {
         // if user is not logged in, redirect to login page
@@ -48,9 +39,6 @@ class AdminController extends Controller
         return $this->render('Admin/data_updates_index.html.twig');
     }
 
-    /**
-     * @Route("/admin/data_updates/match_fixtures", name="admin_data_updates_match_fixtures")
-     */
     public function matchFixturesUpdateAction(Request $request)
     {
         $updateType = 'matches-fixtures';
@@ -65,9 +53,6 @@ class AdminController extends Controller
         return $this->dataUpdatesActionTemplate($request, $updateType, $choices, $viewTemplate);
     }
 
-    /**
-     * @Route("/admin/data_updates/match_results", name="admin_data_updates_match_results")
-     */
     public function matchResultsUpdateAction(Request $request)
     {
         $updateType = 'matches-results';
@@ -82,9 +67,6 @@ class AdminController extends Controller
         return $this->dataUpdatesActionTemplate($request, $updateType, $choices, $viewTemplate);
     }
 
-    /**
-     * @Route("/admin/data_updates/teams", name="admin_data_updates_teams")
-     */
     public function teamsUpdateAction(Request $request)
     {
         $updateType = 'teams-all-tournaments';
@@ -135,9 +117,6 @@ class AdminController extends Controller
         );
     }
 
-    /**
-     * @Route("/admin/api_mappings", name="admin_api_mappings")
-     */
     public function apiMappingAction()
     {
         // if user is not logged in, redirect to login page
@@ -175,9 +154,6 @@ class AdminController extends Controller
         );
     }
 
-    /**
-     * @Route("/admin/api_mappings/modify", name="admin_api_mappings_modify")
-     */
     public function apiMappingModifyAction(Request $request)
     {
         // if user is not logged in, redirect to login page
@@ -222,9 +198,6 @@ class AdminController extends Controller
         return $this->redirectToRoute('admin_api_mappings');
     }
 
-    /**
-     * @Route("/admin/tournaments", name="admin_tournaments")
-     */
     public function tournamentsAction()
     {
         // if user is not logged in, redirect to login page
@@ -261,9 +234,6 @@ class AdminController extends Controller
         );
     }
 
-    /**
-     * @Route("/admin/tournaments/modify", name="admin_tournaments_modify")
-     */
     public function tournamentModifyAction(Request $request)
     {
         // if user is not logged in, redirect to login page
@@ -312,9 +282,6 @@ class AdminController extends Controller
         return $this->redirectToRoute('admin_tournaments');
     }
 
-    /**
-     * @Route("/admin/teams", name="admin_teams")
-     */
     public function teamsAction()
     {
         // if user is not logged in, redirect to login page
@@ -351,9 +318,6 @@ class AdminController extends Controller
         );
     }
 
-    /**
-     * @Route("/admin/teams/modify", name="admin_teams_modify")
-     */
     public function teamModifyAction(Request $request)
     {
         // if user is not logged in, redirect to login page
@@ -395,16 +359,6 @@ class AdminController extends Controller
         return $this->redirectToRoute('admin_teams');
     }
 
-    /**
-     * @Route("/admin/matches/{tournament_id}/{date_from}/{date_to}",
-     *     name="admin_matches",
-     *     defaults={
-     *      "tournament_id" = "empty",
-     *      "date_from" = "empty",
-     *      "date_to" = "empty"
-     *     }
-     * )
-     */
     public function matchesAction(Request $request, $tournament_id, $date_from, $date_to)
     {
         // if user is not logged in, redirect to login page
@@ -494,16 +448,6 @@ class AdminController extends Controller
         );
     }
 
-    /**
-     * @Route("/admin/matches_modify/{tournament_id}/{date_from}/{date_to}",
-     *     name="admin_matches_modify",
-     *     defaults={
-     *      "tournament_id" = "empty",
-     *      "date_from" = "empty",
-     *      "date_to" = "empty"
-     *     }
-     * )
-     */
     public function matchModifyAction(Request $request, $tournament_id, $date_from, $date_to)
     {
         // if user is not logged in, redirect to login page

@@ -4,7 +4,6 @@ namespace Devlabs\SportifyBundle\Controller;
 
 use Devlabs\SportifyBundle\Entity\Prediction;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -13,20 +12,6 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class MatchesController extends Controller
 {
-    /**
-     * @Route("/matches/{action}/{tournament_id}/{date_from}/{date_to}",
-     *     name="matches_index",
-     *     defaults={
-     *      "action" = "index",
-     *      "tournament_id" = "empty",
-     *      "date_from" = "empty",
-     *      "date_to" = "empty"
-     *     },
-     *     requirements={
-     *      "action" : "index"
-     *     }
-     * )
-     */
     public function indexAction(Request $request, $tournament_id, $date_from, $date_to)
     {
         // if user is not logged in, redirect to login page
@@ -91,20 +76,6 @@ class MatchesController extends Controller
         );
     }
 
-    /**
-     * @Route("/matches/{action}/{tournament_id}/{date_from}/{date_to}",
-     *     name="matches_bet",
-     *     defaults={
-     *      "action" = "bet",
-     *      "tournament_id" = "empty",
-     *      "date_from" = "empty",
-     *      "date_to" = "empty"
-     *     },
-     *     requirements={
-     *      "action" : "bet"
-     *     }
-     * )
-     */
     public function betAction(Request $request, $tournament_id, $date_from, $date_to)
     {
         // if user is not logged in, redirect to login page
@@ -160,10 +131,6 @@ class MatchesController extends Controller
         return $this->redirectToRoute('matches_index', $urlParams);
     }
 
-    /**
-     * @Route("/matches/betall",
-     *     name="matches_betall")
-     */
     public function betAllAction(Request $request)
     {
         // if user is not logged in, redirect to login page

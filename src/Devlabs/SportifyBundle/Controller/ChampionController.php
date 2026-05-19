@@ -3,7 +3,6 @@
 namespace Devlabs\SportifyBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -12,14 +11,6 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class ChampionController extends Controller
 {
-    /**
-     * @Route("/champion/{tournament_id}",
-     *     name="champion_index",
-     *     defaults={
-     *      "tournament_id" = "empty"
-     *     }
-     * )
-     */
     public function indexAction(Request $request, $tournament_id)
     {
         // if user is not logged in, redirect to login page

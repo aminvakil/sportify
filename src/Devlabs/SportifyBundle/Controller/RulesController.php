@@ -3,13 +3,9 @@
 namespace Devlabs\SportifyBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\Routing\Annotation\Route;
 
 class RulesController extends Controller
 {
-    /**
-     * @Route("/rules", name="rules_index")
-     */
     public function indexAction()
     {
         // if user is logged in, get their standings and set them as global Twig var

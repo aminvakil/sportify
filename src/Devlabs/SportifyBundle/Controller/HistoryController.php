@@ -3,7 +3,6 @@
 namespace Devlabs\SportifyBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -12,17 +11,6 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class HistoryController extends Controller
 {
-    /**
-     * @Route("/history/{user_id}/{tournament_id}/{date_from}/{date_to}",
-     *     name="history_index",
-     *     defaults={
-     *      "user_id" = "empty",
-     *      "tournament_id" = "empty",
-     *      "date_from" = "empty",
-     *      "date_to" = "empty"
-     *     }
-     * )
-     */
     public function indexAction(Request $request, $user_id, $tournament_id, $date_from, $date_to)
     {
         // if user is not logged in, redirect to login page
