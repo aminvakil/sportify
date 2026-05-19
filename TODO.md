@@ -18,6 +18,7 @@
 - SensioFrameworkExtraBundle has been removed; former admin-only security annotations are explicit controller checks.
 - Web controller routes have been moved from annotations to YAML routing.
 - App validation constraints have been moved from annotations to YAML, and Symfony validator annotation loading is disabled.
+- The app bootstrap no longer manually registers Doctrine's annotation autoloader.
 - Current abandoned packages in `composer.lock`: `doctrine/annotations`, `doctrine/cache`, `doctrine/doctrine-cache-bundle`, `doctrine/reflection`, `swiftmailer/swiftmailer`, and `symfony/swiftmailer-bundle`.
 
 ## Next steps
