@@ -3,7 +3,7 @@
 namespace Devlabs\SportifyBundle\Form;
 
 use Symfony\Component\Form\AbstractType;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\Form\CallbackTransformer;
 use Devlabs\SportifyBundle\Form\DataTransformer\TournamentToIdTransformer;
 use Devlabs\SportifyBundle\Form\DataTransformer\TeamToIdTransformer;
