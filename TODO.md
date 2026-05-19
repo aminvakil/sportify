@@ -17,8 +17,9 @@
 
 ## Next steps
 
-1. Decide the next backend upgrade step after the package review.
-2. Keep frontend upgrade work separate from PHP/Symfony upgrade work.
+1. Investigate newly registered user login failure: login rejects the request with a CSRF token error.
+2. Decide the next backend upgrade step after the package review.
+3. Keep frontend upgrade work separate from PHP/Symfony upgrade work.
 
 ## Always verify each step
 
