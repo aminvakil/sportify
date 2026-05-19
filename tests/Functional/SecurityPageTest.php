@@ -13,6 +13,7 @@ class SecurityPageTest extends WebTestCase
 
         $this->assertTrue($client->getResponse()->isSuccessful());
         $this->assertContains('Log in to place your bets', $crawler->filter('body')->text());
+        $this->assertNotEmpty($crawler->filter('input[name="_csrf_token"]')->attr('value'));
     }
 
     public function testRegisterPageLoads()
