@@ -3,7 +3,6 @@
 namespace Devlabs\SportifyBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Cookie;
@@ -14,14 +13,6 @@ use Symfony\Component\HttpFoundation\Cookie;
  */
 class StandingsController extends Controller
 {
-    /**
-     * @Route("/standings/{tournament_id}",
-     *     name="standings_index",
-     *     defaults={
-     *      "tournament_id" = "empty"
-     *     }
-     * )
-     */
     public function indexAction(Request $request, $tournament_id)
     {
         $urlParams['tournament_id'] = $tournament_id;
@@ -109,14 +100,6 @@ class StandingsController extends Controller
         );
     }
 
-    /**
-     * @Route("/standing/{tournament_id}",
-     *     name="standing_index",
-     *     defaults={
-     *      "tournament_id" = "empty"
-     *     }
-     * )
-     */
     public function index2Action(Request $request, $tournament_id)
     {
         $urlParams['tournament_id'] = $tournament_id;

@@ -1,0 +1,110 @@
+admin_index:
+    path: /admin/{action}
+    defaults: { _controller: DevlabsSportifyBundle:Admin:index, action: index }
+    requirements: { action: index }
+
+admin_data_updates:
+    path: /admin/data_updates
+    defaults: { _controller: DevlabsSportifyBundle:Admin:dataUpdates }
+
+admin_data_updates_match_fixtures:
+    path: /admin/data_updates/match_fixtures
+    defaults: { _controller: DevlabsSportifyBundle:Admin:matchFixturesUpdate }
+
+admin_data_updates_match_results:
+    path: /admin/data_updates/match_results
+    defaults: { _controller: DevlabsSportifyBundle:Admin:matchResultsUpdate }
+
+admin_data_updates_teams:
+    path: /admin/data_updates/teams
+    defaults: { _controller: DevlabsSportifyBundle:Admin:teamsUpdate }
+
+admin_api_mappings:
+    path: /admin/api_mappings
+    defaults: { _controller: DevlabsSportifyBundle:Admin:apiMapping }
+
+admin_api_mappings_modify:
+    path: /admin/api_mappings/modify
+    defaults: { _controller: DevlabsSportifyBundle:Admin:apiMappingModify }
+
+admin_tournaments:
+    path: /admin/tournaments
+    defaults: { _controller: DevlabsSportifyBundle:Admin:tournaments }
+
+admin_tournaments_modify:
+    path: /admin/tournaments/modify
+    defaults: { _controller: DevlabsSportifyBundle:Admin:tournamentModify }
+
+admin_teams:
+    path: /admin/teams
+    defaults: { _controller: DevlabsSportifyBundle:Admin:teams }
+
+admin_teams_modify:
+    path: /admin/teams/modify
+    defaults: { _controller: DevlabsSportifyBundle:Admin:teamModify }
+
+admin_matches:
+    path: /admin/matches/{tournament_id}/{date_from}/{date_to}
+    defaults: { _controller: DevlabsSportifyBundle:Admin:matches, tournament_id: empty, date_from: empty, date_to: empty }
+
+admin_matches_modify:
+    path: /admin/matches_modify/{tournament_id}/{date_from}/{date_to}
+    defaults: { _controller: DevlabsSportifyBundle:Admin:matchModify, tournament_id: empty, date_from: empty, date_to: empty }
+
+champion_index:
+    path: /champion/{tournament_id}
+    defaults: { _controller: DevlabsSportifyBundle:Champion:index, tournament_id: empty }
+
+home:
+    path: /
+    defaults: { _controller: DevlabsSportifyBundle:Default:index }
+
+history_index:
+    path: /history/{user_id}/{tournament_id}/{date_from}/{date_to}
+    defaults: { _controller: DevlabsSportifyBundle:History:index, user_id: empty, tournament_id: empty, date_from: empty, date_to: empty }
+
+matches_index:
+    path: /matches/{action}/{tournament_id}/{date_from}/{date_to}
+    defaults: { _controller: DevlabsSportifyBundle:Matches:index, action: index, tournament_id: empty, date_from: empty, date_to: empty }
+    requirements: { action: index }
+
+matches_bet:
+    path: /matches/{action}/{tournament_id}/{date_from}/{date_to}
+    defaults: { _controller: DevlabsSportifyBundle:Matches:bet, action: bet, tournament_id: empty, date_from: empty, date_to: empty }
+    requirements: { action: bet }
+
+matches_betall:
+    path: /matches/betall
+    defaults: { _controller: DevlabsSportifyBundle:Matches:betAll }
+
+rules_index:
+    path: /rules
+    defaults: { _controller: DevlabsSportifyBundle:Rules:index }
+
+scores_update_all:
+    path: /scores/update/all
+    defaults: { _controller: DevlabsSportifyBundle:ScoresUpdate:updateAll }
+
+scores_update_user_pos_tournament:
+    path: /scores/update/user-positions-tournament/{tournament_id}
+    defaults: { _controller: DevlabsSportifyBundle:ScoresUpdate:updateUserPositionsForTournament }
+
+standings_index:
+    path: /standings/{tournament_id}
+    defaults: { _controller: DevlabsSportifyBundle:Standings:index, tournament_id: empty }
+
+standing_index:
+    path: /standing/{tournament_id}
+    defaults: { _controller: DevlabsSportifyBundle:Standings:index2, tournament_id: empty }
+
+tournaments_index:
+    path: /tournaments
+    defaults: { _controller: DevlabsSportifyBundle:Tournaments:index }
+
+user_profile:
+    path: /user/profile
+    defaults: { _controller: DevlabsSportifyBundle:User:profile }
+
+user_tokens:
+    path: /user/tokens
+    defaults: { _controller: DevlabsSportifyBundle:User:tokens }

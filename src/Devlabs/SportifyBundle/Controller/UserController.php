@@ -3,7 +3,6 @@
 namespace Devlabs\SportifyBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Devlabs\SportifyBundle\Form\UserType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -15,9 +14,6 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class UserController extends Controller
 {
-    /**
-     * @Route("/user/profile", name="user_profile")
-     */
     public function profileAction(Request $request)
     {
         // if user is not logged in, redirect to login page
@@ -54,9 +50,6 @@ class UserController extends Controller
         );
     }
 
-    /**
-     * @Route("/user/tokens", name="user_tokens")
-     */
     public function tokensAction(Request $request)
     {
         // if user is not logged in, redirect to login page

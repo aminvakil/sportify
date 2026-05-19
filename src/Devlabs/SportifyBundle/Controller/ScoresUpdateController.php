@@ -3,7 +3,6 @@
 namespace Devlabs\SportifyBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * Class ScoresUpdateController
@@ -11,11 +10,6 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class ScoresUpdateController extends Controller
 {
-    /**
-     * @Route("/scores/update/all",
-     *     name="scores_update_all"
-     * )
-     */
     public function updateAllAction()
     {
         // if user is not logged in, redirect to login page
@@ -41,11 +35,6 @@ class ScoresUpdateController extends Controller
         return $this->redirectToRoute('home');
     }
 
-    /**
-     * @Route("/scores/update/user-positions-tournament/{tournament_id}",
-     *     name="scores_update_user_pos_tournament"
-     * )
-     */
     public function updateUserPositionsForTournamentAction($tournament_id)
     {
         // if user is not logged in, redirect to login page

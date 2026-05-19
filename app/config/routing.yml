@@ -1,7 +1,5 @@
 devlabs_sportify:
-    resource: "@DevlabsSportifyBundle/Controller"
-    type:     annotation
-    prefix:   /
+    resource: routing_web.yml
 
 devlabs_sportify_api:
     type:     rest

@@ -4,7 +4,6 @@ namespace Devlabs\SportifyBundle\Controller;
 
 use Devlabs\SportifyBundle\Entity\Score;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -15,9 +14,6 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
  */
 class TournamentsController extends Controller
 {
-    /**
-     * @Route("/tournaments", name="tournaments_index")
-     */
     public function indexAction(Request $request)
     {
         // if user is not logged in, redirect to login page
