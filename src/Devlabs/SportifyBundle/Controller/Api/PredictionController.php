@@ -7,7 +7,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Devlabs\SportifyBundle\Entity\User;
 use Devlabs\SportifyBundle\Entity\Prediction;
 use Devlabs\SportifyBundle\Form\PredictionType;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
 /**
@@ -33,13 +32,15 @@ class PredictionController extends BaseApiController
      *     }
      * )
      *
-     * @Security("has_role('ROLE_ADMIN')")
-     *
      * @param Request $request
      * @return \FOS\RestBundle\View\View
      */
     public function cgetAllusersAction(Request $request)
     {
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            return $this->view(null, 403);
+        }
+
         // get an array of all the query string key-value pairs
         $params = $request->query->all();
 

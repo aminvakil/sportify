@@ -5,7 +5,6 @@ namespace Devlabs\SportifyBundle\Controller\Api;
 use Devlabs\SportifyBundle\Controller\Base\BaseApiController;
 use Devlabs\SportifyBundle\Entity\Match;
 use Devlabs\SportifyBundle\Form\MatchEntityType;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
 /**
@@ -31,12 +30,14 @@ class MatchController extends BaseApiController
      *     }
      * )
      *
-     * @Security("has_role('ROLE_ADMIN')")
-     *
      * @return \FOS\RestBundle\View\View
      */
     public function getPredictionsAllusersAction($id)
     {
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            return $this->view(null, 403);
+        }
+
         $match = $this->getDoctrine()->getManager()
             ->getRepository($this->repositoryName)
             ->findOneById($id);

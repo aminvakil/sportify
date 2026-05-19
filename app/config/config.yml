@@ -38,9 +38,6 @@ framework:
     http_method_override: true
     assets: ~
 
-#sensio_framework_extra:
-#    request: { converters: true }
-
 # Twig Configuration
 twig:
     debug:            "%kernel.debug%"
