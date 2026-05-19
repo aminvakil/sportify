@@ -20,12 +20,13 @@
 - App validation constraints have been moved from annotations to YAML, and Symfony validator annotation loading is disabled.
 - The app bootstrap no longer manually registers Doctrine's annotation autoloader.
 - `doctrine/annotations` is no longer a direct dependency; it remains installed transitively through Doctrine ORM/common/persistence, JMS serializer, and Hateoas.
+- `symfony/mailer` is not installable on the current `symfony/symfony:3.4.*` baseline because Symfony Mailer 4.4+/5.4 requires newer Symfony components; current email usage is FOSUserBundle registration/resetting through `fos_user.mailer.twig_swift`.
 - Current abandoned packages in `composer.lock`: `doctrine/annotations`, `doctrine/cache`, `doctrine/doctrine-cache-bundle`, `doctrine/reflection`, `swiftmailer/swiftmailer`, and `symfony/swiftmailer-bundle`.
 
 ## Next steps
 
 1. Keep remaining `doctrine/annotations` work separate because Doctrine ORM mappings and API docs still rely on annotations; plan that migration before a Symfony major upgrade.
-2. Keep `symfony/swiftmailer-bundle`/`swiftmailer/swiftmailer` migration separate; replacing it with `symfony/mailer` likely belongs with a later Symfony upgrade.
+2. Defer `symfony/swiftmailer-bundle`/`swiftmailer/swiftmailer` replacement until the app is on a Symfony version that can install `symfony/mailer`, unless a custom non-Symfony FOSUserBundle mailer is explicitly chosen first.
 3. Keep frontend upgrade work separate from PHP/Symfony upgrade work.
 4. Plan the backend upgrade path toward Symfony 7.4 LTS as the long-term framework target.
 
