@@ -18,18 +18,18 @@
 - `symfony/phpunit-bridge` has been upgraded to 4.4, with `SYMFONY_PHPUNIT_VERSION=6.5` pinned for the legacy PHPUnit test suite.
 - Composer package constraints have been reviewed for the current Symfony 4.4/PHP 7.4 baseline; unused `sensio/generator-bundle` was removed and `doctrine/doctrine-cache-bundle` is no longer a direct dependency.
 - Remaining abandoned packages are tied to legacy dependencies and should be handled as separate migrations.
-- `doctrine/doctrine-cache-bundle` remains installed transitively through `doctrine/doctrine-bundle` 1.x; upgrading DoctrineBundle to 2.x should be handled separately before Symfony 5.4.
+- `doctrine/doctrine-bundle` has been upgraded to 2.7, Doctrine ORM to 2.20, Doctrine DBAL is pinned to 2.13, Doctrine Persistence is pinned to 2.5, and `doctrine/doctrine-cache-bundle`/`doctrine/reflection` have been removed.
+- Legacy `Doctrine\Common\Persistence` aliases remain for FOSUserBundle/FOSOAuthServerBundle compatibility while app code uses `Doctrine\Persistence`; remaining short entity aliases should be migrated before Doctrine Persistence 3.
 - SensioFrameworkExtraBundle has been removed; former admin-only security annotations are explicit controller checks.
 - Web controller routes have been moved from annotations to YAML routing.
 - App validation constraints have been moved from annotations to YAML, and Symfony validator annotation loading is disabled.
 - The leftover `Team` unique-entity validation annotation has been moved to YAML.
 - The app bootstrap no longer manually registers Doctrine's annotation autoloader.
-- `doctrine/annotations` is no longer a direct dependency; it remains installed transitively through Doctrine ORM/common/persistence, JMS serializer, and Hateoas.
+- `doctrine/annotations` is no longer a direct dependency; it remains installed transitively through Doctrine ORM, JMS serializer, and Hateoas.
 - Current email usage is FOSUserBundle registration/resetting through `fos_user.mailer.twig_swift`; full Mailer replacement is still deferred.
-- Current abandoned packages in `composer.lock`: `doctrine/annotations`, `doctrine/cache`, `doctrine/doctrine-cache-bundle`, `doctrine/reflection`, `swiftmailer/swiftmailer`, and `symfony/swiftmailer-bundle`.
-- `composer why-not symfony/symfony 5.4.*` now lists the root Symfony constraint plus DoctrineBundle/cache, FOSOAuthServerBundle, FOSRestBundle, FOSUserBundle, NelmioApiDocBundle, `doctrine/persistence`, and `symfony/contracts` blockers.
-- `doctrine/doctrine-bundle:2.7.2` is currently blocked by the root DoctrineBundle constraint, `doctrine/orm <2.11`, and `doctrine/persistence 1.3`.
-- Symfony 4.4 test output currently reports 6 direct, 26 indirect, and 58 other deprecation notices.
+- Current abandoned packages in `composer.lock`: `doctrine/annotations`, `doctrine/cache`, `swiftmailer/swiftmailer`, and `symfony/swiftmailer-bundle`.
+- `composer why-not symfony/symfony 5.4.*` now lists the root Symfony constraint plus FOSOAuthServerBundle, FOSRestBundle, FOSUserBundle, NelmioApiDocBundle, and `symfony/contracts` blockers.
+- Symfony 4.4 test output currently reports 6 direct, 21 indirect, and 40 other deprecation notices after the DoctrineBundle/ORM upgrade.
 - Backend upgrade path toward Symfony 7.4 LTS has been outlined below.
 
 ## Next steps

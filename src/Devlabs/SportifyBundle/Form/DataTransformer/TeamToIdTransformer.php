@@ -3,7 +3,7 @@
 namespace Devlabs\SportifyBundle\Form\DataTransformer;
 
 use Devlabs\SportifyBundle\Entity\Team;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\Form\DataTransformerInterface;
 use Symfony\Component\Form\Exception\TransformationFailedException;
 
