@@ -29,7 +29,7 @@
         "guzzlehttp/guzzle": "~6.0",
         "intervention/image": "^2.3",
         "friendsofsymfony/rest-bundle": "^2.1",
-        "jms/serializer-bundle": "^1.1",
+        "jms/serializer-bundle": "^2.4",
         "willdurand/hateoas-bundle": "^1.2",
         "friendsofsymfony/oauth-server-bundle": "^1.5",
         "nelmio/api-doc-bundle": "^2.13"
