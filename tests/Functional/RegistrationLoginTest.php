@@ -26,6 +26,9 @@ class RegistrationLoginTest extends WebTestCase
             'fos_user_registration_form[plainPassword][second]' => $password,
         ));
         $client->submit($form);
+        $this->assertTrue($client->getResponse()->isRedirect('/register/confirmed'));
+        $client->followRedirect();
+        $this->assertTrue($client->getResponse()->isSuccessful());
 
         $user = $em->getRepository('DevlabsSportifyBundle:User')->findOneBy(array('email' => $email));
         $this->assertNotNull($user);

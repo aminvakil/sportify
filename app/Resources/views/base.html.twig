@@ -204,7 +204,7 @@
                     <div id="results-slider" class="results-slider">
                         <div class="container-fluid">
                             <div class="current-results-slider owl-carousel">
-                                {% for score in user_scores %}
+                                {% for score in user_scores|default([]) %}
 
                                     {% if score.posNew == score.posOld %}
                                         {% set pos_change = 'same' %}
