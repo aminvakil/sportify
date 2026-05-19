@@ -1,3 +1,8 @@
+Devlabs\SportifyBundle\Entity\Team:
+    constraints:
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity:
+            fields: name
+
 Devlabs\SportifyBundle\Entity\Prediction:
     properties:
         homeGoals:

@@ -18,6 +18,7 @@
 - SensioFrameworkExtraBundle has been removed; former admin-only security annotations are explicit controller checks.
 - Web controller routes have been moved from annotations to YAML routing.
 - App validation constraints have been moved from annotations to YAML, and Symfony validator annotation loading is disabled.
+- The leftover `Team` unique-entity validation annotation has been moved to YAML.
 - The app bootstrap no longer manually registers Doctrine's annotation autoloader.
 - `doctrine/annotations` is no longer a direct dependency; it remains installed transitively through Doctrine ORM/common/persistence, JMS serializer, and Hateoas.
 - `symfony/mailer` is not installable on the current `symfony/symfony:3.4.*` baseline because Symfony Mailer 4.4+/5.4 requires newer Symfony components; current email usage is FOSUserBundle registration/resetting through `fos_user.mailer.twig_swift`.

@@ -3,7 +3,6 @@
 namespace Devlabs\SportifyBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Routing\RequestContext;
 use Intervention\Image\ImageManager;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -11,7 +10,6 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 /**
  * @ORM\Entity(repositoryClass="Devlabs\SportifyBundle\Entity\TeamRepository")
  * @ORM\Table(name="teams")
- * @UniqueEntity("name")
  */
 class Team
 {
