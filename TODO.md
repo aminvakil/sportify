@@ -12,6 +12,7 @@
 - Functional coverage exists for `/login` and `/register/`; both pages load on the Symfony 3.4/FOSUserBundle baseline, the login page renders a CSRF token, and local dev registration creates enabled users.
 - GitHub Actions CI workflow is in place and green on main.
 - Symfony deprecation notices have been reduced to the remaining vendor-level batch.
+- `symfony/monolog-bundle` has been upgraded to 3.6, removing it from the Symfony 4.4 blocker list.
 - Composer package constraints have been reviewed for the current Symfony 3.4/PHP 7.4 baseline; unused `sensio/generator-bundle` was removed and `doctrine/doctrine-cache-bundle` is no longer a direct dependency.
 - Remaining abandoned packages are tied to the legacy Symfony 3.4 stack and should be handled as separate migrations.
 - `doctrine/doctrine-cache-bundle` cannot be removed while staying on Symfony 3.4 because the latest compatible `doctrine/doctrine-bundle` 1.x requires it; `doctrine/doctrine-bundle` 2.x removes that dependency but requires Symfony 4.3+.
