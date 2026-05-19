@@ -23,6 +23,7 @@ The project is intentionally old. Do not modernize broad areas unless the curren
 - Do not install host packages.
 - Do not commit secrets, API tokens, local `parameters.yml`, `vendor/`, `node_modules/`, `lib/`, generated assets, or cache/log files.
 - Do not push unless explicitly asked.
+- Keep PR descriptions concise; do not add a detailed summary unless asked.
 
 ## Verification rule
 
