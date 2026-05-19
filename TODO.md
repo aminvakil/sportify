@@ -9,7 +9,7 @@
 - Composer dependencies have been updated to latest versions within existing constraints.
 - Generated Symfony requirements/config checker files are synced with the current installed SensioDistributionBundle version.
 - Basic integration workflow test exists for tournaments, users, predictions, scoring, standings, and helper/repository calls.
-- Functional coverage exists for `/login` and `/register/`; both pages load on the Symfony 3.4/FOSUserBundle baseline, and the login page renders a CSRF token.
+- Functional coverage exists for `/login` and `/register/`; both pages load on the Symfony 3.4/FOSUserBundle baseline, the login page renders a CSRF token, and local dev registration creates enabled users.
 - GitHub Actions CI workflow is in place and green on main.
 - Symfony deprecation notices have been reduced to the remaining vendor-level batch.
 - Composer package constraints have been reviewed for the current Symfony 3.4/PHP 7.4 baseline; unused `sensio/generator-bundle` was removed and `doctrine/doctrine-cache-bundle` is no longer a direct dependency.
