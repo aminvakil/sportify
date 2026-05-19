@@ -6,7 +6,6 @@ use Devlabs\SportifyBundle\Bridge\FOSOAuthServer\AccessTokenManager;
 use Devlabs\SportifyBundle\Bridge\FOSOAuthServer\AuthCodeManager;
 use Devlabs\SportifyBundle\Bridge\FOSOAuthServer\ClientManager;
 use Devlabs\SportifyBundle\Bridge\FOSOAuthServer\RefreshTokenManager;
-use Devlabs\SportifyBundle\Bridge\FOSUser\GroupManager;
 use Devlabs\SportifyBundle\Bridge\FOSUser\UserListener;
 use Devlabs\SportifyBundle\Bridge\FOSUser\UserManager;
 use Doctrine\Persistence\ObjectManager;
@@ -20,7 +19,6 @@ class LegacyDoctrinePersistencePass implements CompilerPassInterface
         $classes = array(
             'fos_user.object_manager' => ObjectManager::class,
             'fos_user.user_manager.default' => UserManager::class,
-            'fos_user.group_manager.default' => GroupManager::class,
             'fos_user.user_listener' => UserListener::class,
             'fos_oauth_server.client_manager.default' => ClientManager::class,
             'fos_oauth_server.access_token_manager.default' => AccessTokenManager::class,

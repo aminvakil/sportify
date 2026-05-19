@@ -19,7 +19,7 @@
 - Composer package constraints have been reviewed for the current Symfony 4.4/PHP 7.4 baseline; unused `sensio/generator-bundle` was removed and `doctrine/doctrine-cache-bundle` is no longer a direct dependency.
 - Remaining abandoned packages are tied to legacy dependencies and should be handled as separate migrations.
 - `doctrine/doctrine-bundle` has been upgraded to 2.7, Doctrine ORM to 2.20, Doctrine DBAL is pinned to 2.13, Doctrine Persistence is pinned to 2.5, and `doctrine/doctrine-cache-bundle`/`doctrine/reflection` have been removed.
-- App bridge managers/listeners keep FOSUserBundle/FOSOAuthServerBundle working with `Doctrine\Persistence`; remaining short entity aliases should be migrated before Doctrine Persistence 3.
+- Minimal app bridge managers/listeners keep FOSUserBundle/FOSOAuthServerBundle working with `Doctrine\Persistence`; remaining short entity aliases should be migrated before Doctrine Persistence 3.
 - SensioFrameworkExtraBundle has been removed; former admin-only security annotations are explicit controller checks.
 - Web controller routes have been moved from annotations to YAML routing.
 - App validation constraints have been moved from annotations to YAML, and Symfony validator annotation loading is disabled.
