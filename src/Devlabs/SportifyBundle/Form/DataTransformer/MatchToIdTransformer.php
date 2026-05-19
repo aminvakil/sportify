@@ -46,7 +46,7 @@ class MatchToIdTransformer implements DataTransformerInterface
         }
 
         $match = $this->manager
-            ->getRepository('DevlabsSportifyBundle:Match')
+            ->getRepository(Match::class)
             // query for the match with this id
             ->find($matchId)
         ;

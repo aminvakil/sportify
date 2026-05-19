@@ -105,7 +105,7 @@ class AdminHelper
                 }
             }
         } else if ($data['update_type'] === 'teams-all-tournaments') {
-            $tournaments = $this->em->getRepository('DevlabsSportifyBundle:Tournament')
+            $tournaments = $this->em->getRepository(Tournament::class)
                 ->findAll();
 
             foreach ($tournaments as $tournament) {
@@ -135,7 +135,7 @@ class AdminHelper
     public function getApiMapping(Tournament $tournament, $footballApi)
     {
         // get existing ApiMapping or create new if none exists
-        $apiMapping = $this->em->getRepository('DevlabsSportifyBundle:ApiMapping')
+        $apiMapping = $this->em->getRepository(ApiMapping::class)
             ->getByEntityAndApiProvider($tournament, 'Tournament', $footballApi);
 
         // get a new ApiMapping object if none
@@ -303,7 +303,7 @@ class AdminHelper
             : null;
 
         // get a list of teams for the selected tournament
-        $teamChoices = $this->em->getRepository('DevlabsSportifyBundle:Team')
+        $teamChoices = $this->em->getRepository(Team::class)
             ->getAllByTournament($tournament);
 
         // set the input form-data for the tournament form
@@ -433,13 +433,13 @@ class AdminHelper
 
         $homeTeam = ($match->getHomeTeamId())
             ? $match->getHomeTeamId()
-            : $this->em->getRepository('DevlabsSportifyBundle:Team')->getFirstByTournament($tournament);
+            : $this->em->getRepository(Team::class)->getFirstByTournament($tournament);
         $awayTeam = ($match->getAwayTeamId())
             ? $match->getAwayTeamId()
-            : $this->em->getRepository('DevlabsSportifyBundle:Team')->getFirstByTournament($tournament);
+            : $this->em->getRepository(Team::class)->getFirstByTournament($tournament);
 
         // get a list of teams for the selected tournament
-        $teamChoices = $this->em->getRepository('DevlabsSportifyBundle:Team')
+        $teamChoices = $this->em->getRepository(Team::class)
             ->getAllByTournament($tournament);
 
         // set the input form-data for the match form

@@ -46,7 +46,7 @@ class TournamentToIdTransformer implements DataTransformerInterface
         }
 
         $tournament = $this->manager
-            ->getRepository('DevlabsSportifyBundle:Tournament')
+            ->getRepository(Tournament::class)
             // query for the tournament with this id
             ->find($tournamentId)
         ;

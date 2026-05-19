@@ -21,7 +21,7 @@ class MatchRepository extends \Doctrine\ORM\EntityRepository
     {
         $query = $this->getEntityManager()->createQueryBuilder()
             ->select('m')
-            ->from('DevlabsSportifyBundle:Match', 'm')
+            ->from(Match::class, 'm')
             ->join('m.homeTeamId', 'tm')
             ->join('m.tournamentId', 't')
             ->join('t.scores', 's', 'WITH', 's.userId = :user_id')
@@ -60,7 +60,7 @@ class MatchRepository extends \Doctrine\ORM\EntityRepository
     {
         $query = $this->getEntityManager()->createQueryBuilder()
             ->select('m')
-            ->from('DevlabsSportifyBundle:Match', 'm')
+            ->from(Match::class, 'm')
             ->join('m.homeTeamId', 'tm')
             ->join('m.tournamentId', 't')
             ->join('t.scores', 's', 'WITH', 's.userId = :user_id')
@@ -96,7 +96,7 @@ class MatchRepository extends \Doctrine\ORM\EntityRepository
     {
         $queryResult = $this->getEntityManager()->createQueryBuilder()
             ->select('DISTINCT m')
-            ->from('DevlabsSportifyBundle:Match', 'm')
+            ->from(Match::class, 'm')
             ->join('m.predictions', 'p')
             ->where('p.scoreAdded IS NULL OR p.scoreAdded = 0')
             ->andWhere('m.homeGoals IS NOT NULL AND m.awayGoals IS NOT NULL')
@@ -127,7 +127,7 @@ class MatchRepository extends \Doctrine\ORM\EntityRepository
     {
         return $this->getEntityManager()->createQueryBuilder()
             ->select('DISTINCT m')
-            ->from('DevlabsSportifyBundle:Match', 'm')
+            ->from(Match::class, 'm')
             ->where('m.homeGoals IS NOT NULL AND m.awayGoals IS NOT NULL')
             ->andWhere('m.tournamentId = :tournament_id')
             ->setParameter('tournament_id', $tournament->getId())
@@ -147,7 +147,7 @@ class MatchRepository extends \Doctrine\ORM\EntityRepository
     {
         return $this->getEntityManager()->createQueryBuilder()
             ->select('m')
-            ->from('DevlabsSportifyBundle:Match', 'm')
+            ->from(Match::class, 'm')
             ->join('m.homeTeamId', 'tm')
             ->where('m.notificationSent = 0')
             ->andWhere('m.datetime >= :date_from AND m.datetime <= :date_to')
@@ -171,7 +171,7 @@ class MatchRepository extends \Doctrine\ORM\EntityRepository
     {
         return $this->getEntityManager()->createQueryBuilder()
             ->select('m')
-            ->from('DevlabsSportifyBundle:Match', 'm')
+            ->from(Match::class, 'm')
             ->join('m.homeTeamId', 'tm')
             ->where('m.tournamentId = :tournament_id')
             ->setParameter('tournament_id', $tournament->getId())
@@ -193,7 +193,7 @@ class MatchRepository extends \Doctrine\ORM\EntityRepository
     {
         return $this->getEntityManager()->createQueryBuilder()
             ->select('m')
-            ->from('DevlabsSportifyBundle:Match', 'm')
+            ->from(Match::class, 'm')
             ->join('m.homeTeamId', 'tm')
             ->where('m.tournamentId = :tournament_id')
             ->andWhere('m.datetime >= :date_from AND m.datetime <= :date_to')
@@ -219,7 +219,7 @@ class MatchRepository extends \Doctrine\ORM\EntityRepository
     {
         $query = $this->getEntityManager()->createQueryBuilder()
             ->select('m')
-            ->from('DevlabsSportifyBundle:Match', 'm')
+            ->from(Match::class, 'm')
             ->join('m.homeTeamId', 'h_tm')
             ->join('m.awayTeamId', 'a_tm')
             ->join('m.tournamentId', 't')

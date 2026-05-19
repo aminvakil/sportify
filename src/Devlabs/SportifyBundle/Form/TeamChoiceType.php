@@ -2,6 +2,7 @@
 
 namespace Devlabs\SportifyBundle\Form;
 
+use Devlabs\SportifyBundle\Entity\Team;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -30,7 +31,7 @@ class TeamChoiceType extends AbstractType
 
         $builder
             ->add('id', EntityType::class, array(
-                'class' => 'DevlabsSportifyBundle:Team',
+                'class' => Team::class,
                 'choices' => $this->choices,
                 'choice_label' => 'name',
                 'label' => false,

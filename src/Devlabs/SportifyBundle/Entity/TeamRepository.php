@@ -22,7 +22,7 @@ class TeamRepository extends \Doctrine\ORM\EntityRepository
     {
         return $this->getEntityManager()->createQueryBuilder()
             ->select('tm')
-            ->from('DevlabsSportifyBundle:Team', 'tm')
+            ->from(Team::class, 'tm')
             ->join('tm.tournaments', 'tr')
             ->where('tr.id = :tournament_id')
             ->setParameters(array(
@@ -43,7 +43,7 @@ class TeamRepository extends \Doctrine\ORM\EntityRepository
     {
         return $this->getEntityManager()->createQueryBuilder()
             ->select('tm')
-            ->from('DevlabsSportifyBundle:Team', 'tm')
+            ->from(Team::class, 'tm')
             ->join('tm.tournaments', 'tr')
             ->where('tr.id = :tournament_id')
             ->setParameters(array(

@@ -25,7 +25,7 @@ abstract class BaseApiController extends FOSRestController implements ClassResou
     protected $fqEntityClass;
 
     /**
-     * The repository for the model, e.g. 'DevlabsSportifyBundle:Model'
+     * The repository for the model, e.g. Model::class
      */
     protected $repositoryName;
 

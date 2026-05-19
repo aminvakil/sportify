@@ -5,6 +5,12 @@ namespace Devlabs\SportifyBundle\Services;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Doctrine\ORM\EntityManager;
+use Devlabs\SportifyBundle\Entity\Match;
+use Devlabs\SportifyBundle\Entity\Prediction;
+use Devlabs\SportifyBundle\Entity\PredictionChampion;
+use Devlabs\SportifyBundle\Entity\Score;
+use Devlabs\SportifyBundle\Entity\Tournament;
+use Devlabs\SportifyBundle\Entity\User;
 
 /**
  * Class ScoreUpdater
@@ -60,7 +66,7 @@ class ScoreUpdater
     {
         // get tournament
         $tournament = $this->em
-            ->getRepository('DevlabsSportifyBundle:Tournament')
+            ->getRepository(Tournament::class)
             ->findOneById($tournament_id);
 
         $tournamentsModified = array();
@@ -79,7 +85,7 @@ class ScoreUpdater
     {
         // get all tournaments
         $tournamentsAll = $this->em
-            ->getRepository('DevlabsSportifyBundle:Tournament')
+            ->getRepository(Tournament::class)
             ->findAll();
 
         foreach ($tournamentsAll as $tournament) {
@@ -87,7 +93,7 @@ class ScoreUpdater
             if ($tournament->getChampionTeamId() == null) continue;
 
             $championPredictions = $this->em
-                ->getRepository('DevlabsSportifyBundle:PredictionChampion')
+                ->getRepository(PredictionChampion::class)
                 ->getNotScoredByTournament($tournament);
 
             foreach ($championPredictions as $champPrediction) {
@@ -110,7 +116,7 @@ class ScoreUpdater
                  */
                 if ($predictionPoints > 0) {
                     $userScore = $this->em
-                        ->getRepository('DevlabsSportifyBundle:Score')
+                        ->getRepository(Score::class)
                         ->findOneBy(array(
                             'userId' => $champPrediction->getUserId(),
                             'tournamentId' => $champPrediction->getTournamentId(),
@@ -142,11 +148,11 @@ class ScoreUpdater
          * Get a list of the finished matches
          * for which there are NOT SCORED predictions
          */
-        $matches = $this->em->getRepository('DevlabsSportifyBundle:Match')
+        $matches = $this->em->getRepository(Match::class)
             ->getFinishedNotScored();
 
         // get list of enabled users
-        $users = $this->em->getRepository('DevlabsSportifyBundle:User')
+        $users = $this->em->getRepository(User::class)
             ->getAllEnabled();
 
         // iterate for each user
@@ -154,7 +160,7 @@ class ScoreUpdater
             /**
              * Get the list of scores (tournament + points) for the user
              */
-            $scores = $this->em->getRepository('DevlabsSportifyBundle:Score')
+            $scores = $this->em->getRepository(Score::class)
                 ->getByUser($user);
 
             /**
@@ -162,7 +168,7 @@ class ScoreUpdater
              * for matches with final score set
              */
             $predictions = $this->em
-                ->getRepository('DevlabsSportifyBundle:Prediction')
+                ->getRepository(Prediction::class)
                 ->getFinishedNotScored($user);
 
             // iterate on all of the user's predictions
@@ -196,7 +202,7 @@ class ScoreUpdater
                     $tournamentsModified[] = $tournament;
 
                     $tournamentScores = $this->em
-                        ->getRepository('DevlabsSportifyBundle:Score')
+                        ->getRepository(Score::class)
                         ->getByTournamentOrderByPosNew($tournament);
 
                     // keep all users' previous points
@@ -234,11 +240,11 @@ class ScoreUpdater
     private function calculatePredictionPercentage(&$tournamentsModified)
     {
         foreach ($tournamentsModified as $tournament) {
-            $scores = $this->em->getRepository('DevlabsSportifyBundle:Score')
+            $scores = $this->em->getRepository(Score::class)
                 ->getByTournamentOrderByPoints($tournament);
 
             $matchesFinished = $this->em
-                ->getRepository('DevlabsSportifyBundle:Match')
+                ->getRepository(Match::class)
                 ->getFinishedByTournament($tournament);
 
             $matchCount = count($matchesFinished);
@@ -246,7 +252,7 @@ class ScoreUpdater
             foreach ($scores as &$score) {
                 $user = $score->getUserId();
                 $predictionsExact = $this->em
-                    ->getRepository('DevlabsSportifyBundle:Prediction')
+                    ->getRepository(Prediction::class)
                     ->getExactPredictionsByUserAndTournament($user, $tournament);
 
                 $predictionCount = count($predictionsExact);
@@ -271,7 +277,7 @@ class ScoreUpdater
     private function calculateUserPositions(&$tournamentsModified)
     {
         foreach ($tournamentsModified as $tournament) {
-            $scores = $this->em->getRepository('DevlabsSportifyBundle:Score')
+            $scores = $this->em->getRepository(Score::class)
                 ->getByTournamentOrderByPoints($tournament);
 
             $position = 0;

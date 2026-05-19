@@ -5,6 +5,7 @@ namespace Devlabs\SportifyBundle\Services;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Doctrine\ORM\EntityManager;
+use Devlabs\SportifyBundle\Entity\Score;
 use Devlabs\SportifyBundle\Entity\User;
 
 /**
@@ -31,7 +32,7 @@ class TwigHelper
     public function setUserScores(User $user)
     {
         // get scores standings for user
-        $userScores = $this->em->getRepository('DevlabsSportifyBundle:Score')
+        $userScores = $this->em->getRepository(Score::class)
             ->getByUser($user);
 
         // set user scores as Twig global var

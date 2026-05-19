@@ -6,6 +6,7 @@ use Devlabs\SportifyBundle\Entity\Tournament;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Doctrine\ORM\EntityManager;
+use Devlabs\SportifyBundle\Entity\Team;
 use Devlabs\SportifyBundle\Entity\User;
 use Devlabs\SportifyBundle\Entity\PredictionChampion;
 use Symfony\Component\Form\Form;
@@ -37,7 +38,7 @@ class ChampionHelper
     public function getPredictionChampion(User $user, Tournament $tournament)
     {
         // get user's champion prediction or null if there's none
-        $predictionChampion = $this->em->getRepository('DevlabsSportifyBundle:PredictionChampion')
+        $predictionChampion = $this->em->getRepository(PredictionChampion::class)
             ->getByUserAndTournament($user, $tournament);
 
         // get a new PredictionChampion object if none
@@ -61,7 +62,7 @@ class ChampionHelper
 
         // determine if the user has already set a champion prediction
         if (!$predictionChampion->getId()) {
-            $teamSelected = $this->em->getRepository('DevlabsSportifyBundle:Team')
+            $teamSelected = $this->em->getRepository(Team::class)
                 ->getFirstByTournament($tournament);
             $buttonAction = 'BET';
         } else {
@@ -70,7 +71,7 @@ class ChampionHelper
         }
 
         // get a list of teams for the selected tournament
-        $teamChoices = $this->em->getRepository('DevlabsSportifyBundle:Team')
+        $teamChoices = $this->em->getRepository(Team::class)
             ->getAllByTournament($tournament);
 
         // set the input form-data for the champion form

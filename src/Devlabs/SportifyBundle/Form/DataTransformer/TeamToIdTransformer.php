@@ -46,7 +46,7 @@ class TeamToIdTransformer implements DataTransformerInterface
         }
 
         $team = $this->manager
-            ->getRepository('DevlabsSportifyBundle:Team')
+            ->getRepository(Team::class)
             // query for the team with this id
             ->find($teamId)
         ;

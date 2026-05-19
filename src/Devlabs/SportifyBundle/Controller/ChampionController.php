@@ -2,6 +2,9 @@
 
 namespace Devlabs\SportifyBundle\Controller;
 
+use Devlabs\SportifyBundle\Entity\PredictionChampion;
+use Devlabs\SportifyBundle\Entity\Score;
+use Devlabs\SportifyBundle\Entity\Tournament;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -24,13 +27,13 @@ class ChampionController extends Controller
         $em = $this->getDoctrine()->getManager();
 
         // get user joined tournaments as source data for form choices
-        $formSourceData['tournament_choices'] = $em->getRepository('DevlabsSportifyBundle:Tournament')
+        $formSourceData['tournament_choices'] = $em->getRepository(Tournament::class)
             ->getJoined($user);
 
         // get informational message if user has not joined any tournaments
         if (!$formSourceData['tournament_choices']) {
             // get the user's tournaments position data
-            $userScores = $em->getRepository('DevlabsSportifyBundle:Score')
+            $userScores = $em->getRepository(Score::class)
                 ->getByUser($user);
             $this->container->get('twig')->addGlobal('user_scores', $userScores);
 
@@ -43,7 +46,7 @@ class ChampionController extends Controller
          */
         $formSourceData['tournament_selected'] = ($tournament_id === 'empty')
             ? $formSourceData['tournament_choices'][0]
-            : $em->getRepository('DevlabsSportifyBundle:Tournament')->findOneById($tournament_id);
+            : $em->getRepository(Tournament::class)->findOneById($tournament_id);
 
         // get the filter helper service
         $filterHelper = $this->container->get('app.filter.helper');
@@ -96,7 +99,7 @@ class ChampionController extends Controller
         }
 
         // get a list of all users Champion predictions for the selected tournament
-        $championPredictions = $em->getRepository('DevlabsSportifyBundle:PredictionChampion')
+        $championPredictions = $em->getRepository(PredictionChampion::class)
             ->findByTournamentId($formSourceData['tournament_selected']);
 
         // get user standings and set them as global Twig var

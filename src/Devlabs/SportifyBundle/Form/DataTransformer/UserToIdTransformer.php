@@ -46,7 +46,7 @@ class UserToIdTransformer implements DataTransformerInterface
         }
 
         $user = $this->manager
-            ->getRepository('DevlabsSportifyBundle:User')
+            ->getRepository(User::class)
             // query for the user with this id
             ->find($userId)
         ;

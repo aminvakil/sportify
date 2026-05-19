@@ -18,7 +18,7 @@ class OAuthAccessTokenRepository extends \Doctrine\ORM\EntityRepository
     {
         return $this->getEntityManager()->createQueryBuilder()
             ->select('at')
-            ->from('DevlabsSportifyBundle:OAuthAccessToken', 'at')
+            ->from(OAuthAccessToken::class, 'at')
             ->where('at.user = :user_id')
             ->andWhere('at.expiresAt > :current_timestamp')
             ->orderBy('at.expiresAt', 'DESC')

@@ -2,6 +2,7 @@
 
 namespace Devlabs\SportifyBundle\Form;
 
+use Devlabs\SportifyBundle\Entity\User;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -30,7 +31,7 @@ class UserChoiceType extends AbstractType
 
         $builder
             ->add('id', EntityType::class, array(
-                'class' => 'DevlabsSportifyBundle:User',
+                'class' => User::class,
                 'choices' => $this->choices,
                 'choice_label' => 'username',
                 'label' => false,

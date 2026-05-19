@@ -3,6 +3,7 @@
 namespace Devlabs\SportifyBundle\Controller\Api;
 
 use Devlabs\SportifyBundle\Controller\Base\BaseApiController;
+use Devlabs\SportifyBundle\Entity\Score;
 use Devlabs\SportifyBundle\Entity\Tournament;
 use Devlabs\SportifyBundle\Form\TournamentEntityType;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
@@ -15,7 +16,7 @@ class TournamentController extends BaseApiController
 {
     protected $entityName = 'Tournament';
     protected $fqEntityClass = Tournament::class;
-    protected $repositoryName = 'DevlabsSportifyBundle:Tournament';
+    protected $repositoryName = Tournament::class;
     protected $fqEntityFormClass = TournamentEntityType::class;
 
     /**
@@ -44,7 +45,7 @@ class TournamentController extends BaseApiController
         }
 
         $scores = $this->getDoctrine()->getManager()
-            ->getRepository('DevlabsSportifyBundle:Score')
+            ->getRepository(Score::class)
             ->getByTournamentOrderByPosNew($tournament);
 
         return $this->view($scores, 200);

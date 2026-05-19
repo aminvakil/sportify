@@ -4,7 +4,14 @@ namespace Tests\Integration;
 
 require_once __DIR__.'/DatabaseTestCase.php';
 
+use Devlabs\SportifyBundle\Entity\ApiMapping;
+use Devlabs\SportifyBundle\Entity\Match;
 use Devlabs\SportifyBundle\Entity\Prediction;
+use Devlabs\SportifyBundle\Entity\PredictionChampion;
+use Devlabs\SportifyBundle\Entity\Score;
+use Devlabs\SportifyBundle\Entity\Team;
+use Devlabs\SportifyBundle\Entity\Tournament;
+use Devlabs\SportifyBundle\Entity\User;
 use Symfony\Component\HttpFoundation\Request;
 
 class RepositoryAndHelperTest extends DatabaseTestCase
@@ -30,15 +37,15 @@ class RepositoryAndHelperTest extends DatabaseTestCase
         $tournamentsHelper->joinTournament($alice, $league);
         self::$kernel->getContainer()->get('app.score_updater')->updateUserPositionsForTournament($cup->getId());
 
-        $tournamentRepository = $this->em->getRepository('DevlabsSportifyBundle:Tournament');
+        $tournamentRepository = $this->em->getRepository(Tournament::class);
         $this->assertSame($cup->getId(), $tournamentRepository->getFirst()->getId());
         $this->assertSame(array($cup->getId(), $league->getId()), $this->ids($tournamentRepository->getJoined($alice)));
 
-        $teamRepository = $this->em->getRepository('DevlabsSportifyBundle:Team');
+        $teamRepository = $this->em->getRepository(Team::class);
         $this->assertSame($cupTeam->getId(), $teamRepository->getFirstByTournament($cup)->getId());
         $this->assertSame(array($cupTeam->getId()), $this->ids($teamRepository->getAllByTournament($cup)));
 
-        $scoreRepository = $this->em->getRepository('DevlabsSportifyBundle:Score');
+        $scoreRepository = $this->em->getRepository(Score::class);
         $aliceCupScore = $scoreRepository->getByUserAndTournament($alice, $cup);
         $bobCupScore = $scoreRepository->getByUserAndTournament($bob, $cup);
         $aliceCupScore->setPoints(3);
@@ -51,7 +58,7 @@ class RepositoryAndHelperTest extends DatabaseTestCase
         $this->assertSame($aliceCupScore->getId(), $scoreRepository->getAllHashed()[$cup->getId()][$alice->getId()]->getId());
         $this->assertSame(array($bobCupScore->getId(), $aliceCupScore->getId()), $this->ids($scoreRepository->getByTournamentOrderByPoints($cup)));
 
-        $userRepository = $this->em->getRepository('DevlabsSportifyBundle:User');
+        $userRepository = $this->em->getRepository(User::class);
         $this->assertSame(array($alice->getId(), $bob->getId()), $this->ids($userRepository->getAllEnabled()));
 
         $urlParams = array(
@@ -105,9 +112,9 @@ class RepositoryAndHelperTest extends DatabaseTestCase
         $this->createPrediction($user, $finishedScored, 0, 0, 1, Prediction::POINTS_EXACT);
         $this->createPrediction($otherUser, $upcomingUnpredicted, 0, 0);
 
-        $matchRepository = $this->em->getRepository('DevlabsSportifyBundle:Match');
-        $predictionRepository = $this->em->getRepository('DevlabsSportifyBundle:Prediction');
-        $userRepository = $this->em->getRepository('DevlabsSportifyBundle:User');
+        $matchRepository = $this->em->getRepository(Match::class);
+        $predictionRepository = $this->em->getRepository(Prediction::class);
+        $userRepository = $this->em->getRepository(User::class);
 
         $this->assertSame(array($upcomingPredicted->getId()), array_keys($predictionRepository->getNotScored($user, 'all', '2020-01-01', '2020-01-31')));
         $this->assertSame(array($finishedScored->getId()), array_keys($predictionRepository->getAlreadyScored($user, 'all', '2020-01-01', '2020-01-31')));
@@ -159,13 +166,13 @@ class RepositoryAndHelperTest extends DatabaseTestCase
 
         $this->em->clear();
 
-        $tournament = $this->em->getRepository('DevlabsSportifyBundle:Tournament')->find($tournament->getId());
-        $rightUser = $this->em->getRepository('DevlabsSportifyBundle:User')->find($rightUser->getId());
-        $wrongUser = $this->em->getRepository('DevlabsSportifyBundle:User')->find($wrongUser->getId());
-        $rightPrediction = $this->em->getRepository('DevlabsSportifyBundle:PredictionChampion')->find($rightPrediction->getId());
-        $wrongPrediction = $this->em->getRepository('DevlabsSportifyBundle:PredictionChampion')->find($wrongPrediction->getId());
+        $tournament = $this->em->getRepository(Tournament::class)->find($tournament->getId());
+        $rightUser = $this->em->getRepository(User::class)->find($rightUser->getId());
+        $wrongUser = $this->em->getRepository(User::class)->find($wrongUser->getId());
+        $rightPrediction = $this->em->getRepository(PredictionChampion::class)->find($rightPrediction->getId());
+        $wrongPrediction = $this->em->getRepository(PredictionChampion::class)->find($wrongPrediction->getId());
 
-        $predictionChampionRepository = $this->em->getRepository('DevlabsSportifyBundle:PredictionChampion');
+        $predictionChampionRepository = $this->em->getRepository(PredictionChampion::class);
         $this->assertSame($rightPrediction->getId(), $predictionChampionRepository->getByUserAndTournament($rightUser, $tournament)->getId());
         $this->assertSame(array(), $predictionChampionRepository->getNotScoredByTournament($tournament));
         $this->assertSame(5, $rightPrediction->getPoints());
@@ -173,7 +180,7 @@ class RepositoryAndHelperTest extends DatabaseTestCase
         $this->assertTrue((bool) $rightPrediction->getScoreAdded());
         $this->assertTrue((bool) $wrongPrediction->getScoreAdded());
 
-        $scoreRepository = $this->em->getRepository('DevlabsSportifyBundle:Score');
+        $scoreRepository = $this->em->getRepository(Score::class);
         $this->assertSame(5, $scoreRepository->getByUserAndTournament($rightUser, $tournament)->getPoints());
         $this->assertSame(0, $scoreRepository->getByUserAndTournament($wrongUser, $tournament)->getPoints());
     }
@@ -182,7 +189,7 @@ class RepositoryAndHelperTest extends DatabaseTestCase
     {
         $tournament = $this->createTournament('Mapped Cup');
         $mapping = $this->createApiMapping($tournament, 'Tournament', 'football-data', 987);
-        $repository = $this->em->getRepository('DevlabsSportifyBundle:ApiMapping');
+        $repository = $this->em->getRepository(ApiMapping::class);
 
         $this->assertSame($mapping->getId(), $repository->getByEntityTypeAndApiObjectId('Tournament', 'football-data', 987)->getId());
         $this->assertSame($mapping->getId(), $repository->getByEntityAndApiProvider($tournament, 'Tournament', 'football-data')->getId());

@@ -2,6 +2,7 @@
 
 namespace Devlabs\SportifyBundle\Command;
 
+use Devlabs\SportifyBundle\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -62,7 +63,7 @@ class CreateOAuthClientCommand extends ContainerAwareCommand
         );
 
         $users = $container->get('doctrine')
-            ->getRepository('DevlabsSportifyBundle:User')
+            ->getRepository(User::class)
             ->findAll();
 
         foreach ($users as $user) {

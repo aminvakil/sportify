@@ -2,6 +2,8 @@
 
 namespace Devlabs\SportifyBundle\Controller;
 
+use Devlabs\SportifyBundle\Entity\Match;
+use Devlabs\SportifyBundle\Entity\Prediction;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -50,9 +52,9 @@ class HistoryController extends Controller
         }
 
         // get finished scored matches and the user's predictions for them
-        $matches = $em->getRepository('DevlabsSportifyBundle:Match')
+        $matches = $em->getRepository(Match::class)
             ->getAlreadyScored($formSourceData['user_selected'], $urlParams['tournament_id'], $urlParams['date_from'], $modifiedDateTo);
-        $predictions = $em->getRepository('DevlabsSportifyBundle:Prediction')
+        $predictions = $em->getRepository(Prediction::class)
             ->getAlreadyScored($formSourceData['user_selected'], $urlParams['tournament_id'], $urlParams['date_from'], $modifiedDateTo);
 
         // get user standings and set them as global Twig var

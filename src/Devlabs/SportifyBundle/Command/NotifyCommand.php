@@ -2,6 +2,8 @@
 
 namespace Devlabs\SportifyBundle\Command;
 
+use Devlabs\SportifyBundle\Entity\Match;
+use Devlabs\SportifyBundle\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -39,7 +41,7 @@ class NotifyCommand extends ContainerAwareCommand
             $em = $this->getContainer()->get('doctrine')->getManager();
 
             // get the upcoming matches for the next 1 hour
-            $matches = $em->getRepository('DevlabsSportifyBundle:Match')
+            $matches = $em->getRepository(Match::class)
                 ->getUpcoming($dateFrom, $dateTo);
 
             // array for holding the users' messages
@@ -65,7 +67,7 @@ class NotifyCommand extends ContainerAwareCommand
                     $logText = $logText . "\n" . "Match: " . $matchText . "\n";
 
                     // get the users which have no prediction for this match
-                    $usersNotPredictedByMatch = $em->getRepository('DevlabsSportifyBundle:User')
+                    $usersNotPredictedByMatch = $em->getRepository(User::class)
                         ->getNotPredictedByMatch($match);
 
                     // creating the messages for each user
@@ -94,7 +96,7 @@ class NotifyCommand extends ContainerAwareCommand
                  */
                 foreach ($messages as $id => $message) {
                     // get the user for the message
-                    $user = $em->getRepository('DevlabsSportifyBundle:User')
+                    $user = $em->getRepository(User::class)
                         ->findOneById($id);
 
                     // send the notification
