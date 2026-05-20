@@ -15,10 +15,8 @@ class AppKernel extends Kernel
             new Symfony\Bundle\SwiftmailerBundle\SwiftmailerBundle(),
             new Doctrine\Bundle\DoctrineBundle\DoctrineBundle(),
             new Devlabs\SportifyBundle\DevlabsSportifyBundle(),
-            new FOS\RestBundle\FOSRestBundle(),
             new JMS\SerializerBundle\JMSSerializerBundle(),
-            new Bazinga\Bundle\HateoasBundle\BazingaHateoasBundle(),
-            new Nelmio\ApiDocBundle\NelmioApiDocBundle()
+            new Bazinga\Bundle\HateoasBundle\BazingaHateoasBundle()
         ];
 
         if (in_array($this->getEnvironment(), ['dev', 'test'], true)) {

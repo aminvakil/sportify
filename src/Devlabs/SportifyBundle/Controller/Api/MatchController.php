@@ -6,7 +6,6 @@ use Devlabs\SportifyBundle\Controller\Base\BaseApiController;
 use Devlabs\SportifyBundle\Entity\Match;
 use Devlabs\SportifyBundle\Entity\Prediction;
 use Devlabs\SportifyBundle\Form\MatchEntityType;
-use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
 /**
  * Class MatchController
@@ -22,16 +21,7 @@ class MatchController extends BaseApiController
     /**
      * Get all users' predictions for a match (ADMIN only)
      *
-     * @ApiDoc(
-     *     statusCodes = {
-     *      200 = "Returned when successful",
-     *      401 = "Returned when request is not authenticated",
-     *      403 = "Returned when request is not allowed for provided token/user",
-     *      404 = "Returned when resource not found"
-     *     }
-     * )
-     *
-     * @return \FOS\RestBundle\View\View
+     * @return Response
      */
     public function getPredictionsAllusersAction($id)
     {
@@ -52,15 +42,6 @@ class MatchController extends BaseApiController
 
     /**
      * Get the user's prediction for a match
-     *
-     * @ApiDoc(
-     *     statusCodes = {
-     *      200 = "Returned when successful",
-     *      401 = "Returned when request is not authenticated",
-     *      403 = "Returned when request is not allowed for provided token/user",
-     *      404 = "Returned when resource not found"
-     *     }
-     * )
      *
      * @param $id
      * @return mixed

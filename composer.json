@@ -27,10 +27,8 @@
         "incenteev/composer-parameter-handler": "^2.0",
         "guzzlehttp/guzzle": "~6.0",
         "intervention/image": "^2.3",
-        "friendsofsymfony/rest-bundle": "^2.1",
         "jms/serializer-bundle": "^3.10",
         "willdurand/hateoas-bundle": "^2.4",
-        "nelmio/api-doc-bundle": "^2.13",
         "doctrine/dbal": "^2.13",
         "doctrine/persistence": "^2.2"
     },

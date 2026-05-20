@@ -2,10 +2,8 @@ devlabs_sportify:
     resource: routing_web.yml
 
 devlabs_sportify_api:
-    type:     rest
-    resource: "@DevlabsSportifyBundle/Controller/Api"
-    defaults: {_format: json}
-    prefix:   /api/
+    resource: routing_api.yml
+    prefix:   /api
 
 fos_user_security_login:
     path: /login
@@ -66,14 +64,3 @@ oauth_token:
     path: /oauth/v2/token
     defaults: { _controller: Devlabs\SportifyBundle\Controller\OAuthTokenController::tokenAction }
     methods: [POST]
-
-NelmioApiDocBundle:
-    resource: "@NelmioApiDocBundle/Resources/config/routing.yml"
-    prefix:   /api/doc
-
-devlabs_sportify_api_root:
-    path: /api
-    defaults:
-        _controller: FrameworkBundle:Redirect:redirect
-        route: nelmio_api_doc_index
-        permanent: true

@@ -6,7 +6,6 @@ use Devlabs\SportifyBundle\Controller\Base\BaseApiController;
 use Symfony\Component\HttpFoundation\Request;
 use Devlabs\SportifyBundle\Entity\User;
 use Devlabs\SportifyBundle\Form\UserType;
-use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
 /**
  * Class UserController
@@ -22,18 +21,8 @@ class UserController extends BaseApiController
     /**
      * Get all resources of this type
      *
-     * @ApiDoc(
-     *     resource=true,
-     *     statusCodes = {
-     *      200 = "Returned when successful",
-     *      401 = "Returned when request is not authenticated",
-     *      403 = "Returned when request is not allowed for provided token/user",
-     *      404 = "Returned when resource not found"
-     *     }
-     * )
-     *
      * @param Request $request
-     * @return \FOS\RestBundle\View\View
+     * @return Response
      */
     public function cgetAction(Request $request)
     {
@@ -57,17 +46,8 @@ class UserController extends BaseApiController
     /**
      * Get a resource by id
      *
-     * @ApiDoc(
-     *     statusCodes = {
-     *      200 = "Returned when successful",
-     *      401 = "Returned when request is not authenticated",
-     *      403 = "Returned when request is not allowed for provided token/user",
-     *      404 = "Returned when resource not found"
-     *     }
-     * )
-     *
      * @param $id
-     * @return \FOS\RestBundle\View\View
+     * @return Response
      */
     public function getAction($id)
     {
@@ -100,17 +80,8 @@ class UserController extends BaseApiController
     /**
      * Get user's scores
      *
-     * @ApiDoc(
-     *     statusCodes = {
-     *      200 = "Returned when successful",
-     *      401 = "Returned when request is not authenticated",
-     *      403 = "Returned when request is not allowed for provided token/user",
-     *      404 = "Returned when resource not found"
-     *     }
-     * )
-     *
      * @param $id
-     * @return \FOS\RestBundle\View\View
+     * @return Response
      */
     public function getScoresAction($id)
     {
@@ -138,17 +109,8 @@ class UserController extends BaseApiController
     /**
      * Get user's predictions
      *
-     * @ApiDoc(
-     *     statusCodes = {
-     *      200 = "Returned when successful",
-     *      401 = "Returned when request is not authenticated",
-     *      403 = "Returned when request is not allowed for provided token/user",
-     *      404 = "Returned when resource not found"
-     *     }
-     * )
-     *
      * @param $id
-     * @return \FOS\RestBundle\View\View
+     * @return Response
      */
     public function getPredictionsAction($id)
     {
@@ -181,17 +143,8 @@ class UserController extends BaseApiController
     /**
      * Get user's predictions for champion
      *
-     * @ApiDoc(
-     *     statusCodes = {
-     *      200 = "Returned when successful",
-     *      401 = "Returned when request is not authenticated",
-     *      403 = "Returned when request is not allowed for provided token/user",
-     *      404 = "Returned when resource not found"
-     *     }
-     * )
-     *
      * @param $id
-     * @return \FOS\RestBundle\View\View
+     * @return Response
      */
     public function getChamp_predictionsAction($id)
     {
