@@ -11,6 +11,7 @@ parameters:
     # application parameters
     football_api.name: football_data_org
     football_api.base_uri: http://api.football-data.org/v2
+    app.registration_confirmation_enabled: true
 
 framework:
     #esi:             ~
@@ -74,30 +75,6 @@ swiftmailer:
     password:  "%mailer_password%"
     spool:     { type: memory }
 
-fos_user:
-    db_driver: orm
-    firewall_name: main
-    user_class: Devlabs\SportifyBundle\Entity\User
-    registration:
-        form:
-            type: Devlabs\SportifyBundle\Form\RegistrationFormType
-        confirmation:
-            enabled: true
-            template: templates/emails/registration.email.twig
-    from_email:
-        address:        "%mailer_sender_address%"
-        sender_name:    Sportify
-    service:
-        mailer: fos_user.mailer.twig_swift
-    resetting:
-        form:
-            type: Devlabs\SportifyBundle\Form\ResettingFormType
-        email:
-            template: templates/emails/password_resetting.email.twig
-    change_password:
-        form:
-            type: Devlabs\SportifyBundle\Form\ChangePasswordFormType
-
 fos_rest:
     zone:
         - { path: ^/api/* }
@@ -147,9 +124,6 @@ fos_rest:
 jms_serializer:
     metadata:
         directories:
-            FOSUserBundle:
-                path: "%kernel.root_dir%/config/serializer/FOSUB"
-                namespace_prefix: "FOS\\UserBundle"
             DevlabsSportifyBundle:
                 path: "%kernel.root_dir%/config/serializer/DevlabsSportify"
                 namespace_prefix: "Devlabs\\SportifyBundle"
@@ -167,7 +141,7 @@ fos_oauth_server:
     refresh_token_class: Devlabs\SportifyBundle\Entity\OAuthRefreshToken
     auth_code_class:     Devlabs\SportifyBundle\Entity\OAuthAuthCode
     service:
-        user_provider: fos_user.user_provider.username_email
+        user_provider: app.user_provider
         options:
             access_token_lifetime: 7776000 # 90 days in seconds
 

@@ -30,9 +30,14 @@ class UserController extends Controller
         $form->handleRequest($request);
 
         if ($form->isValid()) {
-            $userManager = $this->container->get('fos_user.user_manager');
-            $user->setPlainPassword($form->get('password')->getData());
-            $userManager->updateUser($user, true);
+            $plainPassword = $form->get('password')->getData();
+
+            if ($plainPassword) {
+                $user->setPassword($this->get('security.password_encoder')->encodePassword($user, $plainPassword));
+            }
+
+            $user->setUsernameCanonical(mb_strtolower($user->getUsername(), 'UTF-8'));
+            $this->getDoctrine()->getManager()->flush();
 
             $this->addFlash(
                 'notice',

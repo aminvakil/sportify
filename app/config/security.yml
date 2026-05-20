@@ -3,15 +3,15 @@
 security:
 
     encoders:
-        FOS\UserBundle\Model\UserInterface: bcrypt
+        Devlabs\SportifyBundle\Entity\User: bcrypt
 
     role_hierarchy:
         ROLE_ADMIN:       ROLE_USER
         ROLE_SUPER_ADMIN: ROLE_ADMIN
 
     providers:
-        fos_userbundle:
-            id: fos_user.user_provider.username_email
+        app_user_provider:
+            id: app.user_provider
 
     firewalls:
         # disables authentication for assets and the profiler, adapt it according to your needs
@@ -34,11 +34,16 @@ security:
 
         main:
             pattern: ^/
+            user_checker: app.user_checker
             logout_on_user_change: true
             form_login:
-                provider: fos_userbundle
+                provider: app_user_provider
+                login_path: fos_user_security_login
+                check_path: fos_user_security_check
                 csrf_token_generator: security.csrf.token_manager
-            logout:       true
+            logout:
+                path: fos_user_security_logout
+                target: home
             anonymous:    true
             remember_me:
                 secret:   A3mkS!24D@11WjLg7OI9#Zzx%7fBNS
