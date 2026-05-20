@@ -108,7 +108,7 @@ class RegistrationController extends Controller
         $context = array('user' => $user, 'confirmationUrl' => $confirmationUrl);
         $twigTemplate = $this->get('twig')->load($template);
 
-        $message = \Swift_Message::newInstance()
+        $message = (new \Swift_Message())
             ->setSubject(trim($twigTemplate->renderBlock('subject', $context)))
             ->setFrom($this->getParameter('mailer_sender_address'))
             ->setTo($user->getEmail())

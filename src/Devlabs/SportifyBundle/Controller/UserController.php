@@ -29,7 +29,7 @@ class UserController extends Controller
 
         $form->handleRequest($request);
 
-        if ($form->isValid()) {
+        if ($form->isSubmitted() && $form->isValid()) {
             $plainPassword = $form->get('password')->getData();
 
             if ($plainPassword) {
