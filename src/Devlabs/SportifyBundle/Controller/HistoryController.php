@@ -4,14 +4,14 @@ namespace Devlabs\SportifyBundle\Controller;
 
 use Devlabs\SportifyBundle\Entity\Match;
 use Devlabs\SportifyBundle\Entity\Prediction;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Class HistoryController
  * @package Devlabs\SportifyBundle\Controller
  */
-class HistoryController extends Controller
+class HistoryController extends AbstractController
 {
     public function indexAction(Request $request, $user_id, $tournament_id, $date_from, $date_to)
     {

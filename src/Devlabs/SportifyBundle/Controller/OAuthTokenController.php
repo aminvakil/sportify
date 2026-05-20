@@ -2,12 +2,12 @@
 
 namespace Devlabs\SportifyBundle\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 
-class OAuthTokenController extends Controller
+class OAuthTokenController extends AbstractController
 {
     public function tokenAction(Request $request)
     {

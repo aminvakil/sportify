@@ -2,9 +2,9 @@
 
 namespace Devlabs\SportifyBundle\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
-class SecurityController extends Controller
+class SecurityController extends AbstractController
 {
     public function loginAction()
     {

@@ -2,9 +2,9 @@
 
 namespace Devlabs\SportifyBundle\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
-class RulesController extends Controller
+class RulesController extends AbstractController
 {
     public function indexAction()
     {

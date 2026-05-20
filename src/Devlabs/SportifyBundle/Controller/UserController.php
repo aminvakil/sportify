@@ -3,7 +3,7 @@
 namespace Devlabs\SportifyBundle\Controller;
 
 use Devlabs\SportifyBundle\Entity\OAuthAccessToken;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Devlabs\SportifyBundle\Form\UserType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -12,7 +12,7 @@ use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 
-class UserController extends Controller
+class UserController extends AbstractController
 {
     public function profileAction(Request $request)
     {

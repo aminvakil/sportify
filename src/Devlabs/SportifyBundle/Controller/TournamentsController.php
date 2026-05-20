@@ -4,7 +4,7 @@ namespace Devlabs\SportifyBundle\Controller;
 
 use Devlabs\SportifyBundle\Entity\Score;
 use Devlabs\SportifyBundle\Entity\Tournament;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -13,7 +13,7 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
  * Class TournamentsController
  * @package Devlabs\SportifyBundle\Controller
  */
-class TournamentsController extends Controller
+class TournamentsController extends AbstractController
 {
     public function indexAction(Request $request)
     {

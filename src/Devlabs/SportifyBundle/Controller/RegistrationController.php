@@ -5,13 +5,13 @@ namespace Devlabs\SportifyBundle\Controller;
 use Devlabs\SportifyBundle\Entity\User;
 use Devlabs\SportifyBundle\Form\RegistrationFormType;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-class RegistrationController extends Controller
+class RegistrationController extends AbstractController
 {
     public function registerAction(Request $request)
     {

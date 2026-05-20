@@ -5,14 +5,14 @@ namespace Devlabs\SportifyBundle\Controller;
 use Devlabs\SportifyBundle\Entity\PredictionChampion;
 use Devlabs\SportifyBundle\Entity\Score;
 use Devlabs\SportifyBundle\Entity\Tournament;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Class ChampionController
  * @package Devlabs\SportifyBundle\Controller
  */
-class ChampionController extends Controller
+class ChampionController extends AbstractController
 {
     public function indexAction(Request $request, $tournament_id)
     {

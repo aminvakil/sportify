@@ -4,18 +4,20 @@ namespace Devlabs\SportifyBundle\Command;
 
 use Devlabs\SportifyBundle\Entity\Match;
 use Devlabs\SportifyBundle\Entity\User;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
 /**
  * Class NotifyCommand
  * @package Devlabs\SportifyBundle\Command
  */
-class NotifyCommand extends ContainerAwareCommand
+class NotifyCommand extends Command implements ContainerAwareInterface
 {
+    use ContainerAwareTrait;
     protected function configure()
     {
         $this
@@ -139,5 +141,7 @@ class NotifyCommand extends ContainerAwareCommand
 
             $output->writeln($outputText);
         }
+
+        return 0;
     }
 }

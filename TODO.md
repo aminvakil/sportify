@@ -4,7 +4,7 @@
 
 - Docker development setup exists and has been verified.
 - Docker httpd service serves `web/` static files and proxies dynamic requests to PHP.
-- Symfony has been upgraded to 4.4 LTS.
+- Symfony has been upgraded to 5.4 LTS.
 - Docker PHP has been upgraded incrementally from 7.0 to 7.4.
 - Composer dependencies have been updated to latest versions within existing constraints.
 - SensioDistributionBundle, its Composer script handlers, the generated requirements/config checker flow, and transitive sensiolabs/security-checker have been removed.
@@ -15,7 +15,7 @@
 - `symfony/monolog-bundle` has been upgraded to 3.6, removing it from the Symfony 4.4 blocker list.
 - `symfony/swiftmailer-bundle` has been upgraded to 3.3 and Swiftmailer to 6.3, removing it from the Symfony 4.4 blocker list while keeping full Mailer replacement deferred.
 - `jms/serializer-bundle` has been upgraded to 3.10 and `willdurand/hateoas-bundle` to 2.6, removing them from the Symfony 5.4 blocker list and removing the old `doctrine/common ~2` constraint from Hateoas.
-- `symfony/phpunit-bridge` has been upgraded to 4.4, with `SYMFONY_PHPUNIT_VERSION=6.5` pinned for the legacy PHPUnit test suite.
+- `symfony/phpunit-bridge` has been upgraded to 5.4, with `SYMFONY_PHPUNIT_VERSION=7.5` pinned for the legacy PHPUnit test suite.
 - Composer package constraints have been reviewed for the current Symfony 4.4/PHP 7.4 baseline; unused `sensio/generator-bundle` was removed and `doctrine/doctrine-cache-bundle` is no longer a direct dependency.
 - Remaining abandoned packages are tied to legacy dependencies and should be handled as separate migrations.
 - `doctrine/doctrine-bundle` has been upgraded to 2.7, Doctrine ORM to 2.20, Doctrine DBAL is pinned to 2.13, Doctrine Persistence is pinned to 2.5, and `doctrine/doctrine-cache-bundle`/`doctrine/reflection` have been removed.
@@ -31,8 +31,8 @@
 - FOSUserBundle has been removed; login, logout, registration, and password reset now use Symfony Security with the app `User` entity/provider/checker.
 - FOSOAuthServerBundle has been removed; password-grant token issuance and API access-token authentication now use small app-owned services/controllers against the existing OAuth tables.
 - FOSRestBundle and NelmioApiDocBundle have been removed; API routes are explicit YAML routes and API JSON responses are serialized directly with JMS Serializer.
-- `composer why-not symfony/symfony 5.4.*` now lists only the root Symfony constraint plus the `symfony/contracts` blocker.
-- Symfony 4.4 test output currently reports 248 other deprecation notices with the expanded functional/API test suite.
+- `composer why-not symfony/symfony 5.4.*` now reports no installed package blockers.
+- Symfony 5.4 test output currently reports 227 direct, 7 indirect, and 1021 other deprecation notices with the expanded functional/API test suite.
 - Backend upgrade path toward Symfony 7.4 LTS has been outlined below.
 
 ## Next steps
@@ -59,20 +59,16 @@ Keep each milestone as a PR and verify from a clean Docker state before moving o
 1. Symfony 5.4 blocker-removal PR(s), grouped by subsystem rather than tiny package changes:
    - Keep Doctrine annotation removal grouped by ORM mapping work; ORM mappings still rely on annotations.
    - Defer Swiftmailer replacement until the app can install `symfony/mailer`, unless it becomes a hard Symfony 5.4 blocker.
-2. Symfony 4.4 -> 5.4 upgrade PR:
-   - Update Symfony constraints and `symfony/contracts` together.
-   - Fix all config/code breaks required by Symfony 5.4.
-   - Run the expanded test suite and the full Docker verification flow.
-3. Post-5.4 modernization PR(s):
+2. Post-5.4 modernization PR(s):
    - Replace Swiftmailer with Symfony Mailer.
    - Re-check abandoned packages and `composer why-not` output.
    - Add any missing tests discovered during the 5.4 upgrade.
-4. Continue one LTS at a time:
+3. Continue one LTS at a time:
    - Upgrade Docker PHP to the minimum supported version before Symfony 6.4.
    - Symfony 5.4 -> 6.4.
    - Upgrade Docker PHP to the minimum supported version before Symfony 7.4.
    - Symfony 6.4 -> 7.4.
-5. Defer structural modernization until a framework step requires it:
+4. Defer structural modernization until a framework step requires it:
    - Do not migrate the directory layout or frontend toolchain opportunistically.
    - Prefer compatibility shims and focused route/config changes over broad rewrites unless a milestone explicitly calls for a replacement.
 

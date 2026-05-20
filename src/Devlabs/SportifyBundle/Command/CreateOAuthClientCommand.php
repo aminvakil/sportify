@@ -3,17 +3,20 @@
 namespace Devlabs\SportifyBundle\Command;
 
 use Devlabs\SportifyBundle\Entity\OAuthClient;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
 /**
  * Class CreateOAuthClientCommand
  * @package Devlabs\SportifyBundle\Command
  */
-class CreateOAuthClientCommand extends ContainerAwareCommand
+class CreateOAuthClientCommand extends Command implements ContainerAwareInterface
 {
+    use ContainerAwareTrait;
     protected function configure()
     {
         $this
@@ -59,5 +62,7 @@ class CreateOAuthClientCommand extends ContainerAwareCommand
                 $client->getSecret()
             )
         );
+
+        return 0;
     }
 }

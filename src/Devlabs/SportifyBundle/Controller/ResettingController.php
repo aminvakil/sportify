@@ -4,12 +4,12 @@ namespace Devlabs\SportifyBundle\Controller;
 
 use Devlabs\SportifyBundle\Entity\User;
 use Devlabs\SportifyBundle\Form\ResettingFormType;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-class ResettingController extends Controller
+class ResettingController extends AbstractController
 {
     const TOKEN_TTL = 86400;
 

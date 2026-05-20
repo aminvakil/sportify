@@ -17,7 +17,7 @@ abstract class DatabaseTestCase extends KernelTestCase
     /** @var EntityManager */
     protected $em;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         self::bootKernel();
 
@@ -25,7 +25,7 @@ abstract class DatabaseTestCase extends KernelTestCase
         $this->resetDatabase();
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         if ($this->em) {
             $this->em->close();

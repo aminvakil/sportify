@@ -1,110 +1,110 @@
 admin_index:
     path: /admin/{action}
-    defaults: { _controller: DevlabsSportifyBundle:Admin:index, action: index }
+    defaults: { _controller: Devlabs\SportifyBundle\Controller\AdminController::indexAction, action: index }
     requirements: { action: index }
 
 admin_data_updates:
     path: /admin/data_updates
-    defaults: { _controller: DevlabsSportifyBundle:Admin:dataUpdates }
+    defaults: { _controller: Devlabs\SportifyBundle\Controller\AdminController::dataUpdatesAction }
 
 admin_data_updates_match_fixtures:
     path: /admin/data_updates/match_fixtures
-    defaults: { _controller: DevlabsSportifyBundle:Admin:matchFixturesUpdate }
+    defaults: { _controller: Devlabs\SportifyBundle\Controller\AdminController::matchFixturesUpdateAction }
 
 admin_data_updates_match_results:
     path: /admin/data_updates/match_results
-    defaults: { _controller: DevlabsSportifyBundle:Admin:matchResultsUpdate }
+    defaults: { _controller: Devlabs\SportifyBundle\Controller\AdminController::matchResultsUpdateAction }
 
 admin_data_updates_teams:
     path: /admin/data_updates/teams
-    defaults: { _controller: DevlabsSportifyBundle:Admin:teamsUpdate }
+    defaults: { _controller: Devlabs\SportifyBundle\Controller\AdminController::teamsUpdateAction }
 
 admin_api_mappings:
     path: /admin/api_mappings
-    defaults: { _controller: DevlabsSportifyBundle:Admin:apiMapping }
+    defaults: { _controller: Devlabs\SportifyBundle\Controller\AdminController::apiMappingAction }
 
 admin_api_mappings_modify:
     path: /admin/api_mappings/modify
-    defaults: { _controller: DevlabsSportifyBundle:Admin:apiMappingModify }
+    defaults: { _controller: Devlabs\SportifyBundle\Controller\AdminController::apiMappingModifyAction }
 
 admin_tournaments:
     path: /admin/tournaments
-    defaults: { _controller: DevlabsSportifyBundle:Admin:tournaments }
+    defaults: { _controller: Devlabs\SportifyBundle\Controller\AdminController::tournamentsAction }
 
 admin_tournaments_modify:
     path: /admin/tournaments/modify
-    defaults: { _controller: DevlabsSportifyBundle:Admin:tournamentModify }
+    defaults: { _controller: Devlabs\SportifyBundle\Controller\AdminController::tournamentModifyAction }
 
 admin_teams:
     path: /admin/teams
-    defaults: { _controller: DevlabsSportifyBundle:Admin:teams }
+    defaults: { _controller: Devlabs\SportifyBundle\Controller\AdminController::teamsAction }
 
 admin_teams_modify:
     path: /admin/teams/modify
-    defaults: { _controller: DevlabsSportifyBundle:Admin:teamModify }
+    defaults: { _controller: Devlabs\SportifyBundle\Controller\AdminController::teamModifyAction }
 
 admin_matches:
     path: /admin/matches/{tournament_id}/{date_from}/{date_to}
-    defaults: { _controller: DevlabsSportifyBundle:Admin:matches, tournament_id: empty, date_from: empty, date_to: empty }
+    defaults: { _controller: Devlabs\SportifyBundle\Controller\AdminController::matchesAction, tournament_id: empty, date_from: empty, date_to: empty }
 
 admin_matches_modify:
     path: /admin/matches_modify/{tournament_id}/{date_from}/{date_to}
-    defaults: { _controller: DevlabsSportifyBundle:Admin:matchModify, tournament_id: empty, date_from: empty, date_to: empty }
+    defaults: { _controller: Devlabs\SportifyBundle\Controller\AdminController::matchModifyAction, tournament_id: empty, date_from: empty, date_to: empty }
 
 champion_index:
     path: /champion/{tournament_id}
-    defaults: { _controller: DevlabsSportifyBundle:Champion:index, tournament_id: empty }
+    defaults: { _controller: Devlabs\SportifyBundle\Controller\ChampionController::indexAction, tournament_id: empty }
 
 home:
     path: /
-    defaults: { _controller: DevlabsSportifyBundle:Default:index }
+    defaults: { _controller: Devlabs\SportifyBundle\Controller\DefaultController::indexAction }
 
 history_index:
     path: /history/{user_id}/{tournament_id}/{date_from}/{date_to}
-    defaults: { _controller: DevlabsSportifyBundle:History:index, user_id: empty, tournament_id: empty, date_from: empty, date_to: empty }
+    defaults: { _controller: Devlabs\SportifyBundle\Controller\HistoryController::indexAction, user_id: empty, tournament_id: empty, date_from: empty, date_to: empty }
 
 matches_index:
     path: /matches/{action}/{tournament_id}/{date_from}/{date_to}
-    defaults: { _controller: DevlabsSportifyBundle:Matches:index, action: index, tournament_id: empty, date_from: empty, date_to: empty }
+    defaults: { _controller: Devlabs\SportifyBundle\Controller\MatchesController::indexAction, action: index, tournament_id: empty, date_from: empty, date_to: empty }
     requirements: { action: index }
 
 matches_bet:
     path: /matches/{action}/{tournament_id}/{date_from}/{date_to}
-    defaults: { _controller: DevlabsSportifyBundle:Matches:bet, action: bet, tournament_id: empty, date_from: empty, date_to: empty }
+    defaults: { _controller: Devlabs\SportifyBundle\Controller\MatchesController::betAction, action: bet, tournament_id: empty, date_from: empty, date_to: empty }
     requirements: { action: bet }
 
 matches_betall:
     path: /matches/betall
-    defaults: { _controller: DevlabsSportifyBundle:Matches:betAll }
+    defaults: { _controller: Devlabs\SportifyBundle\Controller\MatchesController::betAllAction }
 
 rules_index:
     path: /rules
-    defaults: { _controller: DevlabsSportifyBundle:Rules:index }
+    defaults: { _controller: Devlabs\SportifyBundle\Controller\RulesController::indexAction }
 
 scores_update_all:
     path: /scores/update/all
-    defaults: { _controller: DevlabsSportifyBundle:ScoresUpdate:updateAll }
+    defaults: { _controller: Devlabs\SportifyBundle\Controller\ScoresUpdateController::updateAllAction }
 
 scores_update_user_pos_tournament:
     path: /scores/update/user-positions-tournament/{tournament_id}
-    defaults: { _controller: DevlabsSportifyBundle:ScoresUpdate:updateUserPositionsForTournament }
+    defaults: { _controller: Devlabs\SportifyBundle\Controller\ScoresUpdateController::updateUserPositionsForTournamentAction }
 
 standings_index:
     path: /standings/{tournament_id}
-    defaults: { _controller: DevlabsSportifyBundle:Standings:index, tournament_id: empty }
+    defaults: { _controller: Devlabs\SportifyBundle\Controller\StandingsController::indexAction, tournament_id: empty }
 
 standing_index:
     path: /standing/{tournament_id}
-    defaults: { _controller: DevlabsSportifyBundle:Standings:index2, tournament_id: empty }
+    defaults: { _controller: Devlabs\SportifyBundle\Controller\StandingsController::index2Action, tournament_id: empty }
 
 tournaments_index:
     path: /tournaments
-    defaults: { _controller: DevlabsSportifyBundle:Tournaments:index }
+    defaults: { _controller: Devlabs\SportifyBundle\Controller\TournamentsController::indexAction }
 
 user_profile:
     path: /user/profile
-    defaults: { _controller: DevlabsSportifyBundle:User:profile }
+    defaults: { _controller: Devlabs\SportifyBundle\Controller\UserController::profileAction }
 
 user_tokens:
     path: /user/tokens
-    defaults: { _controller: DevlabsSportifyBundle:User:tokens }
+    defaults: { _controller: Devlabs\SportifyBundle\Controller\UserController::tokensAction }
