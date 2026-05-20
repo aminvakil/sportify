@@ -96,7 +96,7 @@ class ResettingController extends Controller
         $context = array('user' => $user, 'confirmationUrl' => $confirmationUrl);
         $template = $this->get('twig')->load('templates/emails/password_resetting.email.twig');
 
-        $message = \Swift_Message::newInstance()
+        $message = (new \Swift_Message())
             ->setSubject(trim($template->renderBlock('subject', $context)))
             ->setFrom($this->getParameter('mailer_sender_address'))
             ->setTo($user->getEmail())

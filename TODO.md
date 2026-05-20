@@ -9,7 +9,7 @@
 - Composer dependencies have been updated to latest versions within existing constraints.
 - SensioDistributionBundle, its Composer script handlers, the generated requirements/config checker flow, and transitive sensiolabs/security-checker have been removed.
 - Basic integration workflow test exists for tournaments, users, predictions, scoring, standings, and helper/repository calls.
-- Functional coverage exists for `/login` and `/register/`; both pages load, the login page renders a CSRF token, and local dev registration creates enabled users.
+- Functional auth coverage exists for login page CSRF, successful registration/login, failed login, logout, duplicate registration, registration validation, password reset, and profile password changes.
 - GitHub Actions CI workflow is in place and green on main.
 - Symfony deprecation notices have been reduced to the remaining vendor-level batch.
 - `symfony/monolog-bundle` has been upgraded to 3.6, removing it from the Symfony 4.4 blocker list.
@@ -19,7 +19,7 @@
 - Composer package constraints have been reviewed for the current Symfony 4.4/PHP 7.4 baseline; unused `sensio/generator-bundle` was removed and `doctrine/doctrine-cache-bundle` is no longer a direct dependency.
 - Remaining abandoned packages are tied to legacy dependencies and should be handled as separate migrations.
 - `doctrine/doctrine-bundle` has been upgraded to 2.7, Doctrine ORM to 2.20, Doctrine DBAL is pinned to 2.13, Doctrine Persistence is pinned to 2.5, and `doctrine/doctrine-cache-bundle`/`doctrine/reflection` have been removed.
-- Minimal app bridge managers keep FOSOAuthServerBundle working with `Doctrine\Persistence`; short `DevlabsSportifyBundle:Entity` aliases in app code have been replaced with FQCN/`::class`, and remaining short aliases live only in vendor bridges.
+- Minimal app bridge managers keep FOSOAuthServerBundle working with `Doctrine\Persistence`; minimal FOSRest/JMS serializer bridges keep the legacy API stack working with current JMS Serializer; short `DevlabsSportifyBundle:Entity` aliases in app code have been replaced with FQCN/`::class`, and remaining short aliases live only in vendor bridges.
 - SensioFrameworkExtraBundle has been removed; former admin-only security annotations are explicit controller checks.
 - Web controller routes have been moved from annotations to YAML routing.
 - App validation constraints have been moved from annotations to YAML, and Symfony validator annotation loading is disabled.
@@ -30,7 +30,7 @@
 - Current abandoned packages in `composer.lock`: `doctrine/annotations`, `doctrine/cache`, `swiftmailer/swiftmailer`, and `symfony/swiftmailer-bundle`.
 - FOSUserBundle has been removed; login, logout, registration, and password reset now use Symfony Security with the app `User` entity/provider/checker.
 - `composer why-not symfony/symfony 5.4.*` now lists the root Symfony constraint plus FOSOAuthServerBundle, FOSRestBundle, NelmioApiDocBundle, and `symfony/contracts` blockers.
-- Symfony 4.4 test output currently reports 0 direct, 3 indirect, and 48 other deprecation notices after the FOSUserBundle removal.
+- Symfony 4.4 test output currently reports 2 direct, 5 indirect, and 284 other deprecation notices with the expanded functional/API test suite.
 - Backend upgrade path toward Symfony 7.4 LTS has been outlined below.
 
 ## Next steps
@@ -54,30 +54,25 @@ Use bigger PRs, but keep them coherent:
 
 Keep each milestone as a PR and verify from a clean Docker state before moving on.
 
-1. Test-foundation PR for bigger backend changes:
-   - Expand functional auth coverage: login failure, logout, duplicate registration, registration validation, password reset request/reset, and profile password change.
-   - Add protected-page coverage for anonymous redirects and authenticated access for core pages.
-   - Add API smoke coverage for token-protected endpoints before replacing the OAuth/API stack.
-   - Keep these tests on Symfony 4.4 so later PRs can prove behavior was preserved.
-2. Symfony 5.4 blocker-removal PR(s), grouped by subsystem rather than tiny package changes:
+1. Symfony 5.4 blocker-removal PR(s), grouped by subsystem rather than tiny package changes:
    - Replace or remove FOSOAuthServerBundle and cover token/API authentication behavior.
    - Replace or remove FOSRestBundle/NelmioApiDocBundle usage together with API route/controller tests where practical.
    - Keep Doctrine annotation removal grouped by mapping/API-doc subsystem; ORM mappings and API docs still rely on annotations.
    - Defer Swiftmailer replacement until the app can install `symfony/mailer`, unless it becomes a hard Symfony 5.4 blocker.
-3. Symfony 4.4 -> 5.4 upgrade PR:
+2. Symfony 4.4 -> 5.4 upgrade PR:
    - Update Symfony constraints and `symfony/contracts` together.
    - Fix all config/code breaks required by Symfony 5.4.
    - Run the expanded test suite and the full Docker verification flow.
-4. Post-5.4 modernization PR(s):
+3. Post-5.4 modernization PR(s):
    - Replace Swiftmailer with Symfony Mailer.
    - Re-check abandoned packages and `composer why-not` output.
    - Add any missing tests discovered during the 5.4 upgrade.
-5. Continue one LTS at a time:
+4. Continue one LTS at a time:
    - Upgrade Docker PHP to the minimum supported version before Symfony 6.4.
    - Symfony 5.4 -> 6.4.
    - Upgrade Docker PHP to the minimum supported version before Symfony 7.4.
    - Symfony 6.4 -> 7.4.
-6. Defer structural modernization until a framework step requires it:
+5. Defer structural modernization until a framework step requires it:
    - Do not migrate the directory layout or frontend toolchain opportunistically.
    - Prefer compatibility shims and focused route/config changes over broad rewrites unless a milestone explicitly calls for a replacement.
 
