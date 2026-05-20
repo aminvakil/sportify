@@ -3,13 +3,12 @@
 namespace Devlabs\SportifyBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use FOS\OAuthServerBundle\Entity\AuthCode as BaseAuthCode;
 
 /**
  * @ORM\Entity()
  * @ORM\Table(name="oauth_auth_codes")
  */
-class OAuthAuthCode extends BaseAuthCode
+class OAuthAuthCode
 {
     /**
      * @ORM\Column(type="integer")
@@ -17,6 +16,26 @@ class OAuthAuthCode extends BaseAuthCode
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     protected $id;
+
+    /**
+     * @ORM\Column(type="string", unique=true)
+     */
+    protected $token;
+
+    /**
+     * @ORM\Column(type="text", name="redirect_uri")
+     */
+    protected $redirectUri;
+
+    /**
+     * @ORM\Column(type="integer", name="expires_at", nullable=true)
+     */
+    protected $expiresAt;
+
+    /**
+     * @ORM\Column(type="string", nullable=true)
+     */
+    protected $scope;
 
     /**
      * @ORM\ManyToOne(targetEntity="User")

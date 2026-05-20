@@ -34,6 +34,19 @@ services:
     app.user_checker:
         class: Devlabs\SportifyBundle\Security\UserChecker
 
+    app.oauth_token_issuer:
+        class: Devlabs\SportifyBundle\Security\OAuthTokenIssuer
+        arguments:
+            - '@doctrine.orm.entity_manager'
+            - '@app.user_provider'
+            - '@security.password_encoder'
+            - '@app.user_checker'
+            - '%app.oauth_access_token_lifetime%'
+
+    app.oauth_token_authenticator:
+        class: Devlabs\SportifyBundle\Security\OAuthTokenAuthenticator
+        arguments: ['@doctrine.orm.entity_manager']
+
     app.twig.helper:
         class: Devlabs\SportifyBundle\Services\TwigHelper
         arguments: ['@service_container', '@doctrine.orm.entity_manager']
