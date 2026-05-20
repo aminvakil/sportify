@@ -12,6 +12,7 @@ parameters:
     football_api.name: football_data_org
     football_api.base_uri: http://api.football-data.org/v2
     app.registration_confirmation_enabled: true
+    app.oauth_access_token_lifetime: 7776000 # 90 days in seconds
 
 framework:
     #esi:             ~
@@ -133,16 +134,5 @@ bazinga_hateoas:
         cache: file
         file_cache:
             dir: "%kernel.cache_dir%/hateoas"
-
-fos_oauth_server:
-    db_driver: orm
-    client_class:        Devlabs\SportifyBundle\Entity\OAuthClient
-    access_token_class:  Devlabs\SportifyBundle\Entity\OAuthAccessToken
-    refresh_token_class: Devlabs\SportifyBundle\Entity\OAuthRefreshToken
-    auth_code_class:     Devlabs\SportifyBundle\Entity\OAuthAuthCode
-    service:
-        user_provider: app.user_provider
-        options:
-            access_token_lifetime: 7776000 # 90 days in seconds
 
 nelmio_api_doc: ~

@@ -10,8 +10,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use GuzzleHttp\Client;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Security\Core\Exception\AuthenticationException;
 
 class UserController extends Controller
 {
@@ -80,37 +79,17 @@ class UserController extends Controller
         if ($form->isSubmitted()) {
             $formData = $form->getData();
 
-            $postParams = array(
-                'client_id' => $this->getParameter('sportify_api.client_id'),
-                'client_secret' => $this->getParameter('sportify_api.client_secret'),
-                'grant_type' => 'password',
-                'username' => $user->getUsername(),
-                'password' => $formData['password']
-            );
+            try {
+                $this->get('app.oauth_token_issuer')->issuePasswordGrantToken(
+                    $this->getParameter('sportify_api.client_id'),
+                    $this->getParameter('sportify_api.client_secret'),
+                    $user->getUsername(),
+                    $formData['password']
+                );
 
-            // modifying the request
-            // and initiating a request to the FOS OAuthServerBundle tokenController
-            // in order to generate the access and refresh tokens
-            // Sorry for this hackish code :( ... maybe some day I'll fix it
-
-            $request->attributes->replace(array(
-                '_controller' => 'FOS\OAuthServerBundle\Controller\TokenController::tokenAction',
-                '_route' => 'fos_oauth_server_token'
-            ));
-            $request->request->replace($postParams);
-
-            $ctrl = new \FOS\OAuthServerBundle\Controller\TokenController(
-                $this->get('fos_oauth_server.server')
-            );
-
-            $response = $ctrl->tokenAction($request);
-
-            // set a flash message to inform the user of the token request status
-            if ($response->getStatusCode() == 200) {
                 $flashMsg = 'Successfully generated token.';
-            } else {
-                $decodedContent = json_decode($response->getContent());
-                $flashMsg = $decodedContent->error_description;
+            } catch (AuthenticationException $e) {
+                $flashMsg = $e->getMessage();
             }
 
             $this->get('session')->getFlashBag()->add('message', $flashMsg);

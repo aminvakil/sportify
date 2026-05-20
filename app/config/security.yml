@@ -29,8 +29,13 @@ security:
 
         api:
             pattern:      ^/api/
-            fos_oauth:    true
+            provider: app_user_provider
+            user_checker: app.user_checker
             stateless:    true
+            guard:
+                authenticators:
+                    - app.oauth_token_authenticator
+                entry_point: app.oauth_token_authenticator
 
         main:
             pattern: ^/

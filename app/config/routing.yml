@@ -62,10 +62,10 @@ fos_user_resetting_reset:
     defaults: { _controller: Devlabs\SportifyBundle\Controller\ResettingController::resetAction }
     methods: [GET, POST]
 
-fos_oauth_server_token:
-    resource: "@FOSOAuthServerBundle/Resources/config/routing/token.xml"
-fos_oauth_server_authorize:
-    resource: "@FOSOAuthServerBundle/Resources/config/routing/authorize.xml"
+oauth_token:
+    path: /oauth/v2/token
+    defaults: { _controller: Devlabs\SportifyBundle\Controller\OAuthTokenController::tokenAction }
+    methods: [POST]
 
 NelmioApiDocBundle:
     resource: "@NelmioApiDocBundle/Resources/config/routing.yml"

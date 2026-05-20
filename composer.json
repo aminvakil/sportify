@@ -30,7 +30,6 @@
         "friendsofsymfony/rest-bundle": "^2.1",
         "jms/serializer-bundle": "^3.10",
         "willdurand/hateoas-bundle": "^2.4",
-        "friendsofsymfony/oauth-server-bundle": "^1.5",
         "nelmio/api-doc-bundle": "^2.13",
         "doctrine/dbal": "^2.13",
         "doctrine/persistence": "^2.2"
