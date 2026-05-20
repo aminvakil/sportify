@@ -76,52 +76,6 @@ swiftmailer:
     password:  "%mailer_password%"
     spool:     { type: memory }
 
-fos_rest:
-    zone:
-        - { path: ^/api/* }
-    routing_loader:
-        default_format: json
-        include_format: false
-    format_listener:
-        enabled: true
-        rules:
-            - { path: '^/api', priorities: ['json'], fallback_format: json, prefer_extension: false }
-    body_listener:
-        enabled:              true
-        array_normalizer: fos_rest.normalizer.camel_keys
-#        decoders:
-#            json: fos_rest.decoder.jsontoform
-#    body_converter:
-#        enabled:              true
-#        validate:             true
-#        validation_errors_argument:  validationErrors
-    view:
-        view_response_listener: force
-        formats:
-            json: true
-            rss: false
-            xml: false
-        templating_formats:
-            html: true
-        force_redirects:
-            html: false
-        failed_validation: HTTP_BAD_REQUEST
-        default_engine: twig
-        mime_types:
-            json: ['application/json', 'application/x-json', 'application/vnd.example-com.foo+json']
-    serializer:
-        version: null
-        groups: []
-        serialize_null: true
-    disable_csrf_role: ROLE_API
-    exception:
-#        codes:
-#            'Symfony\Component\Routing\Exception\ResourceNotFoundException': 404
-#        messages:
-#            'ddasd': true
-#        enabled: true
-#        exception_controller: 'Devlabs\SportifyBundle\Controller\Base\ExceptionController::showAction'
-
 jms_serializer:
     metadata:
         directories:
@@ -134,5 +88,3 @@ bazinga_hateoas:
         cache: file
         file_cache:
             dir: "%kernel.cache_dir%/hateoas"
-
-nelmio_api_doc: ~

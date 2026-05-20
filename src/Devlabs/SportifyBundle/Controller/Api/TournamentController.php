@@ -6,7 +6,6 @@ use Devlabs\SportifyBundle\Controller\Base\BaseApiController;
 use Devlabs\SportifyBundle\Entity\Score;
 use Devlabs\SportifyBundle\Entity\Tournament;
 use Devlabs\SportifyBundle\Form\TournamentEntityType;
-use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
 /**
  * Class TournamentController
@@ -22,17 +21,8 @@ class TournamentController extends BaseApiController
     /**
      * Get a tournament's scores/standings table
      *
-     * @ApiDoc(
-     *     statusCodes = {
-     *      200 = "Returned when successful",
-     *      401 = "Returned when request is not authenticated",
-     *      403 = "Returned when request is not allowed for provided token/user",
-     *      404 = "Returned when resource not found"
-     *     }
-     * )
-     *
      * @param $id
-     * @return \FOS\RestBundle\View\View
+     * @return Response
      */
     public function getScoresAction($id)
     {
@@ -54,17 +44,8 @@ class TournamentController extends BaseApiController
     /**
      * Get a tournament's matches
      *
-     * @ApiDoc(
-     *     statusCodes = {
-     *      200 = "Returned when successful",
-     *      401 = "Returned when request is not authenticated",
-     *      403 = "Returned when request is not allowed for provided token/user",
-     *      404 = "Returned when resource not found"
-     *     }
-     * )
-     *
      * @param $id
-     * @return \FOS\RestBundle\View\View
+     * @return Response
      */
     public function getMatchesAction($id)
     {
@@ -82,17 +63,8 @@ class TournamentController extends BaseApiController
     /**
      * Get a tournament's teams
      *
-     * @ApiDoc(
-     *     statusCodes = {
-     *      200 = "Returned when successful",
-     *      401 = "Returned when request is not authenticated",
-     *      403 = "Returned when request is not allowed for provided token/user",
-     *      404 = "Returned when resource not found"
-     *     }
-     * )
-     *
      * @param $id
-     * @return \FOS\RestBundle\View\View
+     * @return Response
      */
     public function getTeamsAction($id)
     {
@@ -110,17 +82,8 @@ class TournamentController extends BaseApiController
     /**
      * Get a tournament's user champion predictions
      *
-     * @ApiDoc(
-     *     statusCodes = {
-     *      200 = "Returned when successful",
-     *      401 = "Returned when request is not authenticated",
-     *      403 = "Returned when request is not allowed for provided token/user",
-     *      404 = "Returned when resource not found"
-     *     }
-     * )
-     *
      * @param $id
-     * @return \FOS\RestBundle\View\View
+     * @return Response
      */
     public function getChamp_predictionsAction($id)
     {

@@ -1,0 +1,264 @@
+get_predictions_allusers:
+    path: /predictions/allusers
+    defaults: { _controller: Devlabs\SportifyBundle\Controller\Api\PredictionController::cgetAllusersAction }
+    methods: [GET]
+
+get_predictions:
+    path: /predictions
+    defaults: { _controller: Devlabs\SportifyBundle\Controller\Api\PredictionController::cgetAction }
+    methods: [GET]
+
+get_prediction:
+    path: /predictions/{id}
+    defaults: { _controller: Devlabs\SportifyBundle\Controller\Api\PredictionController::getAction }
+    methods: [GET]
+
+post_prediction:
+    path: /predictions
+    defaults: { _controller: Devlabs\SportifyBundle\Controller\Api\PredictionController::postAction }
+    methods: [POST]
+
+put_prediction:
+    path: /predictions/{id}
+    defaults: { _controller: Devlabs\SportifyBundle\Controller\Api\PredictionController::putAction }
+    methods: [PUT]
+
+patch_prediction:
+    path: /predictions/{id}
+    defaults: { _controller: Devlabs\SportifyBundle\Controller\Api\PredictionController::patchAction }
+    methods: [PATCH]
+
+delete_prediction:
+    path: /predictions/{id}
+    defaults: { _controller: Devlabs\SportifyBundle\Controller\Api\PredictionController::deleteAction }
+    methods: [DELETE]
+
+get_champ_predictions:
+    path: /champ_predictions
+    defaults: { _controller: Devlabs\SportifyBundle\Controller\Api\Champ_predictionController::cgetAction }
+    methods: [GET]
+
+get_champ_prediction:
+    path: /champ_predictions/{id}
+    defaults: { _controller: Devlabs\SportifyBundle\Controller\Api\Champ_predictionController::getAction }
+    methods: [GET]
+
+post_champ_prediction:
+    path: /champ_predictions
+    defaults: { _controller: Devlabs\SportifyBundle\Controller\Api\Champ_predictionController::postAction }
+    methods: [POST]
+
+put_champ_prediction:
+    path: /champ_predictions/{id}
+    defaults: { _controller: Devlabs\SportifyBundle\Controller\Api\Champ_predictionController::putAction }
+    methods: [PUT]
+
+patch_champ_prediction:
+    path: /champ_predictions/{id}
+    defaults: { _controller: Devlabs\SportifyBundle\Controller\Api\Champ_predictionController::patchAction }
+    methods: [PATCH]
+
+delete_champ_prediction:
+    path: /champ_predictions/{id}
+    defaults: { _controller: Devlabs\SportifyBundle\Controller\Api\Champ_predictionController::deleteAction }
+    methods: [DELETE]
+
+get_team_tournaments:
+    path: /teams/{id}/tournaments
+    defaults: { _controller: Devlabs\SportifyBundle\Controller\Api\TeamController::getTournamentsAction }
+    methods: [GET]
+
+get_teams:
+    path: /teams
+    defaults: { _controller: Devlabs\SportifyBundle\Controller\Api\TeamController::cgetAction }
+    methods: [GET]
+
+get_team:
+    path: /teams/{id}
+    defaults: { _controller: Devlabs\SportifyBundle\Controller\Api\TeamController::getAction }
+    methods: [GET]
+
+post_team:
+    path: /teams
+    defaults: { _controller: Devlabs\SportifyBundle\Controller\Api\TeamController::postAction }
+    methods: [POST]
+
+put_team:
+    path: /teams/{id}
+    defaults: { _controller: Devlabs\SportifyBundle\Controller\Api\TeamController::putAction }
+    methods: [PUT]
+
+patch_team:
+    path: /teams/{id}
+    defaults: { _controller: Devlabs\SportifyBundle\Controller\Api\TeamController::patchAction }
+    methods: [PATCH]
+
+delete_team:
+    path: /teams/{id}
+    defaults: { _controller: Devlabs\SportifyBundle\Controller\Api\TeamController::deleteAction }
+    methods: [DELETE]
+
+get_tournament_scores:
+    path: /tournaments/{id}/scores
+    defaults: { _controller: Devlabs\SportifyBundle\Controller\Api\TournamentController::getScoresAction }
+    methods: [GET]
+
+get_tournament_matches:
+    path: /tournaments/{id}/matches
+    defaults: { _controller: Devlabs\SportifyBundle\Controller\Api\TournamentController::getMatchesAction }
+    methods: [GET]
+
+get_tournament_teams:
+    path: /tournaments/{id}/teams
+    defaults: { _controller: Devlabs\SportifyBundle\Controller\Api\TournamentController::getTeamsAction }
+    methods: [GET]
+
+get_tournament_champ_predictions:
+    path: /tournaments/{id}/champ_predictions
+    defaults: { _controller: Devlabs\SportifyBundle\Controller\Api\TournamentController::getChamp_predictionsAction }
+    methods: [GET]
+
+get_tournaments:
+    path: /tournaments
+    defaults: { _controller: Devlabs\SportifyBundle\Controller\Api\TournamentController::cgetAction }
+    methods: [GET]
+
+get_tournament:
+    path: /tournaments/{id}
+    defaults: { _controller: Devlabs\SportifyBundle\Controller\Api\TournamentController::getAction }
+    methods: [GET]
+
+post_tournament:
+    path: /tournaments
+    defaults: { _controller: Devlabs\SportifyBundle\Controller\Api\TournamentController::postAction }
+    methods: [POST]
+
+put_tournament:
+    path: /tournaments/{id}
+    defaults: { _controller: Devlabs\SportifyBundle\Controller\Api\TournamentController::putAction }
+    methods: [PUT]
+
+patch_tournament:
+    path: /tournaments/{id}
+    defaults: { _controller: Devlabs\SportifyBundle\Controller\Api\TournamentController::patchAction }
+    methods: [PATCH]
+
+delete_tournament:
+    path: /tournaments/{id}
+    defaults: { _controller: Devlabs\SportifyBundle\Controller\Api\TournamentController::deleteAction }
+    methods: [DELETE]
+
+get_scores:
+    path: /scores
+    defaults: { _controller: Devlabs\SportifyBundle\Controller\Api\ScoreController::cgetAction }
+    methods: [GET]
+
+get_score:
+    path: /scores/{id}
+    defaults: { _controller: Devlabs\SportifyBundle\Controller\Api\ScoreController::getAction }
+    methods: [GET]
+
+post_score:
+    path: /scores
+    defaults: { _controller: Devlabs\SportifyBundle\Controller\Api\ScoreController::postAction }
+    methods: [POST]
+
+put_score:
+    path: /scores/{id}
+    defaults: { _controller: Devlabs\SportifyBundle\Controller\Api\ScoreController::putAction }
+    methods: [PUT]
+
+patch_score:
+    path: /scores/{id}
+    defaults: { _controller: Devlabs\SportifyBundle\Controller\Api\ScoreController::patchAction }
+    methods: [PATCH]
+
+delete_score:
+    path: /scores/{id}
+    defaults: { _controller: Devlabs\SportifyBundle\Controller\Api\ScoreController::deleteAction }
+    methods: [DELETE]
+
+get_users:
+    path: /users
+    defaults: { _controller: Devlabs\SportifyBundle\Controller\Api\UserController::cgetAction }
+    methods: [GET]
+
+get_user:
+    path: /users/{id}
+    defaults: { _controller: Devlabs\SportifyBundle\Controller\Api\UserController::getAction }
+    methods: [GET]
+
+get_user_scores:
+    path: /users/{id}/scores
+    defaults: { _controller: Devlabs\SportifyBundle\Controller\Api\UserController::getScoresAction }
+    methods: [GET]
+
+get_user_predictions:
+    path: /users/{id}/predictions
+    defaults: { _controller: Devlabs\SportifyBundle\Controller\Api\UserController::getPredictionsAction }
+    methods: [GET]
+
+get_user_champ_predictions:
+    path: /users/{id}/champ_predictions
+    defaults: { _controller: Devlabs\SportifyBundle\Controller\Api\UserController::getChamp_predictionsAction }
+    methods: [GET]
+
+post_user:
+    path: /users
+    defaults: { _controller: Devlabs\SportifyBundle\Controller\Api\UserController::postAction }
+    methods: [POST]
+
+put_user:
+    path: /users/{id}
+    defaults: { _controller: Devlabs\SportifyBundle\Controller\Api\UserController::putAction }
+    methods: [PUT]
+
+patch_user:
+    path: /users/{id}
+    defaults: { _controller: Devlabs\SportifyBundle\Controller\Api\UserController::patchAction }
+    methods: [PATCH]
+
+delete_user:
+    path: /users/{id}
+    defaults: { _controller: Devlabs\SportifyBundle\Controller\Api\UserController::deleteAction }
+    methods: [DELETE]
+
+get_match_predictions_allusers:
+    path: /matches/{id}/predictions/allusers
+    defaults: { _controller: Devlabs\SportifyBundle\Controller\Api\MatchController::getPredictionsAllusersAction }
+    methods: [GET]
+
+get_match_predictions:
+    path: /matches/{id}/predictions
+    defaults: { _controller: Devlabs\SportifyBundle\Controller\Api\MatchController::getPredictionsAction }
+    methods: [GET]
+
+get_matches:
+    path: /matches
+    defaults: { _controller: Devlabs\SportifyBundle\Controller\Api\MatchController::cgetAction }
+    methods: [GET]
+
+get_match:
+    path: /matches/{id}
+    defaults: { _controller: Devlabs\SportifyBundle\Controller\Api\MatchController::getAction }
+    methods: [GET]
+
+post_match:
+    path: /matches
+    defaults: { _controller: Devlabs\SportifyBundle\Controller\Api\MatchController::postAction }
+    methods: [POST]
+
+put_match:
+    path: /matches/{id}
+    defaults: { _controller: Devlabs\SportifyBundle\Controller\Api\MatchController::putAction }
+    methods: [PUT]
+
+patch_match:
+    path: /matches/{id}
+    defaults: { _controller: Devlabs\SportifyBundle\Controller\Api\MatchController::patchAction }
+    methods: [PATCH]
+
+delete_match:
+    path: /matches/{id}
+    defaults: { _controller: Devlabs\SportifyBundle\Controller\Api\MatchController::deleteAction }
+    methods: [DELETE]

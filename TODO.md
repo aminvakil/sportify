@@ -19,7 +19,7 @@
 - Composer package constraints have been reviewed for the current Symfony 4.4/PHP 7.4 baseline; unused `sensio/generator-bundle` was removed and `doctrine/doctrine-cache-bundle` is no longer a direct dependency.
 - Remaining abandoned packages are tied to legacy dependencies and should be handled as separate migrations.
 - `doctrine/doctrine-bundle` has been upgraded to 2.7, Doctrine ORM to 2.20, Doctrine DBAL is pinned to 2.13, Doctrine Persistence is pinned to 2.5, and `doctrine/doctrine-cache-bundle`/`doctrine/reflection` have been removed.
-- Minimal FOSRest/JMS serializer bridges keep the legacy API stack working with current JMS Serializer; short `DevlabsSportifyBundle:Entity` aliases in app code have been replaced with FQCN/`::class`, and remaining short aliases live only in vendor bridges.
+- Short `DevlabsSportifyBundle:Entity` aliases in app code have been replaced with FQCN/`::class`, and remaining short aliases live only in vendor bridges.
 - SensioFrameworkExtraBundle has been removed; former admin-only security annotations are explicit controller checks.
 - Web controller routes have been moved from annotations to YAML routing.
 - App validation constraints have been moved from annotations to YAML, and Symfony validator annotation loading is disabled.
@@ -30,8 +30,9 @@
 - Current abandoned packages in `composer.lock`: `doctrine/annotations`, `doctrine/cache`, `swiftmailer/swiftmailer`, and `symfony/swiftmailer-bundle`.
 - FOSUserBundle has been removed; login, logout, registration, and password reset now use Symfony Security with the app `User` entity/provider/checker.
 - FOSOAuthServerBundle has been removed; password-grant token issuance and API access-token authentication now use small app-owned services/controllers against the existing OAuth tables.
-- `composer why-not symfony/symfony 5.4.*` now lists the root Symfony constraint plus FOSRestBundle, NelmioApiDocBundle, and `symfony/contracts` blockers.
-- Symfony 4.4 test output currently reports 4 indirect and 292 other deprecation notices with the expanded functional/API test suite.
+- FOSRestBundle and NelmioApiDocBundle have been removed; API routes are explicit YAML routes and API JSON responses are serialized directly with JMS Serializer.
+- `composer why-not symfony/symfony 5.4.*` now lists only the root Symfony constraint plus the `symfony/contracts` blocker.
+- Symfony 4.4 test output currently reports 248 other deprecation notices with the expanded functional/API test suite.
 - Backend upgrade path toward Symfony 7.4 LTS has been outlined below.
 
 ## Next steps
@@ -56,8 +57,7 @@ Use bigger PRs, but keep them coherent:
 Keep each milestone as a PR and verify from a clean Docker state before moving on.
 
 1. Symfony 5.4 blocker-removal PR(s), grouped by subsystem rather than tiny package changes:
-   - Replace or remove FOSRestBundle/NelmioApiDocBundle usage together with API route/controller tests where practical.
-   - Keep Doctrine annotation removal grouped by mapping/API-doc subsystem; ORM mappings and API docs still rely on annotations.
+   - Keep Doctrine annotation removal grouped by ORM mapping work; ORM mappings still rely on annotations.
    - Defer Swiftmailer replacement until the app can install `symfony/mailer`, unless it becomes a hard Symfony 5.4 blocker.
 2. Symfony 4.4 -> 5.4 upgrade PR:
    - Update Symfony constraints and `symfony/contracts` together.

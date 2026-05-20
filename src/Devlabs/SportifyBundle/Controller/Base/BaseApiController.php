@@ -2,17 +2,16 @@
 
 namespace Devlabs\SportifyBundle\Controller\Base;
 
-use FOS\RestBundle\Controller\FOSRestController;
-use FOS\RestBundle\Routing\ClassResourceInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Doctrine\Persistence\ObjectManager;
-use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
 /**
  * Class BaseApiController
  * @package Devlabs\SportifyBundle\Controller\Base
  */
-abstract class BaseApiController extends FOSRestController implements ClassResourceInterface
+abstract class BaseApiController extends Controller
 {
     /**
      * The name of the model, e.g. 'Model'
@@ -37,18 +36,8 @@ abstract class BaseApiController extends FOSRestController implements ClassResou
     /**
      * Get all resources of this type
      *
-     * @ApiDoc(
-     *     resource=true,
-     *     statusCodes = {
-     *      200 = "Returned when successful",
-     *      401 = "Returned when request is not authenticated",
-     *      403 = "Returned when request is not allowed for provided token/user",
-     *      404 = "Returned when resource not found"
-     *     }
-     * )
-     *
      * @param Request $request
-     * @return \FOS\RestBundle\View\View
+     * @return Response
      */
     public function cgetAction(Request $request)
     {
@@ -73,17 +62,8 @@ abstract class BaseApiController extends FOSRestController implements ClassResou
     /**
      * Get a resource by id
      *
-     * @ApiDoc(
-     *     statusCodes = {
-     *      200 = "Returned when successful",
-     *      401 = "Returned when request is not authenticated",
-     *      403 = "Returned when request is not allowed for provided token/user",
-     *      404 = "Returned when resource not found"
-     *     }
-     * )
-     *
      * @param $id
-     * @return \FOS\RestBundle\View\View
+     * @return Response
      */
     public function getAction($id)
     {
@@ -107,17 +87,8 @@ abstract class BaseApiController extends FOSRestController implements ClassResou
     /**
      * Create a new resource of this type
      *
-     * @ApiDoc(
-     *     statusCodes = {
-     *      201 = "Returned when resource successfully created",
-     *      401 = "Returned when request is not authenticated",
-     *      403 = "Returned when request is not allowed for provided token/user",
-     *      404 = "Returned when resource not found"
-     *     }
-     * )
-     *
      * @param Request $request
-     * @return \FOS\RestBundle\View\View
+     * @return Response
      */
     public function postAction(Request $request)
     {
@@ -146,19 +117,9 @@ abstract class BaseApiController extends FOSRestController implements ClassResou
     /**
      * Modify or create a new resource of this type by given id
      *
-     * @ApiDoc(
-     *     statusCodes = {
-     *      201 = "Returned when resource successfully created",
-     *      204 = "Returned when resource successfully modified",
-     *      401 = "Returned when request is not authenticated",
-     *      403 = "Returned when request is not allowed for provided token/user",
-     *      404 = "Returned when resource not found"
-     *     }
-     * )
-     *
      * @param Request $request
      * @param $id
-     * @return \FOS\RestBundle\View\View
+     * @return Response
      */
     public function putAction(Request $request, $id)
     {
@@ -195,18 +156,9 @@ abstract class BaseApiController extends FOSRestController implements ClassResou
     /**
      * Modify a resource of this type by id
      *
-     * @ApiDoc(
-     *     statusCodes = {
-     *      204 = "Returned when resource successfully modified",
-     *      401 = "Returned when request is not authenticated",
-     *      403 = "Returned when request is not allowed for provided token/user",
-     *      404 = "Returned when resource not found"
-     *     }
-     * )
-     *
      * @param Request $request
      * @param $id
-     * @return \FOS\RestBundle\View\View
+     * @return Response
      */
     public function patchAction(Request $request, $id)
     {
@@ -240,17 +192,8 @@ abstract class BaseApiController extends FOSRestController implements ClassResou
     /**
      * Delete a resource of this type by id
      *
-     * @ApiDoc(
-     *     statusCodes = {
-     *      204 = "Returned when resource successfully deleted",
-     *      401 = "Returned when request is not authenticated",
-     *      403 = "Returned when request is not allowed for provided token/user",
-     *      404 = "Returned when resource not found"
-     *     }
-     * )
-     *
      * @param $id
-     * @return \FOS\RestBundle\View\View
+     * @return Response
      */
     public function deleteAction($id)
     {
@@ -297,7 +240,7 @@ abstract class BaseApiController extends FOSRestController implements ClassResou
      * @param $object
      * @param $method
      * @param int $statusCode
-     * @return \FOS\RestBundle\View\View
+     * @return Response
      */
     protected function processForm(
         Request $request,
@@ -340,8 +283,19 @@ abstract class BaseApiController extends FOSRestController implements ClassResou
         return $this->view($form, 400);
     }
 
+    protected function view($data, $statusCode = 200)
+    {
+        $content = '';
+
+        if (null !== $data && 204 !== $statusCode) {
+            $content = $this->get('jms_serializer')->serialize($data, 'json');
+        }
+
+        return new Response($content, $statusCode, array('Content-Type' => 'application/json'));
+    }
+
     /**
-     * @return \FOS\RestBundle\View\View
+     * @return Response
      */
     protected function getUnauthorizedView()
     {
@@ -349,7 +303,7 @@ abstract class BaseApiController extends FOSRestController implements ClassResou
     }
 
     /**
-     * @return \FOS\RestBundle\View\View
+     * @return Response
      */
     protected function getNotFoundView()
     {

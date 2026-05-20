@@ -40,7 +40,22 @@ class ApiAuthenticationTest extends FunctionalTestCase
         $this->client->request('GET', '/api/users/'.$user->getId(), array('access_token' => $tokenResponse['access_token']));
 
         $this->assertSame(200, $this->client->getResponse()->getStatusCode(), $this->client->getResponse()->getContent());
+        $this->assertContains('application/json', $this->client->getResponse()->headers->get('Content-Type'));
         $this->assertContains('api_user@example.com', $this->client->getResponse()->getContent());
+    }
+
+    public function testNestedCurrentUserApiCollectionsRemainAvailable()
+    {
+        $user = $this->createUser('api_user', 'api-password');
+        $oauthClient = $this->createOAuthClient(array('password'));
+        $accessToken = $this->requestAccessToken($oauthClient, 'api_user@example.com', 'api-password');
+
+        foreach (array('scores', 'predictions', 'champ_predictions') as $collection) {
+            $this->client->request('GET', '/api/users/'.$user->getId().'/'.$collection, array('access_token' => $accessToken));
+
+            $this->assertSame(200, $this->client->getResponse()->getStatusCode(), $collection.': '.$this->client->getResponse()->getContent());
+            $this->assertContains('application/json', $this->client->getResponse()->headers->get('Content-Type'));
+        }
     }
 
     public function testPasswordGrantRejectsBadPassword()
@@ -58,5 +73,22 @@ class ApiAuthenticationTest extends FunctionalTestCase
 
         $this->assertSame(400, $this->client->getResponse()->getStatusCode(), $this->client->getResponse()->getContent());
         $this->assertContains('invalid_grant', $this->client->getResponse()->getContent());
+    }
+
+    private function requestAccessToken($oauthClient, $username, $password)
+    {
+        $this->client->request('POST', '/oauth/v2/token', array(
+            'client_id' => $oauthClient->getPublicId(),
+            'client_secret' => $oauthClient->getSecret(),
+            'grant_type' => 'password',
+            'username' => $username,
+            'password' => $password,
+        ));
+
+        $this->assertSame(200, $this->client->getResponse()->getStatusCode(), $this->client->getResponse()->getContent());
+        $tokenResponse = json_decode($this->client->getResponse()->getContent(), true);
+        $this->assertArrayHasKey('access_token', $tokenResponse);
+
+        return $tokenResponse['access_token'];
     }
 }
