@@ -27,6 +27,9 @@ services:
         tags:
             - { name: form.type, alias: app_user_changepassword }
 
+    app.user_checker:
+        class: Devlabs\SportifyBundle\Security\UserChecker
+
     app.twig.helper:
         class: Devlabs\SportifyBundle\Services\TwigHelper
         arguments: ['@service_container', '@doctrine.orm.entity_manager']

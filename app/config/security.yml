@@ -34,6 +34,7 @@ security:
 
         main:
             pattern: ^/
+            user_checker: app.user_checker
             logout_on_user_change: true
             form_login:
                 provider: fos_userbundle

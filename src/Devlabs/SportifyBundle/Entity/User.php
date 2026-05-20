@@ -4,12 +4,14 @@ namespace Devlabs\SportifyBundle\Entity;
 
 use FOS\UserBundle\Model\User as BaseUser;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\EquatableInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @ORM\Entity(repositoryClass="Devlabs\SportifyBundle\Entity\UserRepository")
  * @ORM\Table(name="users")
  */
-class User extends BaseUser
+class User extends BaseUser implements EquatableInterface
 {
     /**
      * @ORM\Id
@@ -50,6 +52,50 @@ class User extends BaseUser
         $this->predictionsChampion = new \Doctrine\Common\Collections\ArrayCollection();
 
         $this->slackUsername = "slack_username";
+    }
+
+    public function isEqualTo(UserInterface $user)
+    {
+        if (!$user instanceof self) {
+            return false;
+        }
+
+        if ($this->getPassword() !== $user->getPassword()) {
+            return false;
+        }
+
+        if ($this->getSalt() !== $user->getSalt()) {
+            return false;
+        }
+
+        $roles = array_map('strval', (array) $this->getRoles());
+        $userRoles = array_map('strval', (array) $user->getRoles());
+
+        if (count($roles) !== count($userRoles) || count($roles) !== count(array_intersect($roles, $userRoles))) {
+            return false;
+        }
+
+        if ($this->getUsername() !== $user->getUsername()) {
+            return false;
+        }
+
+        if ($this->isAccountNonExpired() !== $user->isAccountNonExpired()) {
+            return false;
+        }
+
+        if ($this->isAccountNonLocked() !== $user->isAccountNonLocked()) {
+            return false;
+        }
+
+        if ($this->isCredentialsNonExpired() !== $user->isCredentialsNonExpired()) {
+            return false;
+        }
+
+        if ($this->isEnabled() !== $user->isEnabled()) {
+            return false;
+        }
+
+        return true;
     }
 
     /**

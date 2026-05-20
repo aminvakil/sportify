@@ -29,7 +29,7 @@
 - Current email usage is FOSUserBundle registration/resetting through `fos_user.mailer.twig_swift`; full Mailer replacement is still deferred.
 - Current abandoned packages in `composer.lock`: `doctrine/annotations`, `doctrine/cache`, `swiftmailer/swiftmailer`, and `symfony/swiftmailer-bundle`.
 - `composer why-not symfony/symfony 5.4.*` now lists the root Symfony constraint plus FOSOAuthServerBundle, FOSRestBundle, FOSUserBundle, NelmioApiDocBundle, and `symfony/contracts` blockers.
-- Symfony 4.4 test output currently reports 6 direct, 21 indirect, and 40 other deprecation notices after the DoctrineBundle/ORM upgrade.
+- Symfony 4.4 test output currently reports 0 direct, 20 indirect, and 40 other deprecation notices after adding the local security user checker/equatable user comparison.
 - Backend upgrade path toward Symfony 7.4 LTS has been outlined below.
 
 ## Next steps
@@ -44,7 +44,7 @@
 Keep each item as its own PR and verify from a clean Docker state before moving on.
 
 1. Prepare the Symfony 4.4 baseline for Symfony 5.4:
-   - Keep reducing app-level deprecations until the test suite is clean except for unavoidable vendor notices.
+   - Keep reducing deprecations until the test suite is clean except for unavoidable vendor notices.
    - Remove remaining app dependencies on Doctrine annotations where practical, while keeping ORM/API-doc migrations separate.
    - Audit legacy bundles with `composer why-not` before changing framework constraints.
 2. Upgrade dependency blockers before the next Symfony major bump:
