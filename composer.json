@@ -25,7 +25,6 @@
         "symfony/monolog-bundle": "^3.0",
         "symfony/polyfill-apcu": "^1.0",
         "incenteev/composer-parameter-handler": "^2.0",
-        "friendsofsymfony/user-bundle": "~2.0@dev",
         "guzzlehttp/guzzle": "~6.0",
         "intervention/image": "^2.3",
         "friendsofsymfony/rest-bundle": "^2.1",

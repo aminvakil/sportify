@@ -1,5 +1,3 @@
-{% trans_default_domain 'FOSUserBundle' %}
-
 <div class="container content login-screen">
     <div class="row">
         <div class="col-sm-6 col-sm-offset-3 text-center">
@@ -7,8 +5,8 @@
             <form class="login-form" action="{{ path('fos_user_resetting_send_email') }}" method="POST">
                 <div>
                     <div class="error-msg">
-                    {% if invalid_username is defined %}
-                        <p>{{ 'resetting.request.invalid_username'|trans({'%username%': invalid_username}) }}</p>
+                    {% if invalid_username %}
+                        <p>No user found for {{ invalid_username }}.</p>
                     {% endif %}
                     </div>
                     <div class="form-group">

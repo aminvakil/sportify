@@ -1,0 +1,121 @@
+<?php
+
+namespace Devlabs\SportifyBundle\Controller;
+
+use Devlabs\SportifyBundle\Entity\User;
+use Devlabs\SportifyBundle\Form\RegistrationFormType;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\FormError;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+
+class RegistrationController extends Controller
+{
+    public function registerAction(Request $request)
+    {
+        $user = new User();
+        $form = $this->createForm(RegistrationFormType::class, $user);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $confirmationEnabled = $this->getParameter('app.registration_confirmation_enabled');
+            $this->updateCanonicalFields($user);
+            $user->setEnabled(!$confirmationEnabled);
+            $user->setPassword($this->get('security.password_encoder')->encodePassword($user, $user->getPlainPassword()));
+            $user->eraseCredentials();
+
+            if ($confirmationEnabled) {
+                $user->setConfirmationToken($this->generateToken());
+            }
+
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($user);
+
+            try {
+                $em->flush();
+            } catch (UniqueConstraintViolationException $e) {
+                $form->addError(new FormError('A user with this username or email already exists.'));
+
+                return $this->render('Registration/register.html.twig', array('form' => $form->createView()));
+            }
+
+            if ($confirmationEnabled) {
+                $this->sendConfirmationEmail($user);
+
+                return $this->redirectToRoute('fos_user_registration_check_email');
+            }
+
+            return $this->redirectToRoute('fos_user_registration_confirmed');
+        }
+
+        return $this->render('Registration/register.html.twig', array('form' => $form->createView()));
+    }
+
+    public function checkEmailAction()
+    {
+        return $this->render('Registration/checkEmail.html.twig');
+    }
+
+    public function confirmAction($token)
+    {
+        $user = $this->getDoctrine()->getRepository(User::class)->findOneBy(array('confirmationToken' => $token));
+
+        if (!$user) {
+            throw new NotFoundHttpException('Invalid confirmation token.');
+        }
+
+        $user->setEnabled(true);
+        $user->setConfirmationToken(null);
+        $this->getDoctrine()->getManager()->flush();
+
+        return $this->redirectToRoute('fos_user_registration_confirmed');
+    }
+
+    public function confirmedAction()
+    {
+        return $this->render('Registration/confirmed.html.twig', array('targetUrl' => null));
+    }
+
+    private function updateCanonicalFields(User $user)
+    {
+        $user->setUsernameCanonical($this->canonicalize($user->getUsername()));
+        $user->setEmailCanonical($this->canonicalize($user->getEmail()));
+    }
+
+    private function canonicalize($value)
+    {
+        return mb_strtolower($value, 'UTF-8');
+    }
+
+    private function generateToken()
+    {
+        return rtrim(strtr(base64_encode(random_bytes(32)), '+/', '-_'), '=');
+    }
+
+    private function sendConfirmationEmail(User $user)
+    {
+        $confirmationUrl = $this->generateUrl('fos_user_registration_confirm', array(
+            'token' => $user->getConfirmationToken(),
+        ), UrlGeneratorInterface::ABSOLUTE_URL);
+
+        $this->sendTemplatedEmail('templates/emails/registration.email.twig', $user, $confirmationUrl);
+    }
+
+    private function sendTemplatedEmail($template, User $user, $confirmationUrl)
+    {
+        $context = array('user' => $user, 'confirmationUrl' => $confirmationUrl);
+        $twigTemplate = $this->get('twig')->load($template);
+
+        $message = \Swift_Message::newInstance()
+            ->setSubject(trim($twigTemplate->renderBlock('subject', $context)))
+            ->setFrom($this->getParameter('mailer_sender_address'))
+            ->setTo($user->getEmail())
+            ->setBody($twigTemplate->renderBlock('body_text', $context), 'text/plain')
+            ->addPart($twigTemplate->renderBlock('body_html', $context), 'text/html')
+        ;
+
+        $this->get('mailer')->send($message);
+    }
+}
