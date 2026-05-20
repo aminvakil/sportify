@@ -3,13 +3,12 @@
 namespace Devlabs\SportifyBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use FOS\OAuthServerBundle\Entity\RefreshToken as BaseRefreshToken;
 
 /**
  * @ORM\Entity()
  * @ORM\Table(name="oauth_refresh_tokens")
  */
-class OAuthRefreshToken extends BaseRefreshToken
+class OAuthRefreshToken
 {
     /**
      * @ORM\Column(type="integer")
@@ -17,6 +16,21 @@ class OAuthRefreshToken extends BaseRefreshToken
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     protected $id;
+
+    /**
+     * @ORM\Column(type="string", unique=true)
+     */
+    protected $token;
+
+    /**
+     * @ORM\Column(type="integer", name="expires_at", nullable=true)
+     */
+    protected $expiresAt;
+
+    /**
+     * @ORM\Column(type="string", nullable=true)
+     */
+    protected $scope;
 
     /**
      * @ORM\ManyToOne(targetEntity="User")
