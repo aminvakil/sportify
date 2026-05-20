@@ -3,18 +3,20 @@
 namespace Devlabs\SportifyBundle\Command;
 
 use Devlabs\SportifyBundle\Entity\Score;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
 /**
  * Class DataUpdateCommand
  * @package Devlabs\SportifyBundle\Command
  */
-class DataUpdateCommand extends ContainerAwareCommand
+class DataUpdateCommand extends Command implements ContainerAwareInterface
 {
+    use ContainerAwareTrait;
     protected function configure()
     {
         $this
@@ -115,5 +117,7 @@ class DataUpdateCommand extends ContainerAwareCommand
         }
 
         $output->writeln($logText);
+
+        return 0;
     }
 }

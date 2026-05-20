@@ -2,13 +2,13 @@
 
 namespace Devlabs\SportifyBundle\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 /**
  * Class ScoresUpdateController
  * @package Devlabs\SportifyBundle\Controller
  */
-class ScoresUpdateController extends Controller
+class ScoresUpdateController extends AbstractController
 {
     public function updateAllAction()
     {

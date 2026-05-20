@@ -344,7 +344,7 @@ class Team
         try {
             $file = file_get_contents($filePath);
         }
-        catch(\Symfony\Component\Debug\Exception\ContextErrorException $e) {
+        catch(\Exception $e) {
             return $this;
         }
 

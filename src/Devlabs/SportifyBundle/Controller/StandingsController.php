@@ -4,7 +4,7 @@ namespace Devlabs\SportifyBundle\Controller;
 
 use Devlabs\SportifyBundle\Entity\Score;
 use Devlabs\SportifyBundle\Entity\Tournament;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Cookie;
@@ -13,7 +13,7 @@ use Symfony\Component\HttpFoundation\Cookie;
  * Class StandingsController
  * @package Devlabs\SportifyBundle\Controller
  */
-class StandingsController extends Controller
+class StandingsController extends AbstractController
 {
     public function indexAction(Request $request, $tournament_id)
     {

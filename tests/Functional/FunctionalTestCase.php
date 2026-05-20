@@ -12,14 +12,14 @@ abstract class FunctionalTestCase extends WebTestCase
     protected $client;
     protected $em;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->client = static::createClient();
         $this->em = $this->client->getContainer()->get('doctrine.orm.entity_manager');
         $this->resetDatabase();
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         if ($this->em) {
             $this->em->close();

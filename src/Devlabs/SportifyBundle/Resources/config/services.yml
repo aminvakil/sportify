@@ -2,6 +2,12 @@ services:
     _defaults:
         public: true
 
+    Devlabs\SportifyBundle\Controller\:
+        resource: '../../Controller'
+        exclude: '../../Controller/Base'
+        calls:
+            - [setContainer, ['@service_container']]
+
     app.form.type.prediction:
         class: Devlabs\SportifyBundle\Form\PredictionType
         arguments: ["@doctrine.orm.entity_manager"]

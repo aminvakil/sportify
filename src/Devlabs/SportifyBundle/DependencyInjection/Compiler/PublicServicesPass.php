@@ -15,6 +15,17 @@ class PublicServicesPass implements CompilerPassInterface
             'doctrine.dbal.connection',
             'doctrine.orm.default_entity_manager',
             'doctrine.orm.entity_manager',
+            'form.factory',
+            'jms_serializer',
+            'kernel',
+            'mailer',
+            'parameter_bag',
+            'router',
+            'security.authentication_utils',
+            'security.csrf.token_manager',
+            'security.password_encoder',
+            'session',
+            'twig',
         );
 
         foreach ($serviceIds as $serviceId) {

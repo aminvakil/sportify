@@ -2,7 +2,7 @@
 
 namespace Devlabs\SportifyBundle\Controller\Base;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Doctrine\Persistence\ObjectManager;
@@ -11,7 +11,7 @@ use Doctrine\Persistence\ObjectManager;
  * Class BaseApiController
  * @package Devlabs\SportifyBundle\Controller\Base
  */
-abstract class BaseApiController extends Controller
+abstract class BaseApiController extends AbstractController
 {
     /**
      * The name of the model, e.g. 'Model'
