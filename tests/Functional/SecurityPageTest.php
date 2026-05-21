@@ -12,7 +12,7 @@ class SecurityPageTest extends WebTestCase
         $crawler = $client->request('GET', '/login');
 
         $this->assertTrue($client->getResponse()->isSuccessful());
-        $this->assertContains('Log in to place your bets', $crawler->filter('body')->text(null, false));
+        $this->assertStringContainsString('Log in to place your bets', $crawler->filter('body')->text(null, false));
         $this->assertNotEmpty($crawler->filter('input[name="_csrf_token"]')->attr('value'));
     }
 
@@ -22,6 +22,6 @@ class SecurityPageTest extends WebTestCase
         $crawler = $client->request('GET', '/register/');
 
         $this->assertTrue($client->getResponse()->isSuccessful());
-        $this->assertContains('Sign up', $crawler->filter('body')->text(null, false));
+        $this->assertStringContainsString('Sign up', $crawler->filter('body')->text(null, false));
     }
 }

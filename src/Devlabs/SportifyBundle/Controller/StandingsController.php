@@ -20,7 +20,7 @@ class StandingsController extends AbstractController
         $urlParams['tournament_id'] = $tournament_id;
 
         // Get an instance of the Entity Manager
-        $em = $this->getDoctrine()->getManager();
+        $em = $this->container->get('doctrine')->getManager();
 
         /**
          * Get selected tournament by last selected (from Cookie) and URL param is 'empty',
@@ -88,7 +88,7 @@ class StandingsController extends AbstractController
 
         // if user is logged in, get their standings and set them as global Twig var
         if (is_object($user = $this->getUser())) {
-            $this->get('app.twig.helper')->setUserScores($user);
+            $this->container->get('app.twig.helper')->setUserScores($user);
         }
 
         // rendering the view and returning the response
@@ -107,7 +107,7 @@ class StandingsController extends AbstractController
         $urlParams['tournament_id'] = $tournament_id;
 
         // Get an instance of the Entity Manager
-        $em = $this->getDoctrine()->getManager();
+        $em = $this->container->get('doctrine')->getManager();
 
         /**
          * Get selected tournament by last selected (from Cookie) and URL param is 'empty',
@@ -175,7 +175,7 @@ class StandingsController extends AbstractController
 
         // if user is logged in, get their standings and set them as global Twig var
         if (is_object($user = $this->getUser())) {
-            $this->get('app.twig.helper')->setUserScores($user);
+            $this->container->get('app.twig.helper')->setUserScores($user);
         }
 
         // rendering the view and returning the response

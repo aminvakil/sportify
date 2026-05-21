@@ -1,13 +1,8 @@
 FROM composer:2.2.25 AS composer
 
-FROM php:7.4-cli-buster
+FROM php:8.1-cli-bookworm
 
 RUN set -eux; \
-    printf '%s\n' \
-        'deb [trusted=yes] http://archive.debian.org/debian buster main' \
-        'deb [trusted=yes] http://archive.debian.org/debian-security buster/updates main' \
-        > /etc/apt/sources.list; \
-    echo 'Acquire::Check-Valid-Until "false";' > /etc/apt/apt.conf.d/99no-check-valid-until; \
     apt-get update; \
     apt-get install -y --no-install-recommends \
         ca-certificates \

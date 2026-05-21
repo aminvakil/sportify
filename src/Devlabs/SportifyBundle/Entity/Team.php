@@ -42,12 +42,12 @@ class Team
     private $tournamentsChampion;
 
     /**
-     * @ORM\OneToMany(targetEntity="Match" , mappedBy="homeTeamId" , cascade={"all"})
+     * @ORM\OneToMany(targetEntity="MatchEntity" , mappedBy="homeTeamId" , cascade={"all"})
      */
     private $matchesHomeTeam;
 
     /**
-     * @ORM\OneToMany(targetEntity="Match" , mappedBy="awayTeamId" , cascade={"all"})
+     * @ORM\OneToMany(targetEntity="MatchEntity" , mappedBy="awayTeamId" , cascade={"all"})
      */
     private $matchesAwayTeam;
 
@@ -158,11 +158,11 @@ class Team
     /**
      * Add matchesHomeTeam
      *
-     * @param \Devlabs\SportifyBundle\Entity\Match $matchesHomeTeam
+     * @param \Devlabs\SportifyBundle\Entity\MatchEntity $matchesHomeTeam
      *
      * @return Team
      */
-    public function addMatchesHomeTeam(\Devlabs\SportifyBundle\Entity\Match $matchesHomeTeam)
+    public function addMatchesHomeTeam(\Devlabs\SportifyBundle\Entity\MatchEntity $matchesHomeTeam)
     {
         $this->matchesHomeTeam[] = $matchesHomeTeam;
 
@@ -172,9 +172,9 @@ class Team
     /**
      * Remove matchesHomeTeam
      *
-     * @param \Devlabs\SportifyBundle\Entity\Match $matchesHomeTeam
+     * @param \Devlabs\SportifyBundle\Entity\MatchEntity $matchesHomeTeam
      */
-    public function removeMatchesHomeTeam(\Devlabs\SportifyBundle\Entity\Match $matchesHomeTeam)
+    public function removeMatchesHomeTeam(\Devlabs\SportifyBundle\Entity\MatchEntity $matchesHomeTeam)
     {
         $this->matchesHomeTeam->removeElement($matchesHomeTeam);
     }
@@ -192,11 +192,11 @@ class Team
     /**
      * Add matchesAwayTeam
      *
-     * @param \Devlabs\SportifyBundle\Entity\Match $matchesAwayTeam
+     * @param \Devlabs\SportifyBundle\Entity\MatchEntity $matchesAwayTeam
      *
      * @return Team
      */
-    public function addMatchesAwayTeam(\Devlabs\SportifyBundle\Entity\Match $matchesAwayTeam)
+    public function addMatchesAwayTeam(\Devlabs\SportifyBundle\Entity\MatchEntity $matchesAwayTeam)
     {
         $this->matchesAwayTeam[] = $matchesAwayTeam;
 
@@ -206,9 +206,9 @@ class Team
     /**
      * Remove matchesAwayTeam
      *
-     * @param \Devlabs\SportifyBundle\Entity\Match $matchesAwayTeam
+     * @param \Devlabs\SportifyBundle\Entity\MatchEntity $matchesAwayTeam
      */
-    public function removeMatchesAwayTeam(\Devlabs\SportifyBundle\Entity\Match $matchesAwayTeam)
+    public function removeMatchesAwayTeam(\Devlabs\SportifyBundle\Entity\MatchEntity $matchesAwayTeam)
     {
         $this->matchesAwayTeam->removeElement($matchesAwayTeam);
     }

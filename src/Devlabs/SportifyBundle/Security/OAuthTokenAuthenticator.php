@@ -6,13 +6,16 @@ use Devlabs\SportifyBundle\Entity\OAuthAccessToken;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
-use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Security\Core\User\UserProviderInterface;
-use Symfony\Component\Security\Guard\AbstractGuardAuthenticator;
+use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
+use Symfony\Component\Security\Http\Authenticator\AbstractAuthenticator;
+use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
+use Symfony\Component\Security\Http\Authenticator\Passport\SelfValidatingPassport;
+use Symfony\Component\Security\Http\EntryPoint\AuthenticationEntryPointInterface;
 
-class OAuthTokenAuthenticator extends AbstractGuardAuthenticator
+class OAuthTokenAuthenticator extends AbstractAuthenticator implements AuthenticationEntryPointInterface
 {
     private $em;
 
@@ -21,38 +24,32 @@ class OAuthTokenAuthenticator extends AbstractGuardAuthenticator
         $this->em = $em;
     }
 
-    public function supports(Request $request)
+    public function supports(Request $request): ?bool
     {
         return null !== $this->getTokenForRequest($request);
     }
 
-    public function getCredentials(Request $request)
+    public function authenticate(Request $request): SelfValidatingPassport
     {
-        return $this->getTokenForRequest($request);
+        $credentials = $this->getTokenForRequest($request);
+
+        return new SelfValidatingPassport(new UserBadge($credentials, function ($credentials) {
+            $accessToken = $this->em->getRepository(OAuthAccessToken::class)->findOneBy(array('token' => $credentials));
+
+            if (!$accessToken || $accessToken->hasExpired()) {
+                throw new CustomUserMessageAuthenticationException('The access token is invalid or has expired.');
+            }
+
+            return $accessToken->getUser();
+        }));
     }
 
-    public function getUser($credentials, UserProviderInterface $userProvider)
-    {
-        $accessToken = $this->em->getRepository(OAuthAccessToken::class)->findOneBy(array('token' => $credentials));
-
-        if (!$accessToken || $accessToken->hasExpired()) {
-            return null;
-        }
-
-        return $accessToken->getUser();
-    }
-
-    public function checkCredentials($credentials, UserInterface $user)
-    {
-        return true;
-    }
-
-    public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
+    public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
         return null;
     }
 
-    public function onAuthenticationFailure(Request $request, AuthenticationException $exception)
+    public function onAuthenticationFailure(Request $request, AuthenticationException $exception): ?Response
     {
         return new JsonResponse(array(
             'error' => 'invalid_token',
@@ -60,17 +57,12 @@ class OAuthTokenAuthenticator extends AbstractGuardAuthenticator
         ), 401);
     }
 
-    public function start(Request $request, AuthenticationException $authException = null)
+    public function start(Request $request, ?AuthenticationException $authException = null)
     {
         return new JsonResponse(array(
             'error' => 'access_denied',
             'error_description' => 'OAuth2 authentication required.',
         ), 401);
-    }
-
-    public function supportsRememberMe()
-    {
-        return false;
     }
 
     private function getTokenForRequest(Request $request)

@@ -23,7 +23,7 @@ class TournamentsController extends AbstractController
         }
 
         // Get an instance of the Entity Manager
-        $em = $this->getDoctrine()->getManager();
+        $em = $this->container->get('doctrine')->getManager();
 
         // get the tournaments helper service
         $tournamentsHelper = $this->container->get('app.tournaments.helper');
@@ -60,7 +60,7 @@ class TournamentsController extends AbstractController
         }
 
         // get user standings and set them as global Twig var
-        $this->get('app.twig.helper')->setUserScores($user);
+        $this->container->get('app.twig.helper')->setUserScores($user);
 
         // rendering the view and returning the response
         return $this->render(

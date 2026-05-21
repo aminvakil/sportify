@@ -24,7 +24,7 @@ class ChampionController extends AbstractController
         $urlParams['tournament_id'] = $tournament_id;
 
         // Get an instance of the Entity Manager
-        $em = $this->getDoctrine()->getManager();
+        $em = $this->container->get('doctrine')->getManager();
 
         // get user joined tournaments as source data for form choices
         $formSourceData['tournament_choices'] = $em->getRepository(Tournament::class)
@@ -103,7 +103,7 @@ class ChampionController extends AbstractController
             ->findByTournamentId($formSourceData['tournament_selected']);
 
         // get user standings and set them as global Twig var
-        $this->get('app.twig.helper')->setUserScores($user);
+        $this->container->get('app.twig.helper')->setUserScores($user);
 
         // rendering the view and returning the response
         return $this->render(

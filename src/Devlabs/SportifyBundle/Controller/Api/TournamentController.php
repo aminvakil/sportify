@@ -26,7 +26,7 @@ class TournamentController extends BaseApiController
      */
     public function getScoresAction($id)
     {
-        $tournament = $this->getDoctrine()->getManager()
+        $tournament = $this->container->get('doctrine')->getManager()
             ->getRepository($this->repositoryName)
             ->findOneById($id);
 
@@ -34,7 +34,7 @@ class TournamentController extends BaseApiController
             return $this->getNotFoundView();
         }
 
-        $scores = $this->getDoctrine()->getManager()
+        $scores = $this->container->get('doctrine')->getManager()
             ->getRepository(Score::class)
             ->getByTournamentOrderByPosNew($tournament);
 
@@ -49,7 +49,7 @@ class TournamentController extends BaseApiController
      */
     public function getMatchesAction($id)
     {
-        $object = $this->getDoctrine()->getManager()
+        $object = $this->container->get('doctrine')->getManager()
             ->getRepository($this->repositoryName)
             ->findOneById($id);
 
@@ -68,7 +68,7 @@ class TournamentController extends BaseApiController
      */
     public function getTeamsAction($id)
     {
-        $object = $this->getDoctrine()->getManager()
+        $object = $this->container->get('doctrine')->getManager()
             ->getRepository($this->repositoryName)
             ->findOneById($id);
 
@@ -87,7 +87,7 @@ class TournamentController extends BaseApiController
      */
     public function getChamp_predictionsAction($id)
     {
-        $object = $this->getDoctrine()->getManager()
+        $object = $this->container->get('doctrine')->getManager()
             ->getRepository($this->repositoryName)
             ->findOneById($id);
 

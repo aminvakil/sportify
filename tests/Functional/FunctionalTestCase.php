@@ -57,7 +57,7 @@ abstract class FunctionalTestCase extends WebTestCase
         $user->setSlackUsername($username);
         $user->setEnabled($enabled);
         $user->setRoles($roles);
-        $user->setPassword($this->client->getContainer()->get('security.password_encoder')->encodePassword($user, $password));
+        $user->setPassword($this->client->getContainer()->get('security.user_password_hasher')->hashPassword($user, $password));
 
         $this->em->persist($user);
         $this->em->flush();

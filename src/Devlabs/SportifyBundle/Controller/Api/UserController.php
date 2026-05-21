@@ -36,7 +36,7 @@ class UserController extends BaseApiController
             return $this->getAction($user->getId());
         }
 
-        $objects = $this->getDoctrine()->getManager()
+        $objects = $this->container->get('doctrine')->getManager()
             ->getRepository($this->repositoryName)
             ->findAll();
 
@@ -66,7 +66,7 @@ class UserController extends BaseApiController
             return $this->view($user, 200);
         }
 
-        $object = $this->getDoctrine()->getManager()
+        $object = $this->container->get('doctrine')->getManager()
             ->getRepository($this->repositoryName)
             ->findOneById($id);
 
@@ -95,7 +95,7 @@ class UserController extends BaseApiController
             return $this->view(null, 403);
         }
 
-        $object = $this->getDoctrine()->getManager()
+        $object = $this->container->get('doctrine')->getManager()
             ->getRepository($this->repositoryName)
             ->findOneById($id);
 
@@ -129,7 +129,7 @@ class UserController extends BaseApiController
             return $this->view($user->getPredictions(), 200);
         }
 
-        $object = $this->getDoctrine()->getManager()
+        $object = $this->container->get('doctrine')->getManager()
             ->getRepository($this->repositoryName)
             ->findOneById($id);
 
@@ -153,7 +153,7 @@ class UserController extends BaseApiController
             return $this->getUnauthorizedView();
         }
 
-        $object = $this->getDoctrine()->getManager()
+        $object = $this->container->get('doctrine')->getManager()
             ->getRepository($this->repositoryName)
             ->findOneById($id);
 

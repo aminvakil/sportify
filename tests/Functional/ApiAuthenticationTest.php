@@ -40,8 +40,8 @@ class ApiAuthenticationTest extends FunctionalTestCase
         $this->client->request('GET', '/api/users/'.$user->getId(), array('access_token' => $tokenResponse['access_token']));
 
         $this->assertSame(200, $this->client->getResponse()->getStatusCode(), $this->client->getResponse()->getContent());
-        $this->assertContains('application/json', $this->client->getResponse()->headers->get('Content-Type'));
-        $this->assertContains('api_user@example.com', $this->client->getResponse()->getContent());
+        $this->assertStringContainsString('application/json', $this->client->getResponse()->headers->get('Content-Type'));
+        $this->assertStringContainsString('api_user@example.com', $this->client->getResponse()->getContent());
     }
 
     public function testNestedCurrentUserApiCollectionsRemainAvailable()
@@ -54,7 +54,7 @@ class ApiAuthenticationTest extends FunctionalTestCase
             $this->client->request('GET', '/api/users/'.$user->getId().'/'.$collection, array('access_token' => $accessToken));
 
             $this->assertSame(200, $this->client->getResponse()->getStatusCode(), $collection.': '.$this->client->getResponse()->getContent());
-            $this->assertContains('application/json', $this->client->getResponse()->headers->get('Content-Type'));
+            $this->assertStringContainsString('application/json', $this->client->getResponse()->headers->get('Content-Type'));
         }
     }
 
@@ -72,7 +72,7 @@ class ApiAuthenticationTest extends FunctionalTestCase
         ));
 
         $this->assertSame(400, $this->client->getResponse()->getStatusCode(), $this->client->getResponse()->getContent());
-        $this->assertContains('invalid_grant', $this->client->getResponse()->getContent());
+        $this->assertStringContainsString('invalid_grant', $this->client->getResponse()->getContent());
     }
 
     private function requestAccessToken($oauthClient, $username, $password)

@@ -32,11 +32,11 @@ class UserController extends AbstractController
             $plainPassword = $form->get('password')->getData();
 
             if ($plainPassword) {
-                $user->setPassword($this->get('security.password_encoder')->encodePassword($user, $plainPassword));
+                $user->setPassword($this->container->get('security.user_password_hasher')->hashPassword($user, $plainPassword));
             }
 
             $user->setUsernameCanonical(mb_strtolower($user->getUsername(), 'UTF-8'));
-            $this->getDoctrine()->getManager()->flush();
+            $this->container->get('doctrine')->getManager()->flush();
 
             $this->addFlash(
                 'notice',
@@ -45,7 +45,7 @@ class UserController extends AbstractController
         }
 
         // get user standings and set them as global Twig var
-        $this->get('app.twig.helper')->setUserScores($user);
+        $this->container->get('app.twig.helper')->setUserScores($user);
 
         return $this->render(
             'User/profile.html.twig',
@@ -62,7 +62,7 @@ class UserController extends AbstractController
             return $this->redirectToRoute('fos_user_security_login');
         }
 
-        $accessToken = $this->getDoctrine()->getManager()
+        $accessToken = $this->container->get('doctrine')->getManager()
             ->getRepository(OAuthAccessToken::class)
             ->getLastNotExpired($user);
 
@@ -80,7 +80,7 @@ class UserController extends AbstractController
             $formData = $form->getData();
 
             try {
-                $this->get('app.oauth_token_issuer')->issuePasswordGrantToken(
+                $this->container->get('app.oauth_token_issuer')->issuePasswordGrantToken(
                     $this->getParameter('sportify_api.client_id'),
                     $this->getParameter('sportify_api.client_secret'),
                     $user->getUsername(),
@@ -92,13 +92,13 @@ class UserController extends AbstractController
                 $flashMsg = $e->getMessage();
             }
 
-            $this->get('session')->getFlashBag()->add('message', $flashMsg);
+            $this->container->get('session')->getFlashBag()->add('message', $flashMsg);
 
             return $this->redirectToRoute('user_tokens');
         }
 
         // get user standings and set them as global Twig var
-        $this->get('app.twig.helper')->setUserScores($user);
+        $this->container->get('app.twig.helper')->setUserScores($user);
 
         return $this->render(
             'User/tokens.html.twig',

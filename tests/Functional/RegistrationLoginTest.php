@@ -45,7 +45,7 @@ class RegistrationLoginTest extends WebTestCase
         $client->submit($form);
 
         $this->assertTrue($client->getResponse()->isRedirect());
-        $this->assertRegExp('#/$#', $client->getResponse()->headers->get('Location'));
+        $this->assertMatchesRegularExpression('#/$#', $client->getResponse()->headers->get('Location'));
     }
 
     private function resetDatabase($em)

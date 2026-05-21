@@ -27,10 +27,10 @@ class UserRepository extends \Doctrine\ORM\EntityRepository
     /**
      * Get a list of users which don't have a prediction for a given match
      *
-     * @param Match $match
+     * @param MatchEntity $match
      * @return array
      */
-    public function getNotPredictedByMatch(Match $match)
+    public function getNotPredictedByMatch(MatchEntity $match)
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
         $usersWithPredictions = $qb

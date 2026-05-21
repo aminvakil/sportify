@@ -24,14 +24,14 @@ class RegistrationController extends AbstractController
             $confirmationEnabled = $this->getParameter('app.registration_confirmation_enabled');
             $this->updateCanonicalFields($user);
             $user->setEnabled(!$confirmationEnabled);
-            $user->setPassword($this->get('security.password_encoder')->encodePassword($user, $user->getPlainPassword()));
+            $user->setPassword($this->container->get('security.user_password_hasher')->hashPassword($user, $user->getPlainPassword()));
             $user->eraseCredentials();
 
             if ($confirmationEnabled) {
                 $user->setConfirmationToken($this->generateToken());
             }
 
-            $em = $this->getDoctrine()->getManager();
+            $em = $this->container->get('doctrine')->getManager();
             $em->persist($user);
 
             try {
@@ -61,7 +61,7 @@ class RegistrationController extends AbstractController
 
     public function confirmAction($token)
     {
-        $user = $this->getDoctrine()->getRepository(User::class)->findOneBy(array('confirmationToken' => $token));
+        $user = $this->container->get('doctrine')->getRepository(User::class)->findOneBy(array('confirmationToken' => $token));
 
         if (!$user) {
             throw new NotFoundHttpException('Invalid confirmation token.');
@@ -69,7 +69,7 @@ class RegistrationController extends AbstractController
 
         $user->setEnabled(true);
         $user->setConfirmationToken(null);
-        $this->getDoctrine()->getManager()->flush();
+        $this->container->get('doctrine')->getManager()->flush();
 
         return $this->redirectToRoute('fos_user_registration_confirmed');
     }
@@ -107,7 +107,7 @@ class RegistrationController extends AbstractController
     private function sendTemplatedEmail($template, User $user, $confirmationUrl)
     {
         $context = array('user' => $user, 'confirmationUrl' => $confirmationUrl);
-        $twigTemplate = $this->get('twig')->load($template);
+        $twigTemplate = $this->container->get('twig')->load($template);
 
         $message = (new Email())
             ->subject(trim($twigTemplate->renderBlock('subject', $context)))
@@ -117,6 +117,6 @@ class RegistrationController extends AbstractController
             ->html($twigTemplate->renderBlock('body_html', $context))
         ;
 
-        $this->get('mailer')->send($message);
+        $this->container->get('mailer')->send($message);
     }
 }

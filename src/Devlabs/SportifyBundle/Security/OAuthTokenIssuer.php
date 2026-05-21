@@ -5,7 +5,7 @@ namespace Devlabs\SportifyBundle\Security;
 use Devlabs\SportifyBundle\Entity\OAuthAccessToken;
 use Devlabs\SportifyBundle\Entity\OAuthClient;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Core\Exception\BadCredentialsException;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 
@@ -20,7 +20,7 @@ class OAuthTokenIssuer
     public function __construct(
         EntityManagerInterface $em,
         UserProvider $userProvider,
-        UserPasswordEncoderInterface $passwordEncoder,
+        UserPasswordHasherInterface $passwordEncoder,
         UserChecker $userChecker,
         $accessTokenLifetime
     ) {

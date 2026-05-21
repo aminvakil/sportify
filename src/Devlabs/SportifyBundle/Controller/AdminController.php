@@ -7,7 +7,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Devlabs\SportifyBundle\Entity\ApiMapping;
 use Devlabs\SportifyBundle\Entity\Tournament;
 use Devlabs\SportifyBundle\Entity\Team;
-use Devlabs\SportifyBundle\Entity\Match;
+use Devlabs\SportifyBundle\Entity\MatchEntity;
 
 class AdminController extends AbstractController
 {
@@ -19,7 +19,7 @@ class AdminController extends AbstractController
         }
 
         // get user standings and set them as global Twig var
-        $this->get('app.twig.helper')->setUserScores($user);
+        $this->container->get('app.twig.helper')->setUserScores($user);
 
         // rendering the view and returning the response
         return $this->render('Admin/index.html.twig');
@@ -33,7 +33,7 @@ class AdminController extends AbstractController
         }
 
         // get user standings and set them as global Twig var
-        $this->get('app.twig.helper')->setUserScores($user);
+        $this->container->get('app.twig.helper')->setUserScores($user);
 
         // rendering the view and returning the response
         return $this->render('Admin/data_updates_index.html.twig');
@@ -106,7 +106,7 @@ class AdminController extends AbstractController
         }
 
         // get user standings and set them as global Twig var
-        $this->get('app.twig.helper')->setUserScores($user);
+        $this->container->get('app.twig.helper')->setUserScores($user);
 
         // rendering the view and returning the response
         return $this->render(
@@ -125,7 +125,7 @@ class AdminController extends AbstractController
         }
 
         // Get an instance of the Entity Manager
-        $em = $this->getDoctrine()->getManager();
+        $em = $this->container->get('doctrine')->getManager();
 
         // get the filter helper service
         $adminHelper = $this->container->get('app.admin.helper');
@@ -141,7 +141,7 @@ class AdminController extends AbstractController
         $apiTournaments = $this->container->get('app.data_updates.manager')->getTournaments();
 
         // get user standings and set them as global Twig var
-        $this->get('app.twig.helper')->setUserScores($user);
+        $this->container->get('app.twig.helper')->setUserScores($user);
 
         // rendering the view and returning the response
         return $this->render(
@@ -170,7 +170,7 @@ class AdminController extends AbstractController
         $adminHelper = $this->container->get('app.admin.helper');
 
         // Get an instance of the Entity Manager
-        $em = $this->getDoctrine()->getManager();
+        $em = $this->container->get('doctrine')->getManager();
 
         // set the ApiMapping object based on whether it's new or existing one
         if ($request->request->get('api_mapping')['id']) {
@@ -206,7 +206,7 @@ class AdminController extends AbstractController
         }
 
         // Get an instance of the Entity Manager
-        $em = $this->getDoctrine()->getManager();
+        $em = $this->container->get('doctrine')->getManager();
 
         // get the filter helper service
         $adminHelper = $this->container->get('app.admin.helper');
@@ -222,7 +222,7 @@ class AdminController extends AbstractController
         $forms = $adminHelper->createTournamentForms($tournaments);
 
         // get user standings and set them as global Twig var
-        $this->get('app.twig.helper')->setUserScores($user);
+        $this->container->get('app.twig.helper')->setUserScores($user);
 
         // rendering the view and returning the response
         return $this->render(
@@ -250,7 +250,7 @@ class AdminController extends AbstractController
         $adminHelper = $this->container->get('app.admin.helper');
 
         // Get an instance of the Entity Manager
-        $em = $this->getDoctrine()->getManager();
+        $em = $this->container->get('doctrine')->getManager();
 
         // set the tournament object based on whether it's new or existing one
         if ($request->request->get('tournament_entity')['id']) {
@@ -290,7 +290,7 @@ class AdminController extends AbstractController
         }
 
         // Get an instance of the Entity Manager
-        $em = $this->getDoctrine()->getManager();
+        $em = $this->container->get('doctrine')->getManager();
 
         // get the filter helper service
         $adminHelper = $this->container->get('app.admin.helper');
@@ -306,7 +306,7 @@ class AdminController extends AbstractController
         $forms = $adminHelper->createTeamForms($teams);
 
         // get user standings and set them as global Twig var
-        $this->get('app.twig.helper')->setUserScores($user);
+        $this->container->get('app.twig.helper')->setUserScores($user);
 
         // rendering the view and returning the response
         return $this->render(
@@ -334,7 +334,7 @@ class AdminController extends AbstractController
         $adminHelper = $this->container->get('app.admin.helper');
 
         // Get an instance of the Entity Manager
-        $em = $this->getDoctrine()->getManager();
+        $em = $this->container->get('doctrine')->getManager();
 
         // set the team object based on whether it's new or existing one
         if ($request->request->get('team_entity')['id']) {
@@ -367,7 +367,7 @@ class AdminController extends AbstractController
         }
 
         // Get an instance of the Entity Manager
-        $em = $this->getDoctrine()->getManager();
+        $em = $this->container->get('doctrine')->getManager();
 
         // get the filter helper service
         $adminHelper = $this->container->get('app.admin.helper');
@@ -424,18 +424,18 @@ class AdminController extends AbstractController
         }
 
         // get matches for selected tournament
-        $matches = $em->getRepository(Match::class)
+        $matches = $em->getRepository(MatchEntity::class)
             ->getAllByTournamentAndTimeRange($formSourceData['tournament_selected'], $urlParams['date_from'], $modifiedDateTo);
 
         // add an 'empty' placeholder for a new match to be created
-        $matches['new'] = new Match();
+        $matches['new'] = new MatchEntity();
         $matches['new']->setTournamentId($formSourceData['tournament_selected']);
 
         // create Match forms
         $forms = $adminHelper->createMatchForms($urlParams, $matches);
 
         // get user standings and set them as global Twig var
-        $this->get('app.twig.helper')->setUserScores($user);
+        $this->container->get('app.twig.helper')->setUserScores($user);
 
         // rendering the view and returning the response
         return $this->render(
@@ -464,7 +464,7 @@ class AdminController extends AbstractController
         $adminHelper = $this->container->get('app.admin.helper');
 
         // Get an instance of the Entity Manager
-        $em = $this->getDoctrine()->getManager();
+        $em = $this->container->get('doctrine')->getManager();
 
         $urlParams = $adminHelper->MatchesInitUrlParams($tournament_id, $date_from, $date_to);
 
@@ -473,10 +473,10 @@ class AdminController extends AbstractController
 
         // set the match object based on whether it's new or existing one
         if ($request->request->get('match_entity')['id']) {
-            $match = $em->getRepository(Match::class)
+            $match = $em->getRepository(MatchEntity::class)
                 ->findOneById($request->request->get('match_entity')['id']);
         } else {
-            $match = new Match();
+            $match = new MatchEntity();
             $match->setTournamentId($tournament);
         }
 

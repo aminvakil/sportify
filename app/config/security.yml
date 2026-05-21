@@ -2,7 +2,7 @@
 # http://symfony.com/doc/current/book/security.html
 security:
 
-    encoders:
+    password_hashers:
         Devlabs\SportifyBundle\Entity\User: bcrypt
 
     role_hierarchy:
@@ -32,10 +32,9 @@ security:
             provider: app_user_provider
             user_checker: app.user_checker
             stateless:    true
-            guard:
-                authenticators:
-                    - app.oauth_token_authenticator
-                entry_point: app.oauth_token_authenticator
+            custom_authenticators:
+                - app.oauth_token_authenticator
+            entry_point: app.oauth_token_authenticator
 
         main:
             pattern: ^/
@@ -44,11 +43,10 @@ security:
                 provider: app_user_provider
                 login_path: fos_user_security_login
                 check_path: fos_user_security_check
-                csrf_token_generator: security.csrf.token_manager
+                enable_csrf: true
             logout:
                 path: fos_user_security_logout
                 target: home
-            anonymous:    true
             remember_me:
                 secret:   A3mkS!24D@11WjLg7OI9#Zzx%7fBNS
                 lifetime: 7776000 # 90 days in seconds
@@ -63,10 +61,10 @@ security:
             # form_login: ~
             # http://symfony.com/doc/current/cookbook/security/form_login_setup.html
     access_control:
-        - { path: ^/login$, role: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/register, role: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/resetting, role: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/standings, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/login$, role: PUBLIC_ACCESS }
+        - { path: ^/register, role: PUBLIC_ACCESS }
+        - { path: ^/resetting, role: PUBLIC_ACCESS }
+        - { path: ^/standings, role: PUBLIC_ACCESS }
         - { path: ^/admin/, role: ROLE_ADMIN }
-        - { path: ^/api$, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/api$, role: PUBLIC_ACCESS }
         - { path: ^/api, roles: [ IS_AUTHENTICATED_FULLY ] }

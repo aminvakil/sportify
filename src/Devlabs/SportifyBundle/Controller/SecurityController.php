@@ -8,12 +8,12 @@ class SecurityController extends AbstractController
 {
     public function loginAction()
     {
-        $authenticationUtils = $this->get('security.authentication_utils');
+        $authenticationUtils = $this->container->get('security.authentication_utils');
 
         return $this->render('Security/login.html.twig', array(
             'last_username' => $authenticationUtils->getLastUsername(),
             'error' => $authenticationUtils->getLastAuthenticationError(),
-            'csrf_token' => $this->get('security.csrf.token_manager')->getToken('authenticate'),
+            'csrf_token' => $this->container->get('security.csrf.token_manager')->getToken('authenticate'),
         ));
     }
 

@@ -5,13 +5,14 @@ namespace Devlabs\SportifyBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\EquatableInterface;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @ORM\Entity(repositoryClass="Devlabs\SportifyBundle\Entity\UserRepository")
  * @ORM\Table(name="users")
  */
-class User implements UserInterface, EquatableInterface
+class User implements UserInterface, PasswordAuthenticatedUserInterface, EquatableInterface
 {
     const ROLE_DEFAULT = 'ROLE_USER';
     const ROLE_SUPER_ADMIN = 'ROLE_SUPER_ADMIN';
@@ -115,7 +116,7 @@ class User implements UserInterface, EquatableInterface
         return (string) $this->getUsername();
     }
 
-    public function isEqualTo(UserInterface $user)
+    public function isEqualTo(UserInterface $user): bool
     {
         if (!$user instanceof self) {
             return false;
@@ -129,7 +130,7 @@ class User implements UserInterface, EquatableInterface
             && count($this->getRoles()) === count(array_intersect($this->getRoles(), $user->getRoles()));
     }
 
-    public function eraseCredentials()
+    public function eraseCredentials(): void
     {
         $this->plainPassword = null;
     }
@@ -149,6 +150,11 @@ class User implements UserInterface, EquatableInterface
     public function getUsername()
     {
         return $this->username;
+    }
+
+    public function getUserIdentifier(): string
+    {
+        return (string) $this->username;
     }
 
     public function setUsername($username)
@@ -206,7 +212,7 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
-    public function getPassword()
+    public function getPassword(): ?string
     {
         return $this->password;
     }
@@ -299,7 +305,7 @@ class User implements UserInterface, EquatableInterface
             && $this->passwordRequestedAt->getTimestamp() + $ttl > time();
     }
 
-    public function getRoles()
+    public function getRoles(): array
     {
         $roles = $this->roles;
         $roles[] = self::ROLE_DEFAULT;

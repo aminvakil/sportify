@@ -5,7 +5,7 @@ namespace Devlabs\SportifyBundle\Services;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Doctrine\ORM\EntityManager;
-use Devlabs\SportifyBundle\Entity\Match;
+use Devlabs\SportifyBundle\Entity\MatchEntity;
 use Devlabs\SportifyBundle\Entity\Prediction;
 use Devlabs\SportifyBundle\Entity\PredictionChampion;
 use Devlabs\SportifyBundle\Entity\Score;
@@ -148,7 +148,7 @@ class ScoreUpdater
          * Get a list of the finished matches
          * for which there are NOT SCORED predictions
          */
-        $matches = $this->em->getRepository(Match::class)
+        $matches = $this->em->getRepository(MatchEntity::class)
             ->getFinishedNotScored();
 
         // get list of enabled users
@@ -244,7 +244,7 @@ class ScoreUpdater
                 ->getByTournamentOrderByPoints($tournament);
 
             $matchesFinished = $this->em
-                ->getRepository(Match::class)
+                ->getRepository(MatchEntity::class)
                 ->getFinishedByTournament($tournament);
 
             $matchCount = count($matchesFinished);

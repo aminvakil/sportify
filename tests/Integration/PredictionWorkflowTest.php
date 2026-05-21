@@ -4,7 +4,7 @@ namespace Tests\Integration;
 
 require_once __DIR__.'/DatabaseTestCase.php';
 
-use Devlabs\SportifyBundle\Entity\Match;
+use Devlabs\SportifyBundle\Entity\MatchEntity;
 use Devlabs\SportifyBundle\Entity\Prediction;
 use Devlabs\SportifyBundle\Entity\Score;
 use Devlabs\SportifyBundle\Entity\Tournament;
@@ -40,8 +40,8 @@ class PredictionWorkflowTest extends DatabaseTestCase
 
         $this->em->clear();
 
-        $finishedMatch = $this->em->getRepository(Match::class)->find($finishedMatch->getId());
-        $upcomingMatch = $this->em->getRepository(Match::class)->find($upcomingMatch->getId());
+        $finishedMatch = $this->em->getRepository(MatchEntity::class)->find($finishedMatch->getId());
+        $upcomingMatch = $this->em->getRepository(MatchEntity::class)->find($upcomingMatch->getId());
         $exactUser = $this->em->getRepository(User::class)->find($exactUser->getId());
         $outcomeUser = $this->em->getRepository(User::class)->find($outcomeUser->getId());
         $tournament = $this->em->getRepository(Tournament::class)->find($tournament->getId());

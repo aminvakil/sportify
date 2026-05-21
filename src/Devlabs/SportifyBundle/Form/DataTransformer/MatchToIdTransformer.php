@@ -2,7 +2,7 @@
 
 namespace Devlabs\SportifyBundle\Form\DataTransformer;
 
-use Devlabs\SportifyBundle\Entity\Match;
+use Devlabs\SportifyBundle\Entity\MatchEntity;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\Form\DataTransformerInterface;
 use Symfony\Component\Form\Exception\TransformationFailedException;
@@ -46,7 +46,7 @@ class MatchToIdTransformer implements DataTransformerInterface
         }
 
         $match = $this->manager
-            ->getRepository(Match::class)
+            ->getRepository(MatchEntity::class)
             // query for the match with this id
             ->find($matchId)
         ;

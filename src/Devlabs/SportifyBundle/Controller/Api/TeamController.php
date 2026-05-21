@@ -25,7 +25,7 @@ class TeamController extends BaseApiController
      */
     public function getTournamentsAction($id)
     {
-        $object = $this->getDoctrine()->getManager()
+        $object = $this->container->get('doctrine')->getManager()
             ->getRepository($this->repositoryName)
             ->findOneById($id);
 

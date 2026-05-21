@@ -45,7 +45,7 @@ class Tournament
     private $scores;
 
     /**
-     * @ORM\OneToMany(targetEntity="Match" , mappedBy="tournamentId" , cascade={"all"})
+     * @ORM\OneToMany(targetEntity="MatchEntity" , mappedBy="tournamentId" , cascade={"all"})
      */
     private $matches;
 
@@ -213,11 +213,11 @@ class Tournament
     /**
      * Add match
      *
-     * @param \Devlabs\SportifyBundle\Entity\Match $match
+     * @param \Devlabs\SportifyBundle\Entity\MatchEntity $match
      *
      * @return Tournament
      */
-    public function addMatch(\Devlabs\SportifyBundle\Entity\Match $match)
+    public function addMatch(\Devlabs\SportifyBundle\Entity\MatchEntity $match)
     {
         $this->matches[] = $match;
 
@@ -227,9 +227,9 @@ class Tournament
     /**
      * Remove match
      *
-     * @param \Devlabs\SportifyBundle\Entity\Match $match
+     * @param \Devlabs\SportifyBundle\Entity\MatchEntity $match
      */
-    public function removeMatch(\Devlabs\SportifyBundle\Entity\Match $match)
+    public function removeMatch(\Devlabs\SportifyBundle\Entity\MatchEntity $match)
     {
         $this->matches->removeElement($match);
     }

@@ -32,7 +32,7 @@ class MatchEntityType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'Devlabs\SportifyBundle\Entity\Match',
+            'data_class' => 'Devlabs\SportifyBundle\Entity\MatchEntity',
             'button_action' => null,
             'other_data' => null
         ));

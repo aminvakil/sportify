@@ -5,7 +5,7 @@ namespace Devlabs\SportifyBundle\Security;
 use Devlabs\SportifyBundle\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
-use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
+use Symfony\Component\Security\Core\Exception\UserNotFoundException;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 
@@ -18,9 +18,9 @@ class UserProvider implements UserProviderInterface
         $this->em = $em;
     }
 
-    public function loadUserByUsername($username)
+    public function loadUserByIdentifier(string $identifier): UserInterface
     {
-        $canonical = $this->canonicalize($username);
+        $canonical = $this->canonicalize($identifier);
         $user = $this->em->getRepository(User::class)->createQueryBuilder('u')
             ->where('u.usernameCanonical = :username')
             ->orWhere('u.emailCanonical = :username')
@@ -29,13 +29,18 @@ class UserProvider implements UserProviderInterface
             ->getOneOrNullResult();
 
         if (!$user) {
-            throw new UsernameNotFoundException(sprintf('User "%s" was not found.', $username));
+            throw new UserNotFoundException(sprintf('User "%s" was not found.', $identifier));
         }
 
         return $user;
     }
 
-    public function refreshUser(UserInterface $user)
+    public function loadUserByUsername($username)
+    {
+        return $this->loadUserByIdentifier($username);
+    }
+
+    public function refreshUser(UserInterface $user): UserInterface
     {
         if (!$user instanceof User) {
             throw new UnsupportedUserException(sprintf('Instances of "%s" are not supported.', get_class($user)));
@@ -44,13 +49,13 @@ class UserProvider implements UserProviderInterface
         $refreshedUser = $this->em->getRepository(User::class)->find($user->getId());
 
         if (!$refreshedUser) {
-            throw new UsernameNotFoundException(sprintf('User with id "%s" was not found.', $user->getId()));
+            throw new UserNotFoundException(sprintf('User with id "%s" was not found.', $user->getId()));
         }
 
         return $refreshedUser;
     }
 
-    public function supportsClass($class)
+    public function supportsClass(string $class): bool
     {
         return User::class === $class || is_subclass_of($class, User::class);
     }
