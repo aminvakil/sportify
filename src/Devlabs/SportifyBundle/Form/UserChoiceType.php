@@ -16,7 +16,7 @@ class UserChoiceType extends AbstractType
     /**
      * @param OptionsResolver $resolver
      */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults(array(
             'data_class' => 'Devlabs\SportifyBundle\Entity\User',
@@ -24,7 +24,7 @@ class UserChoiceType extends AbstractType
         ));
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $this->data = $options['data'];
         $this->choices = $options['choices'];

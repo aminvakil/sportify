@@ -34,7 +34,7 @@ abstract class FunctionalTestCase extends WebTestCase
     protected function resetDatabase()
     {
         $connection = $this->em->getConnection();
-        $schemaManager = $connection->getSchemaManager();
+        $schemaManager = $connection->createSchemaManager();
 
         $connection->executeQuery('SET FOREIGN_KEY_CHECKS=0');
         foreach ($schemaManager->listTableNames() as $tableName) {

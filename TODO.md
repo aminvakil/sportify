@@ -34,7 +34,7 @@
 - FOSRestBundle and NelmioApiDocBundle have been removed; API routes are explicit YAML routes and API JSON responses are serialized directly with JMS Serializer.
 - The unsupported `symfony/symfony` meta-package has been replaced with explicit Symfony component packages pinned to 7.4.*.
 - `phpunit.xml.dist` has been migrated to the PHPUnit 9.6 schema.
-- Symfony 7.4 is installed and locked; re-check deprecation output before the next backend milestone.
+- Symfony 7.4 is installed and locked; deprecation re-check is clean for self and direct notices. The remaining 403 indirect notices are a single vendor deprecation (`Subscribing to onSchemaCreateTable events is deprecated`, doctrine/dbal) that needs a future DBAL major upgrade and is not actionable from app code.
 - Backend work should now focus on infrastructure runtime upgrades.
 
 ## Next steps
