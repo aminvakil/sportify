@@ -1,6 +1,6 @@
 FROM composer:2.2.25 AS composer
 
-FROM php:8.1-cli-bookworm
+FROM php:8.2-cli-bookworm
 
 RUN set -eux; \
     apt-get update; \
