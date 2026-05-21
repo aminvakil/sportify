@@ -7,17 +7,23 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
+use Doctrine\ORM\EntityManagerInterface;
 
 /**
  * Class CreateOAuthClientCommand
  * @package Devlabs\SportifyBundle\Command
  */
-class CreateOAuthClientCommand extends Command implements ContainerAwareInterface
+class CreateOAuthClientCommand extends Command
 {
-    use ContainerAwareTrait;
-    protected function configure()
+    private $em;
+
+    public function __construct(EntityManagerInterface $em)
+    {
+        parent::__construct();
+        $this->em = $em;
+    }
+
+    protected function configure(): void
     {
         $this
             ->setName('oauth:client:create')
@@ -39,7 +45,7 @@ class CreateOAuthClientCommand extends Command implements ContainerAwareInterfac
             );
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $name = $input->getArgument('name');
         $redirectUri = $input->getArgument('redirectUri');
@@ -50,9 +56,8 @@ class CreateOAuthClientCommand extends Command implements ContainerAwareInterfac
         $client->setRedirectUris(array($redirectUri));
         $client->setAllowedGrantTypes(array($grantType));
 
-        $em = $this->getContainer()->get('doctrine.orm.entity_manager');
-        $em->persist($client);
-        $em->flush();
+        $this->em->persist($client);
+        $this->em->flush();
 
         $output->writeln(
             sprintf(
