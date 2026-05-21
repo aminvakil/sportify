@@ -25,7 +25,7 @@
         "guzzlehttp/guzzle": "~6.0",
         "intervention/image": "^2.3",
         "jms/serializer-bundle": "^5.5",
-        "willdurand/hateoas-bundle": "^2.4",
+        "willdurand/hateoas-bundle": "^3.0",
         "doctrine/dbal": "^3.6",
         "doctrine/persistence": "^3.1",
         "symfony/contracts": "^3.0",
