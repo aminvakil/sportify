@@ -13,7 +13,7 @@
 - GitHub Actions CI workflow is in place and green on main.
 - Symfony deprecation notices have been reduced to the remaining vendor-level batch.
 - `symfony/monolog-bundle` has been upgraded to 3.6, removing it from the Symfony 4.4 blocker list.
-- `symfony/swiftmailer-bundle` has been upgraded to 3.3 and Swiftmailer to 6.3, removing it from the Symfony 4.4 blocker list while keeping full Mailer replacement deferred.
+- Swiftmailer and `symfony/swiftmailer-bundle` have been replaced with Symfony Mailer for registration and password reset email delivery.
 - `jms/serializer-bundle` has been upgraded to 3.10 and `willdurand/hateoas-bundle` to 2.6, removing them from the Symfony 5.4 blocker list and removing the old `doctrine/common ~2` constraint from Hateoas.
 - `symfony/phpunit-bridge` has been upgraded to 5.4, with `SYMFONY_PHPUNIT_VERSION=7.5` pinned for the legacy PHPUnit test suite.
 - Composer package constraints have been reviewed for the current Symfony 4.4/PHP 7.4 baseline; unused `sensio/generator-bundle` was removed and `doctrine/doctrine-cache-bundle` is no longer a direct dependency.
@@ -26,8 +26,8 @@
 - The leftover `Team` unique-entity validation annotation has been moved to YAML.
 - The app bootstrap no longer manually registers Doctrine's annotation autoloader.
 - `doctrine/annotations` is no longer a direct dependency; it remains installed transitively through Doctrine ORM, JMS serializer, and Hateoas.
-- Current email usage is registration/password reset through Swiftmailer; full Mailer replacement is still deferred.
-- Current abandoned packages in `composer.lock`: `doctrine/annotations`, `doctrine/cache`, `swiftmailer/swiftmailer`, and `symfony/swiftmailer-bundle`.
+- Current email usage is registration/password reset through Symfony Mailer.
+- Current abandoned packages in `composer.lock`: `doctrine/annotations` and `doctrine/cache`.
 - FOSUserBundle has been removed; login, logout, registration, and password reset now use Symfony Security with the app `User` entity/provider/checker.
 - FOSOAuthServerBundle has been removed; password-grant token issuance and API access-token authentication now use small app-owned services/controllers against the existing OAuth tables.
 - FOSRestBundle and NelmioApiDocBundle have been removed; API routes are explicit YAML routes and API JSON responses are serialized directly with JMS Serializer.
@@ -58,9 +58,7 @@ Keep each milestone as a PR and verify from a clean Docker state before moving o
 
 1. Symfony 5.4 blocker-removal PR(s), grouped by subsystem rather than tiny package changes:
    - Keep Doctrine annotation removal grouped by ORM mapping work; ORM mappings still rely on annotations.
-   - Defer Swiftmailer replacement until the app can install `symfony/mailer`, unless it becomes a hard Symfony 5.4 blocker.
 2. Post-5.4 modernization PR(s):
-   - Replace Swiftmailer with Symfony Mailer.
    - Re-check abandoned packages and `composer why-not` output.
    - Add any missing tests discovered during the 5.4 upgrade.
 3. Continue one LTS at a time:

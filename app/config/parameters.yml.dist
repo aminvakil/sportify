@@ -8,11 +8,13 @@ parameters:
     database_password: ~
 
     # mail
-    mailer_transport:  smtp
-    mailer_host:       127.0.0.1
-    mailer_port:       587
-    mailer_user:       ~
-    mailer_password:   ~
+    # Put SMTP username/password in the DSN before the host:
+    # smtp://USERNAME:PASSWORD@SMTP_HOST:PORT
+    # Example for username "user@example.com" and password "app-password":
+    # smtp://user%40example.com:app-password@smtp.example.com:587
+    # Only encode special characters inside USERNAME/PASSWORD.
+    # The @ before SMTP_HOST separates credentials from host, so keep it as @.
+    mailer_dsn:        smtp://127.0.0.1:587
     mailer_sender_address: change-me@example.com
 
     # secret used for generating security-related tokens

@@ -30,8 +30,5 @@ monolog:
         #    type:   chromephp
         #    level:  info
 
-#swiftmailer:
-#    delivery_address: me@example.com
-
 parameters:
     app.registration_confirmation_enabled: false
