@@ -5,8 +5,8 @@
 This is a legacy Symfony application being upgraded incrementally.
 
 Current baseline:
-- Symfony 6.4 LTS
-- PHP 8.2 in Docker
+- Symfony 7.4 LTS
+- PHP 8.5 in Docker
 - Apache httpd 2.4 in Docker serving `web/` and proxying dynamic requests to PHP
 - MySQL 5.7 in Docker
 - Composer 2.2.x in Docker
@@ -26,7 +26,6 @@ The project is intentionally old. Do not modernize broad areas unless the curren
 - Keep Docker as the source of truth for local verification.
 - Do not install host packages.
 - Do not commit secrets, API tokens, local `parameters.yml`, `vendor/`, `node_modules/`, `lib/`, generated assets, or cache/log files.
-- Commit and push changes yourself on non-`main` branches, then create a pull request.
 - Do not push on `main` unless explicitly asked.
 - Keep PR descriptions concise; do not add a detailed summary unless asked.
 - For user-facing web changes, verify the affected flow in a real local browser in addition to command-line smoke checks.
@@ -38,40 +37,44 @@ The project is intentionally old. Do not modernize broad areas unless the curren
 - For failing PHPUnit/Symfony runs, prefer extracting concise failure sections (for example, grep around `^[0-9]+)`), not full HTML error pages or full logs.
 - Keep searches targeted. Use narrower `rg` patterns, `--count`, or `head` before printing large match sets.
 - Prefer `git diff --stat` plus targeted diffs for risky files instead of printing broad diffs.
-- For doc-only changes, still commit and push on a non-`main` branch, but do not run local Docker verification or wait for CI unless explicitly asked.
 - Keep progress updates short and avoid repeating branch/verification details unless they changed or are needed for the final summary.
 
 ## Verification rule
 
-Before validating each upgrade step, reset Docker state:
-
-```sh
-docker compose down -v
-```
-
-Then verify from a clean setup as much as practical:
+Do not reset Docker state (`docker compose down -v`) before verification. If the stack is already up, reuse it. If it isn't, bring it up and make sure the database schema is in place before running checks:
 
 ```sh
 cp docker/symfony/parameters.yml app/config/parameters.yml
-docker compose build
+docker compose up --wait httpd
+docker compose run --rm php php bin/console doctrine:database:create --if-not-exists
+docker compose run --rm php php bin/console doctrine:schema:update --force
+```
+
+Then run only the suite that matches the type of change.
+
+### PHP / Symfony changes
+
+```sh
 docker compose run --rm php composer install --no-interaction --no-progress
+docker compose run --rm php php bin/console cache:clear --env=test
+docker compose run --rm php php bin/console doctrine:schema:validate
+docker compose run --rm php vendor/bin/simple-phpunit --testsuite 'Project Test Suite'
+curl -fsSI --max-time 10 http://localhost:8000/
+```
+
+Do not run the frontend asset pipeline for PHP-only changes.
+
+### Frontend changes
+
+```sh
 docker compose run --rm node npm install
 docker compose run --rm node bower install
 docker compose run --rm node gulp
-docker compose run --rm php php bin/console cache:clear --env=test
-docker compose run --rm php php bin/console doctrine:database:create --if-not-exists
-docker compose run --rm php php bin/console doctrine:schema:validate --skip-sync
-docker compose run --rm php php bin/console doctrine:schema:update --force
-docker compose run --rm php vendor/bin/simple-phpunit --testsuite 'Project Test Suite'
-docker compose up --wait httpd
-curl -I --max-time 10 http://localhost:8000/
-# Leave Docker running after local verification so the user can test manually.
+# docker compose run --rm node npm test   # once a frontend test suite exists — see TODO
+curl -fsSI --max-time 10 http://localhost:8000/css/style.css
+curl -fsSI --max-time 10 http://localhost:8000/js/all-scripts.js
 ```
 
-## Upgrade strategy
+Do not run the PHP test suite for frontend-only changes. Frontend modernization additionally requires browser-based verification by the agent: load the affected pages in a real browser and confirm the flow visibly works, not just that command-line smoke checks return 200.
 
-Preferred path:
-1. Keep Symfony 6.4 test suite passing.
-2. Resolve Symfony 6.4 deprecations and Symfony 7.4 blockers.
-3. Upgrade Docker PHP to the minimum supported version before Symfony 7.4.
-4. Keep frontend modernization separate from PHP/Symfony upgrades.
+Leave Docker running after local verification so the user can test manually.
