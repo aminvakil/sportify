@@ -26,10 +26,11 @@ The project is intentionally old. Do not modernize broad areas unless the curren
 - Keep Docker as the source of truth for local verification.
 - Do not install host packages.
 - Do not commit secrets, API tokens, local `parameters.yml`, `vendor/`, `node_modules/`, `lib/`, generated assets, or cache/log files.
+- Commit and push changes yourself on non-`main` branches.
 - Do not push on `main` unless explicitly asked.
 - Keep PR descriptions concise; do not add a detailed summary unless asked.
 - For user-facing web changes, verify the affected flow in a real local browser in addition to command-line smoke checks.
-- For changes limited to `AGENTS.md` and/or `TODO.md`, commit and push when requested, but do not run local Docker verification or wait for CI unless explicitly asked.
+- For changes limited to `AGENTS.md` and/or `TODO.md`, still commit and push on a non-`main` branch, but do not run local Docker verification or wait for CI unless explicitly asked.
 
 ## Output and token discipline
 
@@ -37,7 +38,7 @@ The project is intentionally old. Do not modernize broad areas unless the curren
 - For failing PHPUnit/Symfony runs, prefer extracting concise failure sections (for example, grep around `^[0-9]+)`), not full HTML error pages or full logs.
 - Keep searches targeted. Use narrower `rg` patterns, `--count`, or `head` before printing large match sets.
 - Prefer `git diff --stat` plus targeted diffs for risky files instead of printing broad diffs.
-- For doc-only changes, commit and push when requested; do not run local Docker verification or wait for CI unless explicitly asked.
+- For doc-only changes, still commit and push on a non-`main` branch, but do not run local Docker verification or wait for CI unless explicitly asked.
 - Keep progress updates short and avoid repeating branch/verification details unless they changed or are needed for the final summary.
 
 ## Verification rule
