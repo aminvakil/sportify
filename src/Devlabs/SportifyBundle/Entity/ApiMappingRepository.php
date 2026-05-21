@@ -26,11 +26,9 @@ class ApiMappingRepository extends \Doctrine\ORM\EntityRepository
             ->where('am.entityType = :entity_type')
             ->andWhere('am.apiName = :api_name')
             ->andWhere('am.apiObjectId = :api_object_id')
-            ->setParameters(array(
-                'entity_type' => $entityType,
-                'api_name' => $apiName,
-                'api_object_id' => $apiObjectId
-            ));
+            ->setParameter('entity_type', $entityType)
+            ->setParameter('api_name', $apiName)
+            ->setParameter('api_object_id', $apiObjectId);
 
         try {
             return $query->getQuery()->getSingleResult();
@@ -58,11 +56,9 @@ class ApiMappingRepository extends \Doctrine\ORM\EntityRepository
             ->where('am.entityId = :entity_id')
             ->andWhere('am.entityType = :entity_type')
             ->andWhere('am.apiName = :api_name')
-            ->setParameters(array(
-                'entity_id' => $entityObject->getId(),
-                'entity_type' => $entityType,
-                'api_name' => $apiName
-            ));
+            ->setParameter('entity_id', $entityObject->getId())
+            ->setParameter('entity_type', $entityType)
+            ->setParameter('api_name', $apiName);
 
         try {
             return $query->getQuery()->getSingleResult();

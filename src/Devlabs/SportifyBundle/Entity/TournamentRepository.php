@@ -21,7 +21,7 @@ class TournamentRepository extends \Doctrine\ORM\EntityRepository
             ->from(Tournament::class, 't')
             ->join('t.scores', 's')
             ->where('s.userId = :user_id')
-            ->setParameters(array('user_id' => $user->getId()))
+            ->setParameter('user_id', $user->getId())
             ->getQuery()
             ->getResult();
     }
