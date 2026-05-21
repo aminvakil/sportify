@@ -66,7 +66,6 @@ This is the active track. Keep each step as its own PR.
 2. Upgrade the Node/npm runtime in Docker in a focused PR.
 3. Replace Bower with an npm-based dependency flow in a focused PR.
 4. Replace Gulp 3 with a current build setup in a focused PR.
-5. Every frontend PR must include a browser-based check of the affected pages by the coding agent, not just command-line smoke checks.
 
 ## Deferred backend infrastructure path
 
