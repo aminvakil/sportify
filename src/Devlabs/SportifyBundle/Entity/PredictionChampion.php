@@ -84,7 +84,7 @@ class PredictionChampion
      *
      * @return PredictionWinner
      */
-    public function setUserId(\Devlabs\SportifyBundle\Entity\User $userId = null)
+    public function setUserId(?\Devlabs\SportifyBundle\Entity\User $userId = null)
     {
         $this->userId = $userId;
 
@@ -108,7 +108,7 @@ class PredictionChampion
      *
      * @return PredictionWinner
      */
-    public function setTournamentId(\Devlabs\SportifyBundle\Entity\Tournament $tournamentId = null)
+    public function setTournamentId(?\Devlabs\SportifyBundle\Entity\Tournament $tournamentId = null)
     {
         $this->tournamentId = $tournamentId;
 
@@ -132,7 +132,7 @@ class PredictionChampion
      *
      * @return PredictionWinner
      */
-    public function setTeamId(\Devlabs\SportifyBundle\Entity\Team $teamId = null)
+    public function setTeamId(?\Devlabs\SportifyBundle\Entity\Team $teamId = null)
     {
         $this->teamId = $teamId;
 

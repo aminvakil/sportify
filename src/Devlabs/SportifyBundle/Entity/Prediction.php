@@ -149,7 +149,7 @@ class Prediction
      *
      * @return Prediction
      */
-    public function setMatchId(\Devlabs\SportifyBundle\Entity\MatchEntity $matchId = null)
+    public function setMatchId(?\Devlabs\SportifyBundle\Entity\MatchEntity $matchId = null)
     {
         $this->matchId = $matchId;
 
@@ -173,7 +173,7 @@ class Prediction
      *
      * @return Prediction
      */
-    public function setUserId(\Devlabs\SportifyBundle\Entity\User $userId = null)
+    public function setUserId(?\Devlabs\SportifyBundle\Entity\User $userId = null)
     {
         $this->userId = $userId;
 
