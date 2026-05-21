@@ -5,7 +5,7 @@
 - Docker development setup exists and has been verified.
 - Docker httpd service serves `web/` static files and proxies dynamic requests to PHP.
 - Symfony has been upgraded to 6.4 LTS.
-- Docker PHP has been upgraded incrementally from 7.0 to 8.1.
+- Docker PHP has been upgraded incrementally from 7.0 to 8.2.
 - Composer dependencies have been updated to latest versions within existing constraints.
 - SensioDistributionBundle, its Composer script handlers, the generated requirements/config checker flow, and transitive sensiolabs/security-checker have been removed.
 - Basic integration workflow test exists for tournaments, users, predictions, scoring, standings, and helper/repository calls.
@@ -33,7 +33,7 @@
 - FOSOAuthServerBundle has been removed; password-grant token issuance and API access-token authentication now use small app-owned services/controllers against the existing OAuth tables.
 - FOSRestBundle and NelmioApiDocBundle have been removed; API routes are explicit YAML routes and API JSON responses are serialized directly with JMS Serializer.
 - `composer why-not symfony/symfony 6.4.*` now reports no installed package blockers.
-- `composer why-not symfony/symfony 7.4.*` reports blockers in the root Symfony constraint and PHP 8.1.
+- `composer why-not symfony/symfony 7.4.*` reports only the root Symfony constraint blocker.
 - Symfony 6.4 test output currently reports 17 self, 38 direct, 407 indirect, and 153 other deprecation notices with the expanded functional/API test suite.
 - PHPUnit reports that `phpunit.xml.dist` validates against a deprecated schema; migrate it with `--migrate-configuration` in a focused follow-up.
 - The project still uses the unsupported `symfony/symfony` meta-package; replace it with individual Symfony packages in a focused follow-up to remove the Symfony 4+ warning and avoid its limitations.
@@ -64,7 +64,6 @@ Keep each milestone as a PR and verify from a clean Docker state before moving o
    - Re-check abandoned packages and `composer why-not` output after each blocker-removal step.
    - Add any missing tests discovered during the Symfony 6.4 upgrade.
 2. Continue one LTS at a time:
-   - Upgrade Docker PHP to the minimum supported version before Symfony 7.4.
    - Symfony 6.4 -> 7.4.
 3. Defer structural modernization until a framework step requires it:
    - Do not migrate the directory layout or frontend toolchain opportunistically.
