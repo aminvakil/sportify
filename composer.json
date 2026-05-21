@@ -17,12 +17,12 @@
         }
     },
     "require": {
-        "php": ">=8.2",
+        "php": ">=8.5",
         "doctrine/orm": "^3",
         "doctrine/doctrine-bundle": "^2.18",
         "symfony/monolog-bundle": "^3.10",
         "symfony/polyfill-apcu": "^1.0",
-        "guzzlehttp/guzzle": "~6.0",
+        "guzzlehttp/guzzle": "^7.10",
         "intervention/image": "^2.3",
         "jms/serializer-bundle": "^5.5",
         "willdurand/hateoas-bundle": "^3.0",
@@ -77,7 +77,7 @@
     },
     "config": {
         "platform": {
-            "php": "8.2"
+            "php": "8.5"
         }
     },
     "extra": {

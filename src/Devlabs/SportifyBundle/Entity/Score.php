@@ -62,7 +62,7 @@ class Score
      *
      * @return Score
      */
-    public function setUserId(\Devlabs\SportifyBundle\Entity\User $userId = null)
+    public function setUserId(?\Devlabs\SportifyBundle\Entity\User $userId = null)
     {
         $this->userId = $userId;
 
@@ -86,7 +86,7 @@ class Score
      *
      * @return Score
      */
-    public function setTournamentId(\Devlabs\SportifyBundle\Entity\Tournament $tournamentId = null)
+    public function setTournamentId(?\Devlabs\SportifyBundle\Entity\Tournament $tournamentId = null)
     {
         $this->tournamentId = $tournamentId;
 

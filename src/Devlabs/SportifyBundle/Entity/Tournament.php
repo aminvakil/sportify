@@ -250,7 +250,7 @@ class Tournament
      *
      * @return Tournament
      */
-    public function setChampionTeamId(\Devlabs\SportifyBundle\Entity\Team $championTeamId = null)
+    public function setChampionTeamId(?\Devlabs\SportifyBundle\Entity\Team $championTeamId = null)
     {
         $this->championTeamId = $championTeamId;
 

@@ -141,7 +141,7 @@ class MatchEntity
      *
      * @return Match
      */
-    public function setTournamentId(\Devlabs\SportifyBundle\Entity\Tournament $tournamentId = null)
+    public function setTournamentId(?\Devlabs\SportifyBundle\Entity\Tournament $tournamentId = null)
     {
         $this->tournamentId = $tournamentId;
 
@@ -247,7 +247,7 @@ class MatchEntity
      *
      * @return Match
      */
-    public function setHomeTeamId(\Devlabs\SportifyBundle\Entity\Team $homeTeamId = null)
+    public function setHomeTeamId(?\Devlabs\SportifyBundle\Entity\Team $homeTeamId = null)
     {
         $this->homeTeamId = $homeTeamId;
 
@@ -271,7 +271,7 @@ class MatchEntity
      *
      * @return Match
      */
-    public function setAwayTeamId(\Devlabs\SportifyBundle\Entity\Team $awayTeamId = null)
+    public function setAwayTeamId(?\Devlabs\SportifyBundle\Entity\Team $awayTeamId = null)
     {
         $this->awayTeamId = $awayTeamId;
 
@@ -309,7 +309,7 @@ class MatchEntity
      */
     public function getNotificationSent()
     {
-        return (boolean) $this->notificationSent;
+        return (bool) $this->notificationSent;
     }
 
     /**

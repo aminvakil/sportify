@@ -1,6 +1,6 @@
 FROM composer:2.2.25 AS composer
 
-FROM php:8.2-cli-bookworm
+FROM php:8.5-cli-bookworm
 
 RUN set -eux; \
     apt-get update; \
@@ -19,7 +19,7 @@ RUN set -eux; \
         libonig-dev \
     ; \
     docker-php-ext-configure gd --with-freetype --with-jpeg; \
-    docker-php-ext-install -j"$(nproc)" curl gd intl mbstring opcache pdo_mysql zip; \
+    docker-php-ext-install -j"$(nproc)" curl gd intl mbstring pdo_mysql zip; \
     rm -rf /var/lib/apt/lists/*
 
 COPY --from=composer /usr/bin/composer /usr/local/bin/composer

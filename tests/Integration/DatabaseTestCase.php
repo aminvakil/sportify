@@ -68,7 +68,7 @@ abstract class DatabaseTestCase extends KernelTestCase
         return $user;
     }
 
-    protected function createTournament($name, \DateTime $startDate = null, \DateTime $endDate = null)
+    protected function createTournament($name, ?\DateTime $startDate = null, ?\DateTime $endDate = null)
     {
         $tournament = new Tournament();
         $tournament->setName($name);
@@ -81,7 +81,7 @@ abstract class DatabaseTestCase extends KernelTestCase
         return $tournament;
     }
 
-    protected function createTeam($name, Tournament $tournament = null)
+    protected function createTeam($name, ?Tournament $tournament = null)
     {
         $team = new Team();
         $team->setName($name);

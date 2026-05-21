@@ -214,7 +214,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Equatab
         return $this->lastLogin;
     }
 
-    public function setLastLogin(\DateTime $lastLogin = null)
+    public function setLastLogin(?\DateTime $lastLogin = null)
     {
         $this->lastLogin = $lastLogin;
 
@@ -238,7 +238,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Equatab
         return $this->passwordRequestedAt;
     }
 
-    public function setPasswordRequestedAt(\DateTime $passwordRequestedAt = null)
+    public function setPasswordRequestedAt(?\DateTime $passwordRequestedAt = null)
     {
         $this->passwordRequestedAt = $passwordRequestedAt;
 
