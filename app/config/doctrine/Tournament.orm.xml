@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity repository-class="Devlabs\SportifyBundle\Entity\TournamentRepository" name="Devlabs\SportifyBundle\Entity\Tournament" table="tournaments">
+    <id name="id" type="integer" column="id">
+      <generator strategy="IDENTITY"/>
+    </id>
+    <field name="name" type="string" column="name" length="100" nullable="false"/>
+    <field name="startDate" type="datetime" column="start_date" nullable="false"/>
+    <field name="endDate" type="datetime" column="end_date" nullable="false"/>
+    <one-to-many field="scores" target-entity="Score" mapped-by="tournamentId" fetch="LAZY">
+      <cascade>
+        <cascade-all/>
+      </cascade>
+    </one-to-many>
+    <one-to-many field="matches" target-entity="MatchEntity" mapped-by="tournamentId" fetch="LAZY">
+      <cascade>
+        <cascade-all/>
+      </cascade>
+    </one-to-many>
+    <one-to-many field="predictionsChampion" target-entity="PredictionChampion" mapped-by="tournamentId" fetch="LAZY">
+      <cascade>
+        <cascade-all/>
+      </cascade>
+    </one-to-many>
+    <many-to-one field="championTeamId" target-entity="Team" inversed-by="tournamentsChampion" fetch="LAZY">
+      <cascade>
+        <cascade-persist/>
+      </cascade>
+      <join-columns>
+        <join-column name="champion_team_id" referenced-column-name="id" nullable="true"/>
+      </join-columns>
+    </many-to-one>
+    <many-to-many field="teams" target-entity="Team" mapped-by="tournaments" fetch="LAZY"/>
+  </entity>
+</doctrine-mapping>

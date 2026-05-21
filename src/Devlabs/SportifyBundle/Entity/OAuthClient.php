@@ -2,44 +2,19 @@
 
 namespace Devlabs\SportifyBundle\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity()
- * @ORM\Table(name="oauth_clients")
- */
 class OAuthClient
 {
-    /**
-     * @ORM\Column(type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
     protected $id;
 
-    /**
-     * @ORM\Column(type="string", length=255, name="name")
-     */
     protected $name;
 
-    /**
-     * @ORM\Column(type="string", name="random_id")
-     */
     protected $randomId;
 
-    /**
-     * @ORM\Column(type="string", name="secret")
-     */
     protected $secret;
 
-    /**
-     * @ORM\Column(type="array", name="redirect_uris")
-     */
     protected $redirectUris = array();
 
-    /**
-     * @ORM\Column(type="array", name="allowed_grant_types")
-     */
     protected $allowedGrantTypes = array('authorization_code');
 
     public function __construct()

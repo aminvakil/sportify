@@ -25,8 +25,9 @@
 - App validation constraints have been moved from annotations to YAML, and Symfony validator annotation loading is disabled.
 - The leftover `Team` unique-entity validation annotation has been moved to YAML.
 - The app bootstrap no longer manually registers Doctrine's annotation autoloader.
-- `doctrine/annotations` is no longer a direct dependency; it remains installed transitively through DoctrineBundle and Hateoas while ORM mappings still use annotations.
+- `doctrine/annotations` is no longer a direct dependency; it remains installed transitively through DoctrineBundle and Hateoas.
 - Current email usage is registration/password reset through Symfony Mailer.
+- Doctrine ORM mappings have been moved from annotations to XML files in `app/config/doctrine`.
 - Current abandoned packages in `composer.lock`: `doctrine/annotations` and `doctrine/cache`.
 - FOSUserBundle has been removed; login, logout, registration, and password reset now use Symfony Security with the app `User` entity/provider/checker.
 - FOSOAuthServerBundle has been removed; password-grant token issuance and API access-token authentication now use small app-owned services/controllers against the existing OAuth tables.
@@ -60,7 +61,6 @@ Use bigger PRs, but keep them coherent:
 Keep each milestone as a PR and verify from a clean Docker state before moving on.
 
 1. Symfony 6.4 stabilization PR(s):
-   - Keep Doctrine annotation removal grouped by ORM mapping work; ORM mappings still rely on annotations.
    - Re-check abandoned packages and `composer why-not` output after each blocker-removal step.
    - Add any missing tests discovered during the Symfony 6.4 upgrade.
 2. Continue one LTS at a time:

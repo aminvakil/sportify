@@ -2,61 +2,26 @@
 
 namespace Devlabs\SportifyBundle\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
 use Intervention\Image\ImageManager;
 
-/**
- * @ORM\Entity(repositoryClass="Devlabs\SportifyBundle\Entity\TournamentRepository")
- * @ORM\Table(name="tournaments")
- */
 class Tournament
 {
-    /**
-     * @ORM\Column(type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
     private $id;
 
-    /**
-     * @ORM\Column(type="string", length=100)
-     */
     private $name;
 
-    /**
-     * @ORM\Column(type="datetime", name="start_date")
-     */
     private $startDate;
 
-    /**
-     * @ORM\Column(type="datetime", name="end_date")
-     */
     private $endDate;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="Team", inversedBy="tournamentsChampion", cascade={"persist"})
-     * @ORM\JoinColumn(name="champion_team_id", referencedColumnName="id")
-     */
     private $championTeamId;
 
-    /**
-     * @ORM\OneToMany(targetEntity="Score" , mappedBy="tournamentId" , cascade={"all"})
-     */
     private $scores;
 
-    /**
-     * @ORM\OneToMany(targetEntity="MatchEntity" , mappedBy="tournamentId" , cascade={"all"})
-     */
     private $matches;
 
-    /**
-     * @ORM\ManyToMany(targetEntity="Team", mappedBy="tournaments")
-     */
     private $teams;
 
-    /**
-     * @ORM\OneToMany(targetEntity="PredictionChampion" , mappedBy="tournamentId" , cascade={"all"})
-     */
     private $predictionsChampion;
 
     /**

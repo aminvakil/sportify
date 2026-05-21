@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity repository-class="Devlabs\SportifyBundle\Entity\MatchRepository" name="Devlabs\SportifyBundle\Entity\MatchEntity" table="matches">
+    <id name="id" type="integer" column="id">
+      <generator strategy="IDENTITY"/>
+    </id>
+    <field name="datetime" type="datetime" column="datetime" length="100" nullable="false"/>
+    <field name="homeGoals" type="integer" column="home_goals" nullable="true"/>
+    <field name="awayGoals" type="integer" column="away_goals" nullable="true"/>
+    <field name="notificationSent" type="boolean" column="notification_sent" nullable="false"/>
+    <one-to-many field="predictions" target-entity="Prediction" mapped-by="matchId" fetch="LAZY">
+      <cascade>
+        <cascade-all/>
+      </cascade>
+    </one-to-many>
+    <many-to-one field="homeTeamId" target-entity="Team" inversed-by="matchesHomeTeam" fetch="LAZY">
+      <join-columns>
+        <join-column name="home_team_id" referenced-column-name="id" nullable="true"/>
+      </join-columns>
+    </many-to-one>
+    <many-to-one field="awayTeamId" target-entity="Team" inversed-by="matchesAwayTeam" fetch="LAZY">
+      <join-columns>
+        <join-column name="away_team_id" referenced-column-name="id" nullable="true"/>
+      </join-columns>
+    </many-to-one>
+    <many-to-one field="tournamentId" target-entity="Tournament" inversed-by="matches" fetch="LAZY">
+      <join-columns>
+        <join-column name="tournament_id" referenced-column-name="id" nullable="true"/>
+      </join-columns>
+    </many-to-one>
+  </entity>
+</doctrine-mapping>

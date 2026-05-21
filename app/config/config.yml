@@ -67,7 +67,13 @@ doctrine:
     orm:
         auto_generate_proxy_classes: "%kernel.debug%"
         naming_strategy: doctrine.orm.naming_strategy.underscore
-        auto_mapping: true
+        mappings:
+            DevlabsSportifyBundle:
+                is_bundle: false
+                type: xml
+                dir: "%kernel.project_dir%/app/config/doctrine"
+                prefix: 'Devlabs\SportifyBundle\Entity'
+                alias: DevlabsSportifyBundle
 
 jms_serializer:
     metadata:

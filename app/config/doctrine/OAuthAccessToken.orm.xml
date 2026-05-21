@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity repository-class="Devlabs\SportifyBundle\Entity\OAuthAccessTokenRepository" name="Devlabs\SportifyBundle\Entity\OAuthAccessToken" table="oauth_access_tokens">
+    <id name="id" type="integer" column="id">
+      <generator strategy="IDENTITY"/>
+    </id>
+    <field name="token" type="string" column="token" unique="true" nullable="false"/>
+    <field name="expiresAt" type="integer" column="expires_at" nullable="true"/>
+    <field name="scope" type="string" column="scope" nullable="true"/>
+    <many-to-one field="user" target-entity="User" fetch="LAZY">
+      <join-columns>
+        <join-column name="user_id" referenced-column-name="id" nullable="true"/>
+      </join-columns>
+    </many-to-one>
+    <many-to-one field="client" target-entity="OAuthClient" fetch="LAZY">
+      <join-columns>
+        <join-column name="client_id" referenced-column-name="id" nullable="true"/>
+      </join-columns>
+    </many-to-one>
+  </entity>
+</doctrine-mapping>

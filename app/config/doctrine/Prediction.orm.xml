@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity repository-class="Devlabs\SportifyBundle\Entity\PredictionRepository" name="Devlabs\SportifyBundle\Entity\Prediction" table="predictions">
+    <unique-constraints>
+      <unique-constraint name="user_match" columns="user_id,match_id"/>
+    </unique-constraints>
+    <id name="id" type="integer" column="id">
+      <generator strategy="IDENTITY"/>
+    </id>
+    <field name="homeGoals" type="integer" column="home_goals" nullable="false"/>
+    <field name="awayGoals" type="integer" column="away_goals" nullable="false"/>
+    <field name="points" type="integer" column="points" nullable="true"/>
+    <field name="scoreAdded" type="boolean" column="score_added" nullable="false"/>
+    <many-to-one field="matchId" target-entity="MatchEntity" inversed-by="predictions" fetch="LAZY">
+      <join-columns>
+        <join-column name="match_id" referenced-column-name="id" nullable="true"/>
+      </join-columns>
+    </many-to-one>
+    <many-to-one field="userId" target-entity="User" inversed-by="predictions" fetch="LAZY">
+      <join-columns>
+        <join-column name="user_id" referenced-column-name="id" nullable="true"/>
+      </join-columns>
+    </many-to-one>
+  </entity>
+</doctrine-mapping>

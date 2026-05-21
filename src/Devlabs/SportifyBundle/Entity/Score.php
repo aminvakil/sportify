@@ -2,58 +2,23 @@
 
 namespace Devlabs\SportifyBundle\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass="Devlabs\SportifyBundle\Entity\ScoreRepository")
- * @ORM\Table(name="scores", uniqueConstraints={
- *      @ORM\UniqueConstraint(name="user_tournament", columns={"user_id", "tournament_id"})
- * })
- */
 class Score
 {
-    /**
-     * @ORM\Column(type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
     private $id;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="User", inversedBy="scores")
-     * @ORM\JoinColumn(name="user_id", referencedColumnName="id")
-     */
     private $userId;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="Tournament", inversedBy="scores")
-     * @ORM\JoinColumn(name="tournament_id", referencedColumnName="id")
-     */
     private $tournamentId;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
     private $points = 0;
 
-    /**
-     * @ORM\Column(type="integer", name="points_old")
-     */
     private $pointsOld = 0;
 
-    /**
-     * @ORM\Column(type="integer", name="pos_old")
-     */
     private $posOld = 0;
 
-    /**
-     * @ORM\Column(type="integer", name="pos_new")
-     */
     private $posNew = 0;
 
-    /**
-     * @ORM\Column(type="integer", name="exact_percentage")
-     */
     private $exactPredictionPercentage = 0;
 
     /**
