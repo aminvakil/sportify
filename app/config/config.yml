@@ -25,6 +25,8 @@ framework:
     form:            ~
     csrf_protection: ~
     validation:      ~
+    property_info:
+        with_constructor_extractor: false
     mailer:
         dsn: "%mailer_dsn%"
 #    serializer:
