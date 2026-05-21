@@ -33,7 +33,7 @@
 - FOSOAuthServerBundle has been removed; password-grant token issuance and API access-token authentication now use small app-owned services/controllers against the existing OAuth tables.
 - FOSRestBundle and NelmioApiDocBundle have been removed; API routes are explicit YAML routes and API JSON responses are serialized directly with JMS Serializer.
 - `composer why-not symfony/symfony 6.4.*` now reports no installed package blockers.
-- `composer why-not symfony/symfony 7.4.*` reports blockers in the root Symfony constraint, PHP 8.1, and Incenteev ParameterHandler.
+- `composer why-not symfony/symfony 7.4.*` reports blockers in the root Symfony constraint and PHP 8.1.
 - Symfony 6.4 test output currently reports 17 self, 38 direct, 407 indirect, and 153 other deprecation notices with the expanded functional/API test suite.
 - PHPUnit reports that `phpunit.xml.dist` validates against a deprecated schema; migrate it with `--migrate-configuration` in a focused follow-up.
 - The project still uses the unsupported `symfony/symfony` meta-package; replace it with individual Symfony packages in a focused follow-up to remove the Symfony 4+ warning and avoid its limitations.
