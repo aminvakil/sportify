@@ -34,6 +34,7 @@
 - `composer why-not symfony/symfony 6.4.*` now reports no installed package blockers.
 - `composer why-not symfony/symfony 7.4.*` reports blockers in the root Symfony constraint, PHP 8.1, DoctrineBundle/DBAL/Persistence, Incenteev ParameterHandler, and Doctrine event-manager/persistence versions.
 - Symfony 6.4 test output currently reports 17 self, 8 direct, 278 indirect, and 562 other deprecation notices with the expanded functional/API test suite.
+- PHPUnit reports that `phpunit.xml.dist` validates against a deprecated schema; migrate it with `--migrate-configuration` in a focused follow-up.
 - Backend upgrade path toward Symfony 7.4 LTS has been outlined below.
 
 ## Next steps
