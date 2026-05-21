@@ -14,10 +14,10 @@ class AuthFlowTest extends FunctionalTestCase
 
         $response = $this->login('login_failure@example.com', 'wrong-password');
         $this->assertTrue($response->isRedirect());
-        $this->assertRegExp('#/login$#', $response->headers->get('Location'));
+        $this->assertMatchesRegularExpression('#/login$#', $response->headers->get('Location'));
 
         $crawler = $this->client->followRedirect();
-        $this->assertContains('Invalid credentials.', $crawler->filter('body')->text(null, false));
+        $this->assertStringContainsString('Invalid credentials.', $crawler->filter('body')->text(null, false));
 
         $this->client->request('GET', '/user/profile');
         $this->assertTrue($this->client->getResponse()->isRedirect('/login'));
@@ -31,7 +31,7 @@ class AuthFlowTest extends FunctionalTestCase
 
         $this->client->request('GET', '/logout');
         $this->assertTrue($this->client->getResponse()->isRedirect());
-        $this->assertRegExp('#/$#', $this->client->getResponse()->headers->get('Location'));
+        $this->assertMatchesRegularExpression('#/$#', $this->client->getResponse()->headers->get('Location'));
 
         $this->client->request('GET', '/user/profile');
         $this->assertTrue($this->client->getResponse()->isRedirect('/login'));
@@ -44,7 +44,7 @@ class AuthFlowTest extends FunctionalTestCase
         $this->register('duplicate_user@example.com', 'testpass', 'duplicate_user');
 
         $this->assertTrue($this->client->getResponse()->isSuccessful());
-        $this->assertContains('already exists', $this->client->getResponse()->getContent());
+        $this->assertStringContainsString('already exists', $this->client->getResponse()->getContent());
     }
 
     public function testRegistrationRequiresMatchingPasswords()
@@ -60,7 +60,7 @@ class AuthFlowTest extends FunctionalTestCase
         $this->client->submit($form);
 
         $this->assertTrue($this->client->getResponse()->isSuccessful());
-        $this->assertContains('The password fields must match.', $this->client->getResponse()->getContent());
+        $this->assertStringContainsString('The password fields must match.', $this->client->getResponse()->getContent());
         $this->assertNull($this->em->getRepository(User::class)->findOneBy(array('email' => 'password-mismatch@example.com')));
     }
 
@@ -106,7 +106,7 @@ class AuthFlowTest extends FunctionalTestCase
         ));
         $this->client->submit($form);
         $this->assertTrue($this->client->getResponse()->isSuccessful());
-        $this->assertContains('Your profile was updated successfully!', $this->client->getResponse()->getContent());
+        $this->assertStringContainsString('Your profile was updated successfully!', $this->client->getResponse()->getContent());
 
         $this->client->restart();
         $this->login('profile_user@example.com', 'new-password');

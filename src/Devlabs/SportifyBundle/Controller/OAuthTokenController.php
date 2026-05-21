@@ -16,7 +16,7 @@ class OAuthTokenController extends AbstractController
         }
 
         try {
-            $accessToken = $this->get('app.oauth_token_issuer')->issuePasswordGrantToken(
+            $accessToken = $this->container->get('app.oauth_token_issuer')->issuePasswordGrantToken(
                 $request->request->get('client_id'),
                 $request->request->get('client_secret'),
                 $request->request->get('username'),

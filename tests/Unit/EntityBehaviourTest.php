@@ -2,7 +2,7 @@
 
 namespace Tests\Unit;
 
-use Devlabs\SportifyBundle\Entity\Match;
+use Devlabs\SportifyBundle\Entity\MatchEntity;
 use Devlabs\SportifyBundle\Entity\Prediction;
 use Devlabs\SportifyBundle\Entity\PredictionChampion;
 use Devlabs\SportifyBundle\Entity\Score;
@@ -17,7 +17,7 @@ class EntityBehaviourTest extends \PHPUnit\Framework\TestCase
      */
     public function testMatchAndPredictionOutcomes($homeGoals, $awayGoals, $expectedOutcome)
     {
-        $match = new Match();
+        $match = new MatchEntity();
         $match->setHomeGoals($homeGoals);
         $match->setAwayGoals($awayGoals);
 
@@ -40,7 +40,7 @@ class EntityBehaviourTest extends \PHPUnit\Framework\TestCase
 
     public function testPredictionCalculatesExactOutcomeAndMissedPoints()
     {
-        $match = new Match();
+        $match = new MatchEntity();
         $match->setHomeGoals(2);
         $match->setAwayGoals(1);
 
@@ -73,14 +73,14 @@ class EntityBehaviourTest extends \PHPUnit\Framework\TestCase
         $awayTeam = new Team();
         $awayTeam->setName('Away');
 
-        $pastMatch = new Match();
+        $pastMatch = new MatchEntity();
         $pastMatch->setId(123);
         $pastMatch->setTournamentId($tournament);
         $pastMatch->setHomeTeamId($homeTeam);
         $pastMatch->setAwayTeamId($awayTeam);
         $pastMatch->setDatetime(new \DateTime('-1 minute'));
 
-        $futureMatch = new Match();
+        $futureMatch = new MatchEntity();
         $futureMatch->setDatetime(new \DateTime('+1 day'));
 
         $this->assertTrue($pastMatch->hasStarted());
@@ -173,7 +173,7 @@ class EntityBehaviourTest extends \PHPUnit\Framework\TestCase
 
         $user = new User();
 
-        $match = new Match();
+        $match = new MatchEntity();
         $prediction = new Prediction();
         $score = new Score();
         $championPrediction = new PredictionChampion();

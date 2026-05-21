@@ -22,10 +22,13 @@ class PublicServicesPass implements CompilerPassInterface
             'parameter_bag',
             'router',
             'security.authentication_utils',
+            'security.authorization_checker',
             'security.csrf.token_manager',
-            'security.password_encoder',
+            'security.user_password_hasher',
+            'security.token_storage',
             'session',
             'twig',
+            'validator',
         );
 
         foreach ($serviceIds as $serviceId) {

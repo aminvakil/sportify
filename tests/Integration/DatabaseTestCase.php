@@ -3,7 +3,7 @@
 namespace Tests\Integration;
 
 use Devlabs\SportifyBundle\Entity\ApiMapping;
-use Devlabs\SportifyBundle\Entity\Match;
+use Devlabs\SportifyBundle\Entity\MatchEntity;
 use Devlabs\SportifyBundle\Entity\Prediction;
 use Devlabs\SportifyBundle\Entity\PredictionChampion;
 use Devlabs\SportifyBundle\Entity\Team;
@@ -98,7 +98,7 @@ abstract class DatabaseTestCase extends KernelTestCase
 
     protected function createMatch(Tournament $tournament, Team $homeTeam, Team $awayTeam, \DateTime $datetime, $homeGoals = null, $awayGoals = null)
     {
-        $match = new Match();
+        $match = new MatchEntity();
         $match->setTournamentId($tournament);
         $match->setHomeTeamId($homeTeam);
         $match->setAwayTeamId($awayTeam);
@@ -112,7 +112,7 @@ abstract class DatabaseTestCase extends KernelTestCase
         return $match;
     }
 
-    protected function createPrediction($user, Match $match, $homeGoals, $awayGoals, $scoreAdded = null, $points = null)
+    protected function createPrediction($user, MatchEntity $match, $homeGoals, $awayGoals, $scoreAdded = null, $points = null)
     {
         $prediction = new Prediction();
         $prediction->setUserId($user);

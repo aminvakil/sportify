@@ -13,7 +13,7 @@ use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Devlabs\SportifyBundle\Entity\ApiMapping;
 use Devlabs\SportifyBundle\Entity\Tournament;
 use Devlabs\SportifyBundle\Entity\Team;
-use Devlabs\SportifyBundle\Entity\Match;
+use Devlabs\SportifyBundle\Entity\MatchEntity;
 use Devlabs\SportifyBundle\Form\ApiMappingType;
 use Devlabs\SportifyBundle\Form\TournamentEntityType;
 use Devlabs\SportifyBundle\Form\TeamEntityType;
@@ -423,10 +423,10 @@ class AdminHelper
     /**
      * Get the input data for the Match form
      *
-     * @param Match $match
+     * @param MatchEntity $match
      * @return array
      */
-    public function getMatchFormInputData(Match $match)
+    public function getMatchFormInputData(MatchEntity $match)
     {
         $tournament = $match->getTournamentId();
         $formInputData = array();
@@ -453,11 +453,11 @@ class AdminHelper
     /**
      * Create Match Entity form
      *
-     * @param Match $match
+     * @param MatchEntity $match
      * @param $buttonAction
      * @return mixed
      */
-    public function createMatchForm(array $urlParams, Match $match, $buttonAction, $formInputData)
+    public function createMatchForm(array $urlParams, MatchEntity $match, $buttonAction, $formInputData)
     {
         $form = $this->container->get('form.factory')->create(MatchEntityType::class, $match, array(
             'action' => $this->container->get('router')->generate('admin_matches_modify', $urlParams),

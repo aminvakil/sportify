@@ -8,7 +8,7 @@ use Doctrine\ORM\EntityManager;
 use Devlabs\SportifyBundle\Form\PredictionType;
 use Symfony\Component\HttpFoundation\Request;
 use Devlabs\SportifyBundle\Entity\User;
-use Devlabs\SportifyBundle\Entity\Match;
+use Devlabs\SportifyBundle\Entity\MatchEntity;
 use Devlabs\SportifyBundle\Entity\Prediction;
 use Symfony\Component\Form\Form;
 
@@ -58,7 +58,7 @@ class MatchesHelper
      * @param $predictions
      * @return Prediction
      */
-    public function getPrediction(User $user, Match $match, array $predictions)
+    public function getPrediction(User $user, MatchEntity $match, array $predictions)
     {
         if (isset($predictions[$match->getId()])) {
             // link/merge prediction with EntityManager (set entity as managed by EM)
@@ -95,7 +95,7 @@ class MatchesHelper
      * @param $buttonAction
      * @return mixed
      */
-    public function createForm(Request $request, array $urlParams, Match $match, Prediction $prediction, $buttonAction)
+    public function createForm(Request $request, array $urlParams, MatchEntity $match, Prediction $prediction, $buttonAction)
     {
         $form = $this->container->get('form.factory')->create(PredictionType::class, $prediction, array(
             'action' => $this->container->get('router')->generate('matches_bet', $urlParams),
@@ -114,7 +114,7 @@ class MatchesHelper
      * @param $form
      * @param $match
      */
-    public function formHandleRequest(Request $request, Form $form, Match $match)
+    public function formHandleRequest(Request $request, Form $form, MatchEntity $match)
     {
         if ($request->request->get('prediction')['matchId'] == $match->getId()) {
             $form->handleRequest($request);

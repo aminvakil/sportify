@@ -2,7 +2,7 @@
 
 namespace Devlabs\SportifyBundle\Controller;
 
-use Devlabs\SportifyBundle\Entity\Match;
+use Devlabs\SportifyBundle\Entity\MatchEntity;
 use Devlabs\SportifyBundle\Entity\Prediction;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -30,7 +30,7 @@ class HistoryController extends AbstractController
         $modifiedDateTo = date("Y-m-d", strtotime($urlParams['date_to']) + 86500);
 
         // Get an instance of the Entity Manager
-        $em = $this->getDoctrine()->getManager();
+        $em = $this->container->get('doctrine')->getManager();
 
         // get the filter helper service
         $filterHelper = $this->container->get('app.filter.helper');
@@ -52,13 +52,13 @@ class HistoryController extends AbstractController
         }
 
         // get finished scored matches and the user's predictions for them
-        $matches = $em->getRepository(Match::class)
+        $matches = $em->getRepository(MatchEntity::class)
             ->getAlreadyScored($formSourceData['user_selected'], $urlParams['tournament_id'], $urlParams['date_from'], $modifiedDateTo);
         $predictions = $em->getRepository(Prediction::class)
             ->getAlreadyScored($formSourceData['user_selected'], $urlParams['tournament_id'], $urlParams['date_from'], $modifiedDateTo);
 
         // get user standings and set them as global Twig var
-        $this->get('app.twig.helper')->setUserScores($user);
+        $this->container->get('app.twig.helper')->setUserScores($user);
 
         // rendering the view and returning the response
         return $this->render(

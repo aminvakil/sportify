@@ -31,7 +31,7 @@ class ResettingController extends AbstractController
         if (!$user->isPasswordRequestNonExpired(self::TOKEN_TTL)) {
             $user->setConfirmationToken($this->generateToken());
             $user->setPasswordRequestedAt(new \DateTime());
-            $this->getDoctrine()->getManager()->flush();
+            $this->container->get('doctrine')->getManager()->flush();
             $this->sendResettingEmail($user);
         }
 
@@ -45,7 +45,7 @@ class ResettingController extends AbstractController
 
     public function resetAction(Request $request, $token)
     {
-        $user = $this->getDoctrine()->getRepository(User::class)->findOneBy(array('confirmationToken' => $token));
+        $user = $this->container->get('doctrine')->getRepository(User::class)->findOneBy(array('confirmationToken' => $token));
 
         if (!$user || !$user->isPasswordRequestNonExpired(self::TOKEN_TTL)) {
             throw new NotFoundHttpException('Invalid password reset token.');
@@ -55,11 +55,11 @@ class ResettingController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $user->setPassword($this->get('security.password_encoder')->encodePassword($user, $user->getPlainPassword()));
+            $user->setPassword($this->container->get('security.user_password_hasher')->hashPassword($user, $user->getPlainPassword()));
             $user->eraseCredentials();
             $user->setConfirmationToken(null);
             $user->setPasswordRequestedAt(null);
-            $this->getDoctrine()->getManager()->flush();
+            $this->container->get('doctrine')->getManager()->flush();
 
             return $this->redirectToRoute('fos_user_security_login');
         }
@@ -77,7 +77,7 @@ class ResettingController extends AbstractController
         }
 
         try {
-            return $this->get('app.user_provider')->loadUserByUsername($username);
+            return $this->container->get('app.user_provider')->loadUserByUsername($username);
         } catch (\Exception $e) {
             return null;
         }
@@ -95,7 +95,7 @@ class ResettingController extends AbstractController
         ), UrlGeneratorInterface::ABSOLUTE_URL);
 
         $context = array('user' => $user, 'confirmationUrl' => $confirmationUrl);
-        $template = $this->get('twig')->load('templates/emails/password_resetting.email.twig');
+        $template = $this->container->get('twig')->load('templates/emails/password_resetting.email.twig');
 
         $message = (new Email())
             ->subject(trim($template->renderBlock('subject', $context)))
@@ -105,6 +105,6 @@ class ResettingController extends AbstractController
             ->html($template->renderBlock('body_html', $context))
         ;
 
-        $this->get('mailer')->send($message);
+        $this->container->get('mailer')->send($message);
     }
 }

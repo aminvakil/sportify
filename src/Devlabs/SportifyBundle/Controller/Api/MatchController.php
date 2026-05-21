@@ -3,7 +3,7 @@
 namespace Devlabs\SportifyBundle\Controller\Api;
 
 use Devlabs\SportifyBundle\Controller\Base\BaseApiController;
-use Devlabs\SportifyBundle\Entity\Match;
+use Devlabs\SportifyBundle\Entity\MatchEntity;
 use Devlabs\SportifyBundle\Entity\Prediction;
 use Devlabs\SportifyBundle\Form\MatchEntityType;
 
@@ -14,8 +14,8 @@ use Devlabs\SportifyBundle\Form\MatchEntityType;
 class MatchController extends BaseApiController
 {
     protected $entityName = 'Match';
-    protected $fqEntityClass = Match::class;
-    protected $repositoryName = Match::class;
+    protected $fqEntityClass = MatchEntity::class;
+    protected $repositoryName = MatchEntity::class;
     protected $fqEntityFormClass = MatchEntityType::class;
 
     /**
@@ -29,7 +29,7 @@ class MatchController extends BaseApiController
             return $this->view(null, 403);
         }
 
-        $match = $this->getDoctrine()->getManager()
+        $match = $this->container->get('doctrine')->getManager()
             ->getRepository($this->repositoryName)
             ->findOneById($id);
 
@@ -53,7 +53,7 @@ class MatchController extends BaseApiController
             return $this->getUnauthorizedView();
         }
 
-        $prediction = $this->getDoctrine()->getManager()
+        $prediction = $this->container->get('doctrine')->getManager()
             ->getRepository(Prediction::class)
             ->findOneBy(array(
                 'matchId' => $id,

@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity(repositoryClass="Devlabs\SportifyBundle\Entity\MatchRepository")
  * @ORM\Table(name="matches")
  */
-class Match
+class MatchEntity
 {
     /**
      * @ORM\Column(type="integer")

@@ -17,8 +17,8 @@
         }
     },
     "require": {
-        "php": ">=7.2.5",
-        "symfony/symfony": "5.4.*",
+        "php": ">=8.1",
+        "symfony/symfony": "6.4.*",
         "doctrine/orm": "^2.11",
         "doctrine/doctrine-bundle": "^2.7",
         "symfony/monolog-bundle": "^3.10",
@@ -30,9 +30,12 @@
         "willdurand/hateoas-bundle": "^2.4",
         "doctrine/dbal": "^2.13",
         "doctrine/persistence": "^2.2",
-        "symfony/contracts": "^2.1",
-        "symfony/doctrine-messenger": "^5.4",
-        "egulias/email-validator": "^3.2"
+        "symfony/contracts": "^3.0",
+        "symfony/doctrine-messenger": "^6.4",
+        "egulias/email-validator": "^3.2",
+        "psr/cache": "^3.0",
+        "psr/link": "^2.0",
+        "masterminds/html5": "^2.9"
     },
     "scripts": {
         "post-install-cmd": [
@@ -44,7 +47,7 @@
     },
     "config": {
         "platform": {
-            "php": "7.4"
+            "php": "8.1"
         }
     },
     "extra": {
@@ -59,6 +62,6 @@
         }
     },
     "require-dev": {
-        "symfony/phpunit-bridge": "^5.4"
+        "symfony/phpunit-bridge": "^6.4"
     }
 }

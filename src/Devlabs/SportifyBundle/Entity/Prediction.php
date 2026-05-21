@@ -23,7 +23,7 @@ class Prediction
     private $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Match", inversedBy="predictions")
+     * @ORM\ManyToOne(targetEntity="MatchEntity", inversedBy="predictions")
      * @ORM\JoinColumn(name="match_id", referencedColumnName="id")
      */
     private $matchId;
@@ -177,11 +177,11 @@ class Prediction
     /**
      * Set matchId
      *
-     * @param \Devlabs\SportifyBundle\Entity\Match $matchId
+     * @param \Devlabs\SportifyBundle\Entity\MatchEntity $matchId
      *
      * @return Prediction
      */
-    public function setMatchId(\Devlabs\SportifyBundle\Entity\Match $matchId = null)
+    public function setMatchId(\Devlabs\SportifyBundle\Entity\MatchEntity $matchId = null)
     {
         $this->matchId = $matchId;
 
@@ -191,7 +191,7 @@ class Prediction
     /**
      * Get matchId
      *
-     * @return \Devlabs\SportifyBundle\Entity\Match
+     * @return \Devlabs\SportifyBundle\Entity\MatchEntity
      */
     public function getMatchId()
     {
@@ -241,10 +241,10 @@ class Prediction
     /**
      * Calculate the points from the prediction
      *
-     * @param Match $match
+     * @param MatchEntity $match
      * @return int
      */
-    public function calculatePoints(Match $match)
+    public function calculatePoints(MatchEntity $match)
     {
         if (($this->homeGoals === $match->getHomeGoals()) && ($this->awayGoals === $match->getAwayGoals())) {
             return self::POINTS_EXACT;

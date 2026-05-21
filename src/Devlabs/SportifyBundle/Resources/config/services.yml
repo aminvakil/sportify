@@ -45,7 +45,7 @@ services:
         arguments:
             - '@doctrine.orm.entity_manager'
             - '@app.user_provider'
-            - '@security.password_encoder'
+            - '@security.user_password_hasher'
             - '@app.user_checker'
             - '%app.oauth_access_token_lifetime%'
 

@@ -5,7 +5,7 @@ namespace Tests\Integration;
 require_once __DIR__.'/DatabaseTestCase.php';
 
 use Devlabs\SportifyBundle\Entity\ApiMapping;
-use Devlabs\SportifyBundle\Entity\Match;
+use Devlabs\SportifyBundle\Entity\MatchEntity;
 use Devlabs\SportifyBundle\Entity\Prediction;
 use Devlabs\SportifyBundle\Entity\PredictionChampion;
 use Devlabs\SportifyBundle\Entity\Score;
@@ -112,7 +112,7 @@ class RepositoryAndHelperTest extends DatabaseTestCase
         $this->createPrediction($user, $finishedScored, 0, 0, 1, Prediction::POINTS_EXACT);
         $this->createPrediction($otherUser, $upcomingUnpredicted, 0, 0);
 
-        $matchRepository = $this->em->getRepository(Match::class);
+        $matchRepository = $this->em->getRepository(MatchEntity::class);
         $predictionRepository = $this->em->getRepository(Prediction::class);
         $userRepository = $this->em->getRepository(User::class);
 

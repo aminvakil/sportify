@@ -1,4 +1,4 @@
-Devlabs\SportifyBundle\Entity\Match:
+Devlabs\SportifyBundle\Entity\MatchEntity:
     exclusion_policy: ALL
     properties:
         id:

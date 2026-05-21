@@ -6,7 +6,7 @@ use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Doctrine\ORM\EntityManager;
 use Devlabs\SportifyBundle\Entity\Tournament;
-use Devlabs\SportifyBundle\Entity\Match;
+use Devlabs\SportifyBundle\Entity\MatchEntity;
 use Devlabs\SportifyBundle\Entity\Team;
 use Devlabs\SportifyBundle\Entity\ApiMapping;
 
@@ -119,8 +119,8 @@ class Importer
 
                 $datetime = \DateTime::createFromFormat('Y-m-d H:i:s', $fixtureData['match_local_time']);
 
-                // create new Match object by using the parsed data
-                $match = new Match();
+                // create new match object by using the parsed data
+                $match = new MatchEntity();
                 $match->setTournamentId($tournament);
                 $match->setDatetime($datetime);
                 $match->setHomeTeamId($homeTeam);
@@ -139,7 +139,7 @@ class Importer
 
             } else {
                 // get match from db
-                $match = $this->em->getRepository(Match::class)
+                $match = $this->em->getRepository(MatchEntity::class)
                     ->findOneById($matchApiMapping->getEntityId());
 
                 $matchUpdated = false;

@@ -49,7 +49,7 @@ abstract class BaseApiController extends AbstractController
         // get an array of all the query string key-value pairs
         $params = $request->query->all();
 
-        $repository = $this->getDoctrine()->getManager()
+        $repository = $this->container->get('doctrine')->getManager()
             ->getRepository($this->repositoryName);
 
         $objects = (method_exists($repository, 'findFiltered'))
@@ -72,7 +72,7 @@ abstract class BaseApiController extends AbstractController
             return $this->getUnauthorizedView();
         }
 
-        $em = $this->getDoctrine()->getManager();
+        $em = $this->container->get('doctrine')->getManager();
 
         $object = $em->getRepository($this->repositoryName)
             ->findOneById($id);
@@ -101,7 +101,7 @@ abstract class BaseApiController extends AbstractController
             return $this->getUnauthorizedView();
         }
 
-        $em = $this->getDoctrine()->getManager();
+        $em = $this->container->get('doctrine')->getManager();
 
         $object = new $this->fqEntityClass();
 
@@ -132,7 +132,7 @@ abstract class BaseApiController extends AbstractController
             return $this->getUnauthorizedView();
         }
 
-        $em = $this->getDoctrine()->getManager();
+        $em = $this->container->get('doctrine')->getManager();
 
         $object = $em->getRepository($this->repositoryName)
             ->findOneById($id);
@@ -171,7 +171,7 @@ abstract class BaseApiController extends AbstractController
             return $this->getUnauthorizedView();
         }
 
-        $em = $this->getDoctrine()->getManager();
+        $em = $this->container->get('doctrine')->getManager();
 
         $object = $em->getRepository($this->repositoryName)
             ->findOneById($id);
@@ -206,7 +206,7 @@ abstract class BaseApiController extends AbstractController
             return $this->getUnauthorizedView();
         }
 
-        $em = $this->getDoctrine()->getManager();
+        $em = $this->container->get('doctrine')->getManager();
 
         $object = $em->getRepository($this->repositoryName)
             ->findOneById($id);
@@ -288,7 +288,7 @@ abstract class BaseApiController extends AbstractController
         $content = '';
 
         if (null !== $data && 204 !== $statusCode) {
-            $content = $this->get('jms_serializer')->serialize($data, 'json');
+            $content = $this->container->get('jms_serializer')->serialize($data, 'json');
         }
 
         return new Response($content, $statusCode, array('Content-Type' => 'application/json'));

@@ -10,7 +10,7 @@ class RulesController extends AbstractController
     {
         // if user is logged in, get their standings and set them as global Twig var
         if (is_object($user = $this->getUser())) {
-            $this->get('app.twig.helper')->setUserScores($user);
+            $this->container->get('app.twig.helper')->setUserScores($user);
         }
 
         // rendering the view and returning the response

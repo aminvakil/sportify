@@ -35,7 +35,7 @@ class PredictionController extends BaseApiController
         $params = $request->query->all();
 
         // get all user predictions (by passing in an 'empty' user object)
-        $objects = $this->getDoctrine()->getManager()
+        $objects = $this->container->get('doctrine')->getManager()
             ->getRepository($this->repositoryName)
             ->findFiltered(new User(), $params);
 
@@ -59,7 +59,7 @@ class PredictionController extends BaseApiController
         $params = $request->query->all();
 
         // get user's predictions
-        $objects = $this->getDoctrine()->getManager()
+        $objects = $this->container->get('doctrine')->getManager()
             ->getRepository($this->repositoryName)
             ->findFiltered($user, $params);
 
@@ -79,7 +79,7 @@ class PredictionController extends BaseApiController
             return $this->getUnauthorizedView();
         }
 
-        $object = $this->getDoctrine()->getManager()
+        $object = $this->container->get('doctrine')->getManager()
             ->getRepository($this->repositoryName)
             ->findOneById($id);
 

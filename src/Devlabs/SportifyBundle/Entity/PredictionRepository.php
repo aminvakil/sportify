@@ -146,12 +146,12 @@ class PredictionRepository extends \Doctrine\ORM\EntityRepository
      * Get a single prediction by user and match id
      *
      * @param User $user
-     * @param Match $match
+     * @param MatchEntity $match
      * @return mixed
      * @throws \Doctrine\ORM\NoResultException
      * @throws \Doctrine\ORM\NonUniqueResultException
      */
-    public function getOneByUserAndMatch(User $user, Match $match)
+    public function getOneByUserAndMatch(User $user, MatchEntity $match)
     {
         return $this->getEntityManager()->createQueryBuilder()
             ->select('p')

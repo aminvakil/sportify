@@ -2,7 +2,7 @@
 
 namespace Devlabs\SportifyBundle\Controller;
 
-use Devlabs\SportifyBundle\Entity\Match;
+use Devlabs\SportifyBundle\Entity\MatchEntity;
 use Devlabs\SportifyBundle\Entity\Prediction;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -29,7 +29,7 @@ class MatchesController extends AbstractController
         $modifiedDateTo = date("Y-m-d", strtotime($urlParams['date_to']) + 86500);
 
         // Get an instance of the Entity Manager
-        $em = $this->getDoctrine()->getManager();
+        $em = $this->container->get('doctrine')->getManager();
 
         // get the filter helper service
         $filterHelper = $this->container->get('app.filter.helper');
@@ -51,7 +51,7 @@ class MatchesController extends AbstractController
         }
 
         // get not finished matches and the user's predictions for them
-        $matches = $em->getRepository(Match::class)
+        $matches = $em->getRepository(MatchEntity::class)
             ->getNotScored($user, $urlParams['tournament_id'], $urlParams['date_from'], $modifiedDateTo);
         $predictions = $em->getRepository(Prediction::class)
             ->getNotScored($user, $urlParams['tournament_id'], $urlParams['date_from'], $modifiedDateTo);
@@ -63,7 +63,7 @@ class MatchesController extends AbstractController
         }
 
         // get user standings and set them as global Twig var
-        $this->get('app.twig.helper')->setUserScores($user);
+        $this->container->get('app.twig.helper')->setUserScores($user);
 
         // rendering the view and returning the response
         return $this->render(
@@ -96,10 +96,10 @@ class MatchesController extends AbstractController
         $urlParams = $matchesHelper->initUrlParams($tournament_id, $date_from, $date_to);
 
         // Get an instance of the Entity Manager
-        $em = $this->getDoctrine()->getManager();
+        $em = $this->container->get('doctrine')->getManager();
 
         // get the submitted form's match object
-        $match = $em->getRepository(Match::class)
+        $match = $em->getRepository(MatchEntity::class)
             ->findOneById($request->request->get('prediction')['matchId']);
 
         // set the prediction object based on whether it's new or existing one
@@ -145,12 +145,12 @@ class MatchesController extends AbstractController
         }
 
         // Get an instance of the Entity Manager
-        $em = $this->getDoctrine()->getManager();
+        $em = $this->container->get('doctrine')->getManager();
 
         $formsArray = $request->request->get('matches');
 
         foreach ($formsArray as $submittedForm) {
-            $match = $em->getRepository(Match::class)
+            $match = $em->getRepository(MatchEntity::class)
                 ->findOneById($submittedForm['matchId']);
 
             // skip to next form if this match has started or data is invalid
