@@ -2,57 +2,23 @@
 
 namespace Devlabs\SportifyBundle\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass="Devlabs\SportifyBundle\Entity\MatchRepository")
- * @ORM\Table(name="matches")
- */
 class MatchEntity
 {
-    /**
-     * @ORM\Column(type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
     private $id;
 
-    /**
-     * @ORM\Column(type="datetime", length=100)
-     */
     private $datetime;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="Team", inversedBy="matchesHomeTeam")
-     * @ORM\JoinColumn(name="home_team_id", referencedColumnName="id")
-     */
     private $homeTeamId;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="Team", inversedBy="matchesAwayTeam")
-     * @ORM\JoinColumn(name="away_team_id", referencedColumnName="id")
-     */
     private $awayTeamId;
 
-    /**
-     * @ORM\Column(type="integer", name="home_goals", nullable=TRUE)
-     */
     private $homeGoals;
 
-    /**
-     * @ORM\Column(type="integer", name="away_goals", nullable=true)
-     */
     private $awayGoals;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="Tournament", inversedBy="matches")
-     * @ORM\JoinColumn(name="tournament_id", referencedColumnName="id")
-     */
     private $tournamentId;
 
-    /**
-     * @ORM\OneToMany(targetEntity="Prediction" , mappedBy="matchId" , cascade={"all"})
-     */
     private $predictions;
 
     /**
@@ -62,9 +28,6 @@ class MatchEntity
      */
     private $disabledAttribute = false;
 
-    /**
-     * @ORM\Column(type="boolean", name="notification_sent")
-     */
     private $notificationSent = 0;
     
     /**

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity repository-class="Devlabs\SportifyBundle\Entity\ApiMappingRepository" name="Devlabs\SportifyBundle\Entity\ApiMapping" table="api_mappings">
+    <unique-constraints>
+      <unique-constraint name="entity_id_type_api_name" columns="entity_id,entity_type,api_name"/>
+      <unique-constraint name="entity_type_api_name_object_id" columns="entity_type,api_name,api_object_id"/>
+    </unique-constraints>
+    <id name="id" type="integer" column="id">
+      <generator strategy="IDENTITY"/>
+    </id>
+    <field name="entityId" type="integer" column="entity_id" nullable="false"/>
+    <field name="entityType" type="string" column="entity_type" length="50" nullable="false"/>
+    <field name="apiName" type="string" column="api_name" length="50" nullable="false"/>
+    <field name="apiObjectId" type="integer" column="api_object_id" nullable="false"/>
+  </entity>
+</doctrine-mapping>

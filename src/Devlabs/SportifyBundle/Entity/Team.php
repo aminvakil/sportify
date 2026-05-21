@@ -2,53 +2,24 @@
 
 namespace Devlabs\SportifyBundle\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Routing\RequestContext;
 use Intervention\Image\ImageManager;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
-/**
- * @ORM\Entity(repositoryClass="Devlabs\SportifyBundle\Entity\TeamRepository")
- * @ORM\Table(name="teams")
- */
 class Team
 {
-    /**
-     * @ORM\Column(type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
     private $id;
 
-    /**
-     * @ORM\Column(type="string", length=100, unique = true)
-     */
     private $name;
 
-    /**
-     * @ORM\ManyToMany(targetEntity="Tournament", inversedBy="teams")
-     * @ORM\JoinTable(name="teams_tournaments")
-     */
     private $tournaments;
 
-    /**
-     * @ORM\OneToMany(targetEntity="PredictionChampion" , mappedBy="teamId" , cascade={"all"})
-     */
     private $predictionsChampion;
 
-    /**
-     * @ORM\OneToMany(targetEntity="Tournament" , mappedBy="championTeamId" , cascade={"all"})
-     */
     private $tournamentsChampion;
 
-    /**
-     * @ORM\OneToMany(targetEntity="MatchEntity" , mappedBy="homeTeamId" , cascade={"all"})
-     */
     private $matchesHomeTeam;
 
-    /**
-     * @ORM\OneToMany(targetEntity="MatchEntity" , mappedBy="awayTeamId" , cascade={"all"})
-     */
     private $matchesAwayTeam;
 
     /**

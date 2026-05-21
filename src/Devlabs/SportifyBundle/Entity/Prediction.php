@@ -2,56 +2,24 @@
 
 namespace Devlabs\SportifyBundle\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass="Devlabs\SportifyBundle\Entity\PredictionRepository")
- * @ORM\Table(name="predictions", uniqueConstraints={
- *      @ORM\UniqueConstraint(name="user_match", columns={"user_id", "match_id"})
- * })
- */
 class Prediction
 {
     const POINTS_OUTCOME = 1;
     const POINTS_EXACT = 3;
 
-    /**
-     * @ORM\Column(type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
     private $id;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="MatchEntity", inversedBy="predictions")
-     * @ORM\JoinColumn(name="match_id", referencedColumnName="id")
-     */
     private $matchId;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="User", inversedBy="predictions")
-     * @ORM\JoinColumn(name="user_id", referencedColumnName="id")
-     */
     private $userId;
 
-    /**
-     * @ORM\Column(type="integer", name="home_goals")
-     */
     private $homeGoals;
 
-    /**
-     * @ORM\Column(type="integer", name="away_goals")
-     */
     private $awayGoals;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
     private $points;
 
-    /**
-     * @ORM\Column(type="boolean", name="score_added")
-     */
     private $scoreAdded = 0;
 
     /**

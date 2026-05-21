@@ -3,102 +3,47 @@
 namespace Devlabs\SportifyBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\EquatableInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-/**
- * @ORM\Entity(repositoryClass="Devlabs\SportifyBundle\Entity\UserRepository")
- * @ORM\Table(name="users")
- */
 class User implements UserInterface, PasswordAuthenticatedUserInterface, EquatableInterface
 {
     const ROLE_DEFAULT = 'ROLE_USER';
     const ROLE_SUPER_ADMIN = 'ROLE_SUPER_ADMIN';
 
-    /**
-     * @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
     protected $id;
 
-    /**
-     * @ORM\Column(type="string", length=180)
-     */
     protected $username;
 
-    /**
-     * @ORM\Column(type="string", length=180, name="username_canonical", unique=true)
-     */
     protected $usernameCanonical;
 
-    /**
-     * @ORM\Column(type="string", length=180)
-     */
     protected $email;
 
-    /**
-     * @ORM\Column(type="string", length=180, name="email_canonical", unique=true)
-     */
     protected $emailCanonical;
 
-    /**
-     * @ORM\Column(type="boolean")
-     */
     protected $enabled;
 
-    /**
-     * @ORM\Column(type="string", nullable=true)
-     */
     protected $salt;
 
-    /**
-     * @ORM\Column(type="string")
-     */
     protected $password;
 
     protected $plainPassword;
 
-    /**
-     * @ORM\Column(type="datetime", name="last_login", nullable=true)
-     */
     protected $lastLogin;
 
-    /**
-     * @ORM\Column(type="string", length=180, name="confirmation_token", unique=true, nullable=true)
-     */
     protected $confirmationToken;
 
-    /**
-     * @ORM\Column(type="datetime", name="password_requested_at", nullable=true)
-     */
     protected $passwordRequestedAt;
 
-    /**
-     * @ORM\Column(type="array")
-     */
     protected $roles;
 
-    /**
-     * @ORM\Column(type="string", length=100, name="slack_username")
-     */
     private $slackUsername;
 
-    /**
-     * @ORM\OneToMany(targetEntity="Score" , mappedBy="userId" , cascade={"all"})
-     */
     private $scores;
 
-    /**
-     * @ORM\OneToMany(targetEntity="Prediction" , mappedBy="userId" , cascade={"all"})
-     */
     private $predictions;
 
-    /**
-     * @ORM\OneToMany(targetEntity="PredictionChampion" , mappedBy="userId" , cascade={"all"})
-     */
     private $predictionsChampion;
 
     public function __construct()
