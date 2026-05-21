@@ -25,9 +25,7 @@ class TeamRepository extends \Doctrine\ORM\EntityRepository
             ->from(Team::class, 'tm')
             ->join('tm.tournaments', 'tr')
             ->where('tr.id = :tournament_id')
-            ->setParameters(array(
-                'tournament_id' => $tournament->getId()
-            ))
+            ->setParameter('tournament_id', $tournament->getId())
             ->setMaxResults(1)
             ->getQuery()
             ->getSingleResult();
@@ -46,9 +44,7 @@ class TeamRepository extends \Doctrine\ORM\EntityRepository
             ->from(Team::class, 'tm')
             ->join('tm.tournaments', 'tr')
             ->where('tr.id = :tournament_id')
-            ->setParameters(array(
-                'tournament_id' => $tournament->getId()
-            ))
+            ->setParameter('tournament_id', $tournament->getId())
             ->getQuery()
             ->getResult();
     }

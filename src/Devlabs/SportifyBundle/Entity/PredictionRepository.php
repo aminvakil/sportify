@@ -30,11 +30,9 @@ class PredictionRepository extends \Doctrine\ORM\EntityRepository
             ->orderBy('m.datetime')
             ->addOrderBy('m.tournamentId')
             ->addOrderBy('tm.name')
-            ->setParameters(array(
-                'user_id' => $user->getId(),
-                'date_from' => $dateFrom,
-                'date_to' => $dateTo
-            ));
+            ->setParameter('user_id', $user->getId())
+            ->setParameter('date_from', $dateFrom)
+            ->setParameter('date_to', $dateTo);
 
         // prepare a different query, if a tournament is selected for filtering
         if ($tournamentId !== 'all') {
@@ -82,11 +80,9 @@ class PredictionRepository extends \Doctrine\ORM\EntityRepository
             ->orderBy('m.datetime', 'DESC')
             ->addOrderBy('m.tournamentId')
             ->addOrderBy('tm.name')
-            ->setParameters(array(
-                'user_id' => $user->getId(),
-                'date_from' => $dateFrom,
-                'date_to' => $dateTo
-            ));
+            ->setParameter('user_id', $user->getId())
+            ->setParameter('date_from', $dateFrom)
+            ->setParameter('date_to', $dateTo);
 
         // prepare a different query, if a tournament is selected for filtering
         if ($tournamentId !== 'all') {
@@ -125,7 +121,7 @@ class PredictionRepository extends \Doctrine\ORM\EntityRepository
             ->andWhere('m.homeGoals IS NOT NULL AND m.awayGoals IS NOT NULL')
             ->andWhere('p.userId = :user_id')
             ->orderBy('m.id')
-            ->setParameters(array('user_id' => $user->getId()))
+            ->setParameter('user_id', $user->getId())
             ->getQuery()
             ->getResult();
 
@@ -158,7 +154,8 @@ class PredictionRepository extends \Doctrine\ORM\EntityRepository
             ->from(Prediction::class, 'p')
             ->where('p.userId = :user_id')
             ->andWhere('p.matchId = :match_id')
-            ->setParameters(array('user_id' => $user->getId(), 'match_id' => $match->getId()))
+            ->setParameter('user_id', $user->getId())
+            ->setParameter('match_id', $match->getId())
             ->getQuery()
             ->getSingleResult();
     }
@@ -179,11 +176,9 @@ class PredictionRepository extends \Doctrine\ORM\EntityRepository
             ->where('p.userId = :user_id')
             ->andWhere('p.scoreAdded = 1 AND p.points = :points_exact')
             ->andWhere('m.tournamentId = :tournament_id')
-            ->setParameters(array(
-                'user_id' => $user->getId(),
-                'tournament_id' => $tournament->getId(),
-                'points_exact' => Prediction::POINTS_EXACT
-            ))
+            ->setParameter('user_id', $user->getId())
+            ->setParameter('tournament_id', $tournament->getId())
+            ->setParameter('points_exact', Prediction::POINTS_EXACT)
             ->getQuery()
             ->getResult();
     }

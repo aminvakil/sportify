@@ -24,7 +24,8 @@ class ScoreRepository extends \Doctrine\ORM\EntityRepository
             ->from(Score::class, 's')
             ->where('s.userId = :user_id')
             ->andWhere('s.tournamentId = :tournament_id')
-            ->setParameters(array('user_id' => $user->getId(), 'tournament_id' => $tournament->getId()))
+            ->setParameter('user_id', $user->getId())
+            ->setParameter('tournament_id', $tournament->getId())
             ->getQuery()
             ->getSingleResult();
     }
@@ -46,7 +47,7 @@ class ScoreRepository extends \Doctrine\ORM\EntityRepository
             ->orderBy('s.points', 'DESC')
             ->addOrderBy('s.exactPredictionPercentage', 'DESC')
             ->addOrderBy('u.username', 'ASC')
-            ->setParameters(array('tournament_id' => $tournament->getId()))
+            ->setParameter('tournament_id', $tournament->getId())
             ->getQuery()
             ->getResult();
     }
@@ -65,7 +66,7 @@ class ScoreRepository extends \Doctrine\ORM\EntityRepository
             ->from(Score::class, 's')
             ->where('s.tournamentId = :tournament_id')
             ->orderBy('s.posNew', 'ASC')
-            ->setParameters(array('tournament_id' => $tournament->getId()))
+            ->setParameter('tournament_id', $tournament->getId())
             ->getQuery()
             ->getResult();
     }
@@ -82,7 +83,7 @@ class ScoreRepository extends \Doctrine\ORM\EntityRepository
             ->select('s')
             ->from(Score::class, 's')
             ->where('s.userId = :user_id')
-            ->setParameters(array('user_id' => $user->getId()))
+            ->setParameter('user_id', $user->getId())
             ->getQuery()
             ->getResult();
 

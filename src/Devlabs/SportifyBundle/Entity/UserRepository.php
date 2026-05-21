@@ -56,10 +56,8 @@ class UserRepository extends \Doctrine\ORM\EntityRepository
                 ->andWhere('s.tournamentId = :tournament_id')
                 ->andWhere($qb->expr()->notIn('u.id', ':users_predicted'))
                 ->orderBy('u.id', 'ASC')
-                ->setParameters(array(
-                    'users_predicted' => $usersWithPredictions,
-                    'tournament_id' => $match->getTournamentId()
-                ))
+                ->setParameter('users_predicted', $usersWithPredictions)
+                ->setParameter('tournament_id', $match->getTournamentId())
                 ->getQuery()
                 ->getResult();
         } else {
@@ -70,9 +68,7 @@ class UserRepository extends \Doctrine\ORM\EntityRepository
                 ->where('u.enabled = 1')
                 ->andWhere('s.tournamentId = :tournament_id')
                 ->orderBy('u.id', 'ASC')
-                ->setParameters(array(
-                    'tournament_id' => $match->getTournamentId()
-                ))
+                ->setParameter('tournament_id', $match->getTournamentId())
                 ->getQuery()
                 ->getResult();
         }

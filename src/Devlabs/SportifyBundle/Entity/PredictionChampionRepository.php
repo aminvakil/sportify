@@ -25,10 +25,8 @@ class PredictionChampionRepository extends \Doctrine\ORM\EntityRepository
             ->from(PredictionChampion::class, 'p')
             ->where('p.userId = :user_id')
             ->andWhere('p.tournamentId = :tournament_id')
-            ->setParameters(array(
-                'user_id' => $user->getId(),
-                'tournament_id' => $tournament->getId()
-            ));
+            ->setParameter('user_id', $user->getId())
+            ->setParameter('tournament_id', $tournament->getId());
 
         try {
             return $query->getQuery()->getSingleResult();
@@ -51,7 +49,7 @@ class PredictionChampionRepository extends \Doctrine\ORM\EntityRepository
             ->from(PredictionChampion::class, 'p')
             ->where('p.scoreAdded IS NULL OR p.scoreAdded = 0')
             ->andWhere('p.tournamentId = :tournament_id')
-            ->setParameters(array('tournament_id' => $tournament->getId()))
+            ->setParameter('tournament_id', $tournament->getId())
             ->getQuery()
             ->getResult();
     }

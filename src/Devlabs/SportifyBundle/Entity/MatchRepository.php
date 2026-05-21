@@ -32,11 +32,9 @@ class MatchRepository extends \Doctrine\ORM\EntityRepository
             ->orderBy('m.datetime')
             ->addOrderBy('m.tournamentId')
             ->addOrderBy('tm.name')
-            ->setParameters(array(
-                'user_id' => $user->getId(),
-                'date_from' => $dateFrom,
-                'date_to' => $dateTo
-            ));
+            ->setParameter('user_id', $user->getId())
+            ->setParameter('date_from', $dateFrom)
+            ->setParameter('date_to', $dateTo);
 
         // prepare a different query, if a tournament is selected for filtering
         if ($tournamentId !== 'all') {
@@ -71,11 +69,9 @@ class MatchRepository extends \Doctrine\ORM\EntityRepository
             ->orderBy('m.datetime', 'DESC')
             ->addOrderBy('m.tournamentId')
             ->addOrderBy('tm.name')
-            ->setParameters(array(
-                'user_id' => $user->getId(),
-                'date_from' => $dateFrom,
-                'date_to' => $dateTo
-            ));
+            ->setParameter('user_id', $user->getId())
+            ->setParameter('date_from', $dateFrom)
+            ->setParameter('date_to', $dateTo);
 
         // prepare a different query, if a tournament is selected for filtering
         if ($tournamentId !== 'all') {
@@ -153,10 +149,8 @@ class MatchRepository extends \Doctrine\ORM\EntityRepository
             ->andWhere('m.datetime >= :date_from AND m.datetime <= :date_to')
             ->orderBy('m.datetime')
             ->addOrderBy('tm.name')
-            ->setParameters(array(
-                'date_from' => $dateFrom,
-                'date_to' => $dateTo
-            ))
+            ->setParameter('date_from', $dateFrom)
+            ->setParameter('date_to', $dateTo)
             ->getQuery()
             ->getResult();
     }
@@ -197,11 +191,9 @@ class MatchRepository extends \Doctrine\ORM\EntityRepository
             ->join('m.homeTeamId', 'tm')
             ->where('m.tournamentId = :tournament_id')
             ->andWhere('m.datetime >= :date_from AND m.datetime <= :date_to')
-            ->setParameters(array(
-                'tournament_id' => $tournament->getId(),
-                'date_from' => $dateFrom,
-                'date_to' => $dateTo
-            ))
+            ->setParameter('tournament_id', $tournament->getId())
+            ->setParameter('date_from', $dateFrom)
+            ->setParameter('date_to', $dateTo)
             ->orderBy('m.datetime')
             ->addOrderBy('tm.name')
             ->getQuery()

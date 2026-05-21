@@ -23,10 +23,8 @@ class OAuthAccessTokenRepository extends \Doctrine\ORM\EntityRepository
             ->andWhere('at.expiresAt > :current_timestamp')
             ->orderBy('at.expiresAt', 'DESC')
             ->setMaxResults(1)
-            ->setParameters(array(
-                'user_id' => $user->getId(),
-                'current_timestamp' => time()
-            ))
+            ->setParameter('user_id', $user->getId())
+            ->setParameter('current_timestamp', time())
             ->getQuery()
             ->getOneOrNullResult();
     }
