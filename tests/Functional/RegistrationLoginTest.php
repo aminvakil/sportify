@@ -51,7 +51,7 @@ class RegistrationLoginTest extends WebTestCase
     private function resetDatabase($em)
     {
         $connection = $em->getConnection();
-        $schemaManager = $connection->getSchemaManager();
+        $schemaManager = $connection->createSchemaManager();
 
         $connection->executeQuery('SET FOREIGN_KEY_CHECKS=0');
         foreach ($schemaManager->listTableNames() as $tableName) {

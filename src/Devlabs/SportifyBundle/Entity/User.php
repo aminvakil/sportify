@@ -75,6 +75,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Equatab
             && count($this->getRoles()) === count(array_intersect($this->getRoles(), $user->getRoles()));
     }
 
+    #[\Deprecated]
     public function eraseCredentials(): void
     {
         $this->plainPassword = null;

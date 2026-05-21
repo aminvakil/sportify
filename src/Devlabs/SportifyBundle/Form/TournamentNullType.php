@@ -16,7 +16,7 @@ class TournamentNullType extends AbstractType
     /**
      * @param OptionsResolver $resolver
      */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults(array(
             'data_class' => null
@@ -29,7 +29,7 @@ class TournamentNullType extends AbstractType
      * @param FormBuilderInterface $builder
      * @param array $options
      */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $this->data = $options['data']['tournament_id'];
         $this->buttonAction = $options['data']['button_action'];

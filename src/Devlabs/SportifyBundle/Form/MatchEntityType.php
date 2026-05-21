@@ -29,7 +29,7 @@ class MatchEntityType extends AbstractType
     /**
      * @param OptionsResolver $resolver
      */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults(array(
             'data_class' => 'Devlabs\SportifyBundle\Entity\MatchEntity',
@@ -42,7 +42,7 @@ class MatchEntityType extends AbstractType
      * @param FormBuilderInterface $builder
      * @param array $options
      */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $this->otherData = $options['other_data'];
         $this->buttonAction = $options['button_action'];
