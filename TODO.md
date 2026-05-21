@@ -17,7 +17,7 @@
 - `jms/serializer-bundle` has been upgraded to 5.5, `jms/serializer` to 3.32, and `willdurand/hateoas-bundle` to 2.6, removing the old `doctrine/common ~2` constraint from Hateoas.
 - `symfony/phpunit-bridge` has been upgraded to 7.4, with PHPUnit 9.6 pinned for the legacy test suite.
 - Composer package constraints have been reviewed for the current Symfony 7.4/PHP 8.2 baseline; unused `sensio/generator-bundle` was removed and `doctrine/doctrine-cache-bundle` is no longer a direct dependency.
-- Remaining abandoned packages are tied to legacy dependencies and should be handled as separate migrations.
+- No abandoned Composer packages are currently known in `composer.lock`.
 - `doctrine/doctrine-bundle` has been upgraded to 2.18, Doctrine ORM to 3.6, Doctrine DBAL to 3.10, Doctrine Persistence to 3.4, Doctrine Event Manager to 2.1, and `doctrine/doctrine-cache-bundle`/`doctrine/cache`/`doctrine/reflection` have been removed.
 - Short `DevlabsSportifyBundle:Entity` aliases in app code have been replaced with FQCN/`::class`, and remaining short aliases live only in vendor bridges.
 - SensioFrameworkExtraBundle has been removed; former admin-only security annotations are explicit controller checks.
@@ -25,18 +25,17 @@
 - App validation constraints have been moved from annotations to YAML, and Symfony validator annotation loading is disabled.
 - The leftover `Team` unique-entity validation annotation has been moved to YAML.
 - The app bootstrap no longer manually registers Doctrine's annotation autoloader.
-- `doctrine/annotations` is no longer a direct dependency; it remains installed transitively through DoctrineBundle and Hateoas.
+- `doctrine/annotations` has been removed.
 - Current email usage is registration/password reset through Symfony Mailer.
 - Doctrine ORM mappings have been moved from annotations to XML files in `app/config/doctrine`.
-- Current abandoned packages in `composer.lock`: `doctrine/annotations`, which remains through Hateoas/legacy Doctrine compatibility constraints.
+- Current abandoned packages in `composer.lock`: none known.
 - FOSUserBundle has been removed; login, logout, registration, and password reset now use Symfony Security with the app `User` entity/provider/checker.
 - FOSOAuthServerBundle has been removed; password-grant token issuance and API access-token authentication now use small app-owned services/controllers against the existing OAuth tables.
 - FOSRestBundle and NelmioApiDocBundle have been removed; API routes are explicit YAML routes and API JSON responses are serialized directly with JMS Serializer.
 - The unsupported `symfony/symfony` meta-package has been replaced with explicit Symfony component packages pinned to 7.4.*.
 - `phpunit.xml.dist` has been migrated to the PHPUnit 9.6 schema.
 - Symfony 7.4 is installed and locked; re-check deprecation output before the next backend milestone.
-- Remaining abandoned packages in `composer.lock`: `doctrine/annotations`.
-- Backend work should now focus on post-7.4 stabilization and remaining legacy dependency cleanup.
+- Backend work should now focus on infrastructure runtime upgrades.
 
 ## Next steps
 
@@ -60,16 +59,11 @@ Use bigger PRs, but keep them coherent:
 
 Keep each milestone as a PR and verify from a clean Docker state before moving on.
 
-1. Symfony 7.4 stabilization PR(s):
-   - Re-check abandoned packages and deprecation output after each blocker-removal step.
-   - Add any missing tests discovered during the Symfony 7.4 upgrade.
-2. Legacy dependency cleanup:
-   - Remove `doctrine/annotations` by upgrading/replacing the remaining dependency chain that keeps it installed.
-3. Infrastructure runtime upgrades:
+1. Infrastructure runtime upgrades:
    - Upgrade Docker PHP from 8.2 to 8.5 in a focused PR after Symfony 7.4 stabilization.
    - Upgrade Docker MySQL from 5.7 to 8 in a separate focused PR after the PHP 8.5 runtime is stable.
    - For MySQL 8, explicitly check schema compatibility, reserved words, SQL modes, charset/collation behavior, and Doctrine schema validation output.
-4. Defer structural modernization until a framework step requires it:
+2. Defer structural modernization until a framework step requires it:
    - Do not migrate the directory layout or frontend toolchain opportunistically.
    - Prefer compatibility shims and focused route/config changes over broad rewrites unless a milestone explicitly calls for a replacement.
 
