@@ -43,7 +43,7 @@ After doing any changes on **app/config/parameters.yml** run `php bin/console ca
 
 ### Changing advanced app settings (app/config/parameters.yml):
  
-`mailer_dsn` - SMTP settings for registration confirmation and password reset emails. Put the SMTP username and password before the host: `smtp://USERNAME:PASSWORD@SMTP_HOST:PORT`. Example: `smtp://user%40example.com:app-password@smtp.example.com:587`. URL-encode special characters, e.g. `@` becomes `%40`.
+`mailer_dsn` - SMTP settings for registration confirmation and password reset emails. Put the SMTP username and password before the host: `smtp://USERNAME:PASSWORD@SMTP_HOST:PORT`. Example for username `user@example.com` and password `app-password`: `smtp://user%40example.com:app-password@smtp.example.com:587`. Only encode special characters inside `USERNAME`/`PASSWORD`; the `@` before `SMTP_HOST` separates credentials from the host, so keep it as `@`.
 
 `mailer_sender_address` - the email address used as the `From` address.
 
