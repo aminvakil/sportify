@@ -8,6 +8,10 @@ parameters:
     database_password: ~
 
     # mail
+    # Put SMTP username/password in the DSN before the host:
+    # smtp://USERNAME:PASSWORD@SMTP_HOST:PORT
+    # Example: smtp://user%40example.com:app-password@smtp.example.com:587
+    # URL-encode special characters, e.g. @ becomes %40.
     mailer_dsn:        smtp://127.0.0.1:587
     mailer_sender_address: change-me@example.com
 

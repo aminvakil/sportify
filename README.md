@@ -43,7 +43,9 @@ After doing any changes on **app/config/parameters.yml** run `php bin/console ca
 
 ### Changing advanced app settings (app/config/parameters.yml):
  
-`mailer_host`, `mailer_port`, `mailer_user`, `mailer_password` - SMTP settings in order to have sending of registration confirmation and password reset emails enabled.
+`mailer_dsn` - SMTP settings for registration confirmation and password reset emails. Put the SMTP username and password before the host: `smtp://USERNAME:PASSWORD@SMTP_HOST:PORT`. Example: `smtp://user%40example.com:app-password@smtp.example.com:587`. URL-encode special characters, e.g. `@` becomes `%40`.
+
+`mailer_sender_address` - the email address used as the `From` address.
 
 Best practice is to use a transactional mail service, like Mailgun, Amazon SES, etc. We recommend Mailgun as registering an account takes a few minutes and the free tier should be enough. Another option is to use [Gmail SMTP settings](https://www.digitalocean.com/community/tutorials/how-to-use-google-s-smtp-server).  
 
