@@ -11,13 +11,11 @@
 - Basic integration workflow test exists for tournaments, users, predictions, scoring, standings, and helper/repository calls.
 - Functional auth coverage exists for login page CSRF, successful registration/login, failed login, logout, duplicate registration, registration validation, password reset, and profile password changes.
 - GitHub Actions CI workflow is in place and green on main.
-- Symfony deprecation notices have been reduced to the remaining vendor-level batch.
 - `symfony/monolog-bundle` has been upgraded to 3.10.
 - Swiftmailer and `symfony/swiftmailer-bundle` have been replaced with Symfony Mailer for registration and password reset email delivery.
 - `jms/serializer-bundle` has been upgraded to 5.5, `jms/serializer` to 3.32, and `willdurand/hateoas-bundle` to 2.6, removing the old `doctrine/common ~2` constraint from Hateoas.
 - `symfony/phpunit-bridge` has been upgraded to 7.4, with PHPUnit 9.6 pinned for the legacy test suite.
-- Composer package constraints have been reviewed for the current Symfony 7.4/PHP 8.2 baseline; unused `sensio/generator-bundle` was removed and `doctrine/doctrine-cache-bundle` is no longer a direct dependency.
-- No abandoned Composer packages are currently known in `composer.lock`.
+- Composer package constraints have been reviewed for the current Symfony 7.4/PHP 8.5 baseline; unused `sensio/generator-bundle` was removed and `doctrine/doctrine-cache-bundle` is no longer a direct dependency.
 - `doctrine/doctrine-bundle` has been upgraded to 2.18, Doctrine ORM to 3.6, Doctrine DBAL to 3.10, Doctrine Persistence to 3.4, Doctrine Event Manager to 2.1, and `doctrine/doctrine-cache-bundle`/`doctrine/cache`/`doctrine/reflection` have been removed.
 - Short `DevlabsSportifyBundle:Entity` aliases in app code have been replaced with FQCN/`::class`, and remaining short aliases live only in vendor bridges.
 - SensioFrameworkExtraBundle has been removed; former admin-only security annotations are explicit controller checks.
@@ -35,16 +33,10 @@
 - The unsupported `symfony/symfony` meta-package has been replaced with explicit Symfony component packages pinned to 7.4.*.
 - `phpunit.xml.dist` has been migrated to the PHPUnit 9.6 schema.
 - Symfony 7.4 is installed and locked; deprecation re-check is clean for self and direct notices. The remaining 403 indirect notices are a single vendor deprecation (`Subscribing to onSchemaCreateTable events is deprecated`, doctrine/dbal) that needs a future DBAL major upgrade and is not actionable from app code.
-- Backend work should now focus on infrastructure runtime upgrades.
 
 ## Next steps
 
-1. Stop splitting upgrade work into tiny deprecation-only PRs. Prefer larger, coherent milestone PRs that remove a full blocker or complete a framework step end-to-end.
-2. Add tests before each larger change so CI gives enough confidence to review and merge bigger PRs.
-3. Keep frontend modernization separate from backend/Symfony modernization unless a backend step explicitly requires a frontend change.
-4. Follow the post-Symfony 7.4 stabilization path and remove remaining legacy dependency blockers.
-5. Backend infrastructure (PHP runtime, Symfony, Doctrine) is good enough for now. Start the frontend modernization track next: Node 6 / Bower / Gulp 3 are far past EOL and are the most painful remaining baseline. This track needs the coding agent's browser skills: loading the affected pages locally and confirming the UI flows visibly work, not just that command-line smoke checks return 200.
-6. Defer the remaining backend infrastructure upgrades (MySQL 5.7 → 8 → 9) until after the frontend track is complete.
+Backend infrastructure (PHP runtime, Symfony, Doctrine) is good enough for now. The active track is frontend modernization (see "Frontend modernization path" below): Node 6 / Bower / Gulp 3 are far past EOL and are the most painful remaining baseline. Remaining backend infrastructure upgrades (MySQL 5.7 → 8 → 9) are deferred until the frontend track is complete.
 
 ## PR sizing strategy
 
@@ -80,42 +72,4 @@ Pick this back up only after the frontend modernization path is complete. Keep e
 
 ## Always verify each step
 
-Do not `docker compose down -v` before verifying. Reuse the running stack if it's already up; otherwise bring it up and create the schema:
-
-```sh
-cp docker/symfony/parameters.yml app/config/parameters.yml
-# CI also replaces football_api.token with the FOOTBALL_DATA_API_TOKEN secret before running.
-docker compose up --wait httpd
-docker compose run --rm php php bin/console doctrine:database:create --if-not-exists
-docker compose run --rm php php bin/console doctrine:schema:update --force
-```
-
-Then run only the suite that matches the type of change.
-
-### PHP / Symfony changes
-
-```sh
-docker compose run --rm php composer install --no-interaction --no-progress
-docker compose run --rm php php bin/console cache:clear --env=test
-docker compose run --rm php php bin/console cache:clear --env=dev
-docker compose run --rm php php bin/console doctrine:schema:validate
-docker compose run --rm php vendor/bin/simple-phpunit --testsuite 'Project Test Suite'
-curl -fsSI --max-time 10 http://localhost:8000/
-```
-
-Skip the Node/Bower/Gulp asset pipeline for PHP-only changes.
-
-### Frontend changes
-
-```sh
-docker compose run --rm node npm install
-docker compose run --rm node bower install
-docker compose run --rm node gulp
-# docker compose run --rm node npm test   # once a frontend test suite exists — see "Frontend modernization path"
-curl -fsSI --max-time 10 http://localhost:8000/css/style.css
-curl -fsSI --max-time 10 http://localhost:8000/js/all-scripts.js
-```
-
-Skip the PHP test suite for frontend-only changes. In addition to the smoke checks above, the coding agent must verify the affected pages in a real browser.
-
-Leave Docker running after local verification so the app can be tested manually.
+See the "Verification rule" section of `AGENTS.md`. Note: CI also replaces `football_api.token` with the `FOOTBALL_DATA_API_TOKEN` secret before running.

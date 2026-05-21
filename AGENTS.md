@@ -5,8 +5,8 @@
 This is a legacy Symfony application being upgraded incrementally.
 
 Current baseline:
-- Symfony 6.4 LTS
-- PHP 8.2 in Docker
+- Symfony 7.4 LTS
+- PHP 8.5 in Docker
 - Apache httpd 2.4 in Docker serving `web/` and proxying dynamic requests to PHP
 - MySQL 5.7 in Docker
 - Composer 2.2.x in Docker
@@ -26,7 +26,6 @@ The project is intentionally old. Do not modernize broad areas unless the curren
 - Keep Docker as the source of truth for local verification.
 - Do not install host packages.
 - Do not commit secrets, API tokens, local `parameters.yml`, `vendor/`, `node_modules/`, `lib/`, generated assets, or cache/log files.
-- Commit and push changes yourself on non-`main` branches, then create a pull request.
 - Do not push on `main` unless explicitly asked.
 - Keep PR descriptions concise; do not add a detailed summary unless asked.
 - For user-facing web changes, verify the affected flow in a real local browser in addition to command-line smoke checks.
@@ -38,7 +37,6 @@ The project is intentionally old. Do not modernize broad areas unless the curren
 - For failing PHPUnit/Symfony runs, prefer extracting concise failure sections (for example, grep around `^[0-9]+)`), not full HTML error pages or full logs.
 - Keep searches targeted. Use narrower `rg` patterns, `--count`, or `head` before printing large match sets.
 - Prefer `git diff --stat` plus targeted diffs for risky files instead of printing broad diffs.
-- For doc-only changes, still commit and push on a non-`main` branch, but do not run local Docker verification or wait for CI unless explicitly asked.
 - Keep progress updates short and avoid repeating branch/verification details unless they changed or are needed for the final summary.
 
 ## Verification rule
@@ -80,11 +78,3 @@ curl -fsSI --max-time 10 http://localhost:8000/js/all-scripts.js
 Do not run the PHP test suite for frontend-only changes. Frontend modernization additionally requires browser-based verification by the agent: load the affected pages in a real browser and confirm the flow visibly works, not just that command-line smoke checks return 200.
 
 Leave Docker running after local verification so the user can test manually.
-
-## Upgrade strategy
-
-Preferred path:
-1. Keep Symfony 6.4 test suite passing.
-2. Resolve Symfony 6.4 deprecations and Symfony 7.4 blockers.
-3. Upgrade Docker PHP to the minimum supported version before Symfony 7.4.
-4. Keep frontend modernization separate from PHP/Symfony upgrades.
