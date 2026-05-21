@@ -59,16 +59,11 @@ Use bigger PRs, but keep them coherent:
 
 Keep each milestone as a PR and verify from a clean Docker state before moving on.
 
-1. Symfony 7.4 stabilization PR(s):
-   - Re-check abandoned packages and deprecation output after each blocker-removal step.
-   - Add any missing tests discovered during the Symfony 7.4 upgrade.
-2. Legacy dependency cleanup:
-   - Done: `doctrine/annotations` has been removed by upgrading the remaining Hateoas dependency chain.
-3. Infrastructure runtime upgrades:
+1. Infrastructure runtime upgrades:
    - Upgrade Docker PHP from 8.2 to 8.5 in a focused PR after Symfony 7.4 stabilization.
    - Upgrade Docker MySQL from 5.7 to 8 in a separate focused PR after the PHP 8.5 runtime is stable.
    - For MySQL 8, explicitly check schema compatibility, reserved words, SQL modes, charset/collation behavior, and Doctrine schema validation output.
-4. Defer structural modernization until a framework step requires it:
+2. Defer structural modernization until a framework step requires it:
    - Do not migrate the directory layout or frontend toolchain opportunistically.
    - Prefer compatibility shims and focused route/config changes over broad rewrites unless a milestone explicitly calls for a replacement.
 
