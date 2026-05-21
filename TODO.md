@@ -18,7 +18,7 @@
 - `symfony/phpunit-bridge` has been upgraded to 6.4, with `SYMFONY_PHPUNIT_VERSION=9.6` pinned for the legacy PHPUnit test suite.
 - Composer package constraints have been reviewed for the current Symfony 6.4/PHP 8.1 baseline; unused `sensio/generator-bundle` was removed and `doctrine/doctrine-cache-bundle` is no longer a direct dependency.
 - Remaining abandoned packages are tied to legacy dependencies and should be handled as separate migrations.
-- `doctrine/doctrine-bundle` has been upgraded to 2.7, Doctrine ORM to 2.20, Doctrine DBAL is pinned to 2.13, Doctrine Persistence is pinned to 2.5, and `doctrine/doctrine-cache-bundle`/`doctrine/reflection` have been removed.
+- `doctrine/doctrine-bundle` has been upgraded to 2.18, Doctrine ORM to 2.20, Doctrine DBAL to 3.10, Doctrine Persistence to 3.4, Doctrine Event Manager to 2.1, and `doctrine/doctrine-cache-bundle`/`doctrine/reflection` have been removed.
 - Short `DevlabsSportifyBundle:Entity` aliases in app code have been replaced with FQCN/`::class`, and remaining short aliases live only in vendor bridges.
 - SensioFrameworkExtraBundle has been removed; former admin-only security annotations are explicit controller checks.
 - Web controller routes have been moved from annotations to YAML routing.
@@ -28,13 +28,13 @@
 - `doctrine/annotations` is no longer a direct dependency; it remains installed transitively through DoctrineBundle and Hateoas.
 - Current email usage is registration/password reset through Symfony Mailer.
 - Doctrine ORM mappings have been moved from annotations to XML files in `app/config/doctrine`.
-- Current abandoned packages in `composer.lock`: `doctrine/annotations` and `doctrine/cache`.
+- Current abandoned packages in `composer.lock`: `doctrine/annotations` and `doctrine/cache`; `doctrine/cache` remains through Doctrine ORM 2.20 and `doctrine/annotations` remains through Hateoas/legacy Doctrine compatibility constraints.
 - FOSUserBundle has been removed; login, logout, registration, and password reset now use Symfony Security with the app `User` entity/provider/checker.
 - FOSOAuthServerBundle has been removed; password-grant token issuance and API access-token authentication now use small app-owned services/controllers against the existing OAuth tables.
 - FOSRestBundle and NelmioApiDocBundle have been removed; API routes are explicit YAML routes and API JSON responses are serialized directly with JMS Serializer.
 - `composer why-not symfony/symfony 6.4.*` now reports no installed package blockers.
-- `composer why-not symfony/symfony 7.4.*` reports blockers in the root Symfony constraint, PHP 8.1, DoctrineBundle/DBAL/Persistence, Incenteev ParameterHandler, and Doctrine event-manager/persistence versions.
-- Symfony 6.4 test output currently reports 17 self, 8 direct, 278 indirect, and 562 other deprecation notices with the expanded functional/API test suite.
+- `composer why-not symfony/symfony 7.4.*` reports blockers in the root Symfony constraint, PHP 8.1, and Incenteev ParameterHandler.
+- Symfony 6.4 test output currently reports 17 self, 38 direct, 407 indirect, and 153 other deprecation notices with the expanded functional/API test suite.
 - PHPUnit reports that `phpunit.xml.dist` validates against a deprecated schema; migrate it with `--migrate-configuration` in a focused follow-up.
 - The project still uses the unsupported `symfony/symfony` meta-package; replace it with individual Symfony packages in a focused follow-up to remove the Symfony 4+ warning and avoid its limitations.
 - Backend upgrade path toward Symfony 7.4 LTS has been outlined below.
