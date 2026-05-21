@@ -89,6 +89,7 @@
         "symfony-assets-install": "relative"
     },
     "require-dev": {
-        "symfony/phpunit-bridge": "^7.4"
+        "symfony/phpunit-bridge": "^7.4",
+        "phpunit/phpunit": "^9.6"
     }
 }
