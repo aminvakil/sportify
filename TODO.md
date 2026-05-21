@@ -43,7 +43,8 @@
 2. Add tests before each larger change so CI gives enough confidence to review and merge bigger PRs.
 3. Keep frontend modernization separate from backend/Symfony modernization unless a backend step explicitly requires a frontend change.
 4. Follow the post-Symfony 7.4 stabilization path and remove remaining legacy dependency blockers.
-5. Plan infrastructure upgrades as separate milestones: PHP 8.5 first, then MySQL 8.
+5. Plan infrastructure upgrades as separate milestones: PHP 8.5 first, then MySQL 8, then MySQL 9.
+6. After backend infrastructure is stable, start the frontend modernization track (Node 6 / Bower / Gulp 3 are far past EOL). This track needs the coding agent's browser skills: loading the affected pages locally and confirming the UI flows visibly work, not just that command-line smoke checks return 200.
 
 ## PR sizing strategy
 
@@ -62,33 +63,61 @@ Keep each milestone as a PR and verify from a clean Docker state before moving o
 1. Infrastructure runtime upgrades:
    - Upgrade Docker MySQL from 5.7 to 8 in a focused PR now that the PHP 8.5 runtime is stable.
    - For MySQL 8, explicitly check schema compatibility, reserved words, SQL modes, charset/collation behavior, and Doctrine schema validation output.
+   - Upgrade Docker MySQL from 8 to 9 in a separate focused PR after the MySQL 8 runtime is stable. Re-check schema compatibility, reserved words, SQL modes, charset/collation behavior, and Doctrine schema validation output against MySQL 9.
 2. Defer structural modernization until a framework step requires it:
    - Do not migrate the directory layout or frontend toolchain opportunistically.
    - Prefer compatibility shims and focused route/config changes over broad rewrites unless a milestone explicitly calls for a replacement.
 
+## Frontend modernization path
+
+Start this track only after the backend infrastructure path above is complete. Keep each step as its own PR.
+
+1. Add a frontend test suite before changing the frontend toolchain:
+   - The repo currently has no automated frontend tests. Pick a minimal runner that fits the existing Gulp/Bower setup (or the chosen replacement) and add smoke-level coverage for the assets the app actually ships (`web/css/style.css`, `web/js/all-scripts.js`, and the templates that load them).
+   - Until this exists, frontend changes can only be verified manually in a browser; CI cannot gate them.
+2. Upgrade the Node/npm runtime in Docker in a focused PR.
+3. Replace Bower with an npm-based dependency flow in a focused PR.
+4. Replace Gulp 3 with a current build setup in a focused PR.
+5. Every frontend PR must include a browser-based check of the affected pages by the coding agent, not just command-line smoke checks.
+
 ## Always verify each step
 
-Local verification should mirror `.github/workflows/ci.yml`, with an explicit clean reset before and after:
+Do not `docker compose down -v` before verifying. Reuse the running stack if it's already up; otherwise bring it up and create the schema:
 
 ```sh
-docker compose down -v
 cp docker/symfony/parameters.yml app/config/parameters.yml
 # CI also replaces football_api.token with the FOOTBALL_DATA_API_TOKEN secret before running.
-docker compose build
+docker compose up --wait httpd
+docker compose run --rm php php bin/console doctrine:database:create --if-not-exists
+docker compose run --rm php php bin/console doctrine:schema:update --force
+```
+
+Then run only the suite that matches the type of change.
+
+### PHP / Symfony changes
+
+```sh
 docker compose run --rm php composer install --no-interaction --no-progress
+docker compose run --rm php php bin/console cache:clear --env=test
+docker compose run --rm php php bin/console cache:clear --env=dev
+docker compose run --rm php php bin/console doctrine:schema:validate
+docker compose run --rm php vendor/bin/simple-phpunit --testsuite 'Project Test Suite'
+curl -fsSI --max-time 10 http://localhost:8000/
+```
+
+Skip the Node/Bower/Gulp asset pipeline for PHP-only changes.
+
+### Frontend changes
+
+```sh
 docker compose run --rm node npm install
 docker compose run --rm node bower install
 docker compose run --rm node gulp
-docker compose run --rm php php bin/console cache:clear --env=test
-docker compose run --rm php php bin/console cache:clear --env=dev
-docker compose run --rm php php bin/console doctrine:database:create --if-not-exists
-docker compose run --rm php php bin/console doctrine:schema:validate --skip-sync
-docker compose run --rm php php bin/console doctrine:schema:update --force
-docker compose run --rm php php bin/console doctrine:schema:validate
-docker compose run --rm php vendor/bin/simple-phpunit --testsuite 'Project Test Suite'
-docker compose up --wait httpd
-curl -fsSI --max-time 10 http://localhost:8000/
+# docker compose run --rm node npm test   # once a frontend test suite exists — see "Frontend modernization path"
 curl -fsSI --max-time 10 http://localhost:8000/css/style.css
 curl -fsSI --max-time 10 http://localhost:8000/js/all-scripts.js
-# Leave Docker running after local verification so the app can be tested manually.
 ```
+
+Skip the PHP test suite for frontend-only changes. In addition to the smoke checks above, the coding agent must verify the affected pages in a real browser.
+
+Leave Docker running after local verification so the app can be tested manually.

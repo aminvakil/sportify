@@ -43,30 +43,43 @@ The project is intentionally old. Do not modernize broad areas unless the curren
 
 ## Verification rule
 
-Before validating each upgrade step, reset Docker state:
-
-```sh
-docker compose down -v
-```
-
-Then verify from a clean setup as much as practical:
+Do not reset Docker state (`docker compose down -v`) before verification. If the stack is already up, reuse it. If it isn't, bring it up and make sure the database schema is in place before running checks:
 
 ```sh
 cp docker/symfony/parameters.yml app/config/parameters.yml
-docker compose build
+docker compose up --wait httpd
+docker compose run --rm php php bin/console doctrine:database:create --if-not-exists
+docker compose run --rm php php bin/console doctrine:schema:update --force
+```
+
+Then run only the suite that matches the type of change.
+
+### PHP / Symfony changes
+
+```sh
 docker compose run --rm php composer install --no-interaction --no-progress
+docker compose run --rm php php bin/console cache:clear --env=test
+docker compose run --rm php php bin/console doctrine:schema:validate
+docker compose run --rm php vendor/bin/simple-phpunit --testsuite 'Project Test Suite'
+curl -fsSI --max-time 10 http://localhost:8000/
+```
+
+Do not run the frontend asset pipeline for PHP-only changes.
+
+### Frontend changes
+
+```sh
 docker compose run --rm node npm install
 docker compose run --rm node bower install
 docker compose run --rm node gulp
-docker compose run --rm php php bin/console cache:clear --env=test
-docker compose run --rm php php bin/console doctrine:database:create --if-not-exists
-docker compose run --rm php php bin/console doctrine:schema:validate --skip-sync
-docker compose run --rm php php bin/console doctrine:schema:update --force
-docker compose run --rm php vendor/bin/simple-phpunit --testsuite 'Project Test Suite'
-docker compose up --wait httpd
-curl -I --max-time 10 http://localhost:8000/
-# Leave Docker running after local verification so the user can test manually.
+# docker compose run --rm node npm test   # once a frontend test suite exists — see TODO
+curl -fsSI --max-time 10 http://localhost:8000/css/style.css
+curl -fsSI --max-time 10 http://localhost:8000/js/all-scripts.js
 ```
+
+Do not run the PHP test suite for frontend-only changes. Frontend modernization additionally requires browser-based verification by the agent: load the affected pages in a real browser and confirm the flow visibly works, not just that command-line smoke checks return 200.
+
+Leave Docker running after local verification so the user can test manually.
 
 ## Upgrade strategy
 
