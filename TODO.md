@@ -4,7 +4,7 @@
 
 - Docker development setup exists and has been verified.
 - Docker httpd service serves `web/` static files and proxies dynamic requests to PHP.
-- Symfony has been upgraded to 6.4 LTS.
+- Symfony has been upgraded to 7.4 LTS.
 - Docker PHP has been upgraded incrementally from 7.0 to 8.2.
 - Composer dependencies have been updated to latest versions within existing constraints.
 - SensioDistributionBundle, its Composer script handlers, the generated requirements/config checker flow, and transitive sensiolabs/security-checker have been removed.
@@ -15,8 +15,8 @@
 - `symfony/monolog-bundle` has been upgraded to 3.10.
 - Swiftmailer and `symfony/swiftmailer-bundle` have been replaced with Symfony Mailer for registration and password reset email delivery.
 - `jms/serializer-bundle` has been upgraded to 5.5, `jms/serializer` to 3.32, and `willdurand/hateoas-bundle` to 2.6, removing the old `doctrine/common ~2` constraint from Hateoas.
-- `symfony/phpunit-bridge` has been upgraded to 6.4, with `SYMFONY_PHPUNIT_VERSION=9.6` pinned for the legacy PHPUnit test suite.
-- Composer package constraints have been reviewed for the current Symfony 6.4/PHP 8.1 baseline; unused `sensio/generator-bundle` was removed and `doctrine/doctrine-cache-bundle` is no longer a direct dependency.
+- `symfony/phpunit-bridge` has been upgraded to 7.4, with PHPUnit 9.6 pinned for the legacy test suite.
+- Composer package constraints have been reviewed for the current Symfony 7.4/PHP 8.2 baseline; unused `sensio/generator-bundle` was removed and `doctrine/doctrine-cache-bundle` is no longer a direct dependency.
 - Remaining abandoned packages are tied to legacy dependencies and should be handled as separate migrations.
 - `doctrine/doctrine-bundle` has been upgraded to 2.18, Doctrine ORM to 2.20, Doctrine DBAL to 3.10, Doctrine Persistence to 3.4, Doctrine Event Manager to 2.1, and `doctrine/doctrine-cache-bundle`/`doctrine/reflection` have been removed.
 - Short `DevlabsSportifyBundle:Entity` aliases in app code have been replaced with FQCN/`::class`, and remaining short aliases live only in vendor bridges.
@@ -32,39 +32,39 @@
 - FOSUserBundle has been removed; login, logout, registration, and password reset now use Symfony Security with the app `User` entity/provider/checker.
 - FOSOAuthServerBundle has been removed; password-grant token issuance and API access-token authentication now use small app-owned services/controllers against the existing OAuth tables.
 - FOSRestBundle and NelmioApiDocBundle have been removed; API routes are explicit YAML routes and API JSON responses are serialized directly with JMS Serializer.
-- `composer why-not symfony/symfony 6.4.*` now reports no installed package blockers.
-- `composer why-not symfony/symfony 7.4.*` reports only the root Symfony constraint blocker.
-- Symfony 6.4 test output currently reports 17 self, 38 direct, 407 indirect, and 153 other deprecation notices with the expanded functional/API test suite.
-- PHPUnit reports that `phpunit.xml.dist` validates against a deprecated schema; migrate it with `--migrate-configuration` in a focused follow-up.
-- The project still uses the unsupported `symfony/symfony` meta-package; replace it with individual Symfony packages in a focused follow-up to remove the Symfony 4+ warning and avoid its limitations.
-- Backend upgrade path toward Symfony 7.4 LTS has been outlined below.
+- The unsupported `symfony/symfony` meta-package has been replaced with explicit Symfony component packages pinned to 7.4.*.
+- `phpunit.xml.dist` has been migrated to the PHPUnit 9.6 schema.
+- Symfony 7.4 is installed and locked; re-check deprecation output before the next backend milestone.
+- Remaining abandoned packages in `composer.lock`: `doctrine/annotations` and `doctrine/cache`.
+- Backend work should now focus on post-7.4 stabilization and remaining legacy dependency cleanup.
 
 ## Next steps
 
 1. Stop splitting upgrade work into tiny deprecation-only PRs. Prefer larger, coherent milestone PRs that remove a full blocker or complete a framework step end-to-end.
 2. Add tests before each larger change so CI gives enough confidence to review and merge bigger PRs.
 3. Keep frontend modernization separate from backend/Symfony modernization unless a backend step explicitly requires a frontend change.
-4. Follow the backend upgrade path toward Symfony 7.4 LTS as the long-term framework target.
+4. Follow the post-Symfony 7.4 stabilization path and remove remaining legacy dependency blockers.
 
 ## PR sizing strategy
 
 Use bigger PRs, but keep them coherent:
 
-- Good larger PR: "remove a Doctrine blocker with mapping coverage" or "upgrade Symfony 6.4 to 7.4 and fix resulting config/code breaks".
+- Good larger PR: "remove a Doctrine blocker with mapping coverage" or "stabilize Symfony 7.4 by fixing one coherent group of deprecations/config breaks".
 - Bad larger PR: mixing Symfony upgrades, frontend build modernization, broad directory layout changes, and unrelated cleanup.
 - Every large PR should include or expand tests for the flows it changes.
 - Prefer one PR per milestone below, not one PR per deprecation notice or one PR per small config line.
 - If a milestone uncovers unrelated work, note it in TODO instead of expanding scope indefinitely.
 
-## Backend upgrade path
+## Backend stabilization path
 
 Keep each milestone as a PR and verify from a clean Docker state before moving on.
 
-1. Symfony 6.4 stabilization PR(s):
-   - Re-check abandoned packages and `composer why-not` output after each blocker-removal step.
-   - Add any missing tests discovered during the Symfony 6.4 upgrade.
-2. Continue one LTS at a time:
-   - Symfony 6.4 -> 7.4.
+1. Symfony 7.4 stabilization PR(s):
+   - Re-check abandoned packages and deprecation output after each blocker-removal step.
+   - Add any missing tests discovered during the Symfony 7.4 upgrade.
+2. Legacy dependency cleanup:
+   - Remove `doctrine/cache` by upgrading/replacing the remaining dependency chain that keeps it installed.
+   - Remove `doctrine/annotations` by upgrading/replacing the remaining dependency chain that keeps it installed.
 3. Defer structural modernization until a framework step requires it:
    - Do not migrate the directory layout or frontend toolchain opportunistically.
    - Prefer compatibility shims and focused route/config changes over broad rewrites unless a milestone explicitly calls for a replacement.
