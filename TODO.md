@@ -43,8 +43,8 @@
 2. Add tests before each larger change so CI gives enough confidence to review and merge bigger PRs.
 3. Keep frontend modernization separate from backend/Symfony modernization unless a backend step explicitly requires a frontend change.
 4. Follow the post-Symfony 7.4 stabilization path and remove remaining legacy dependency blockers.
-5. Plan infrastructure upgrades as separate milestones: PHP 8.5 first, then MySQL 8, then MySQL 9.
-6. After backend infrastructure is stable, start the frontend modernization track (Node 6 / Bower / Gulp 3 are far past EOL). This track needs the coding agent's browser skills: loading the affected pages locally and confirming the UI flows visibly work, not just that command-line smoke checks return 200.
+5. Backend infrastructure (PHP runtime, Symfony, Doctrine) is good enough for now. Start the frontend modernization track next: Node 6 / Bower / Gulp 3 are far past EOL and are the most painful remaining baseline. This track needs the coding agent's browser skills: loading the affected pages locally and confirming the UI flows visibly work, not just that command-line smoke checks return 200.
+6. Defer the remaining backend infrastructure upgrades (MySQL 5.7 → 8 → 9) until after the frontend track is complete.
 
 ## PR sizing strategy
 
@@ -56,21 +56,9 @@ Use bigger PRs, but keep them coherent:
 - Prefer one PR per milestone below, not one PR per deprecation notice or one PR per small config line.
 - If a milestone uncovers unrelated work, note it in TODO instead of expanding scope indefinitely.
 
-## Backend stabilization path
-
-Keep each milestone as a PR and verify from a clean Docker state before moving on.
-
-1. Infrastructure runtime upgrades:
-   - Upgrade Docker MySQL from 5.7 to 8 in a focused PR now that the PHP 8.5 runtime is stable.
-   - For MySQL 8, explicitly check schema compatibility, reserved words, SQL modes, charset/collation behavior, and Doctrine schema validation output.
-   - Upgrade Docker MySQL from 8 to 9 in a separate focused PR after the MySQL 8 runtime is stable. Re-check schema compatibility, reserved words, SQL modes, charset/collation behavior, and Doctrine schema validation output against MySQL 9.
-2. Defer structural modernization until a framework step requires it:
-   - Do not migrate the directory layout or frontend toolchain opportunistically.
-   - Prefer compatibility shims and focused route/config changes over broad rewrites unless a milestone explicitly calls for a replacement.
-
 ## Frontend modernization path
 
-Start this track only after the backend infrastructure path above is complete. Keep each step as its own PR.
+This is the active track. Keep each step as its own PR.
 
 1. Add a frontend test suite before changing the frontend toolchain:
    - The repo currently has no automated frontend tests. Pick a minimal runner that fits the existing Gulp/Bower setup (or the chosen replacement) and add smoke-level coverage for the assets the app actually ships (`web/css/style.css`, `web/js/all-scripts.js`, and the templates that load them).
@@ -79,6 +67,17 @@ Start this track only after the backend infrastructure path above is complete. K
 3. Replace Bower with an npm-based dependency flow in a focused PR.
 4. Replace Gulp 3 with a current build setup in a focused PR.
 5. Every frontend PR must include a browser-based check of the affected pages by the coding agent, not just command-line smoke checks.
+
+## Deferred backend infrastructure path
+
+Pick this back up only after the frontend modernization path is complete. Keep each milestone as its own PR.
+
+1. Infrastructure runtime upgrades:
+   - Upgrade Docker MySQL from 5.7 to 8 in a focused PR.
+   - For MySQL 8, explicitly check schema compatibility, reserved words, SQL modes, charset/collation behavior, and Doctrine schema validation output.
+   - Upgrade Docker MySQL from 8 to 9 in a separate focused PR after the MySQL 8 runtime is stable. Re-check schema compatibility, reserved words, SQL modes, charset/collation behavior, and Doctrine schema validation output against MySQL 9.
+2. Defer structural modernization until a framework step requires it:
+   - Prefer compatibility shims and focused route/config changes over broad rewrites unless a milestone explicitly calls for a replacement.
 
 ## Always verify each step
 
