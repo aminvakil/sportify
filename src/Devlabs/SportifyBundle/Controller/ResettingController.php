@@ -7,6 +7,7 @@ use Devlabs\SportifyBundle\Form\ResettingFormType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class ResettingController extends AbstractController
@@ -96,12 +97,12 @@ class ResettingController extends AbstractController
         $context = array('user' => $user, 'confirmationUrl' => $confirmationUrl);
         $template = $this->get('twig')->load('templates/emails/password_resetting.email.twig');
 
-        $message = (new \Swift_Message())
-            ->setSubject(trim($template->renderBlock('subject', $context)))
-            ->setFrom($this->getParameter('mailer_sender_address'))
-            ->setTo($user->getEmail())
-            ->setBody($template->renderBlock('body_text', $context), 'text/plain')
-            ->addPart($template->renderBlock('body_html', $context), 'text/html')
+        $message = (new Email())
+            ->subject(trim($template->renderBlock('subject', $context)))
+            ->from($this->getParameter('mailer_sender_address'))
+            ->to($user->getEmail())
+            ->text($template->renderBlock('body_text', $context))
+            ->html($template->renderBlock('body_html', $context))
         ;
 
         $this->get('mailer')->send($message);

@@ -21,7 +21,6 @@
         "symfony/symfony": "5.4.*",
         "doctrine/orm": "^2.11",
         "doctrine/doctrine-bundle": "^2.7",
-        "symfony/swiftmailer-bundle": "^3.5",
         "symfony/monolog-bundle": "^3.0",
         "symfony/polyfill-apcu": "^1.0",
         "incenteev/composer-parameter-handler": "^2.0",
@@ -32,7 +31,8 @@
         "doctrine/dbal": "^2.13",
         "doctrine/persistence": "^2.2",
         "symfony/contracts": "^2.1",
-        "symfony/doctrine-messenger": "^5.4"
+        "symfony/doctrine-messenger": "^5.4",
+        "egulias/email-validator": "^3.2"
     },
     "scripts": {
         "post-install-cmd": [

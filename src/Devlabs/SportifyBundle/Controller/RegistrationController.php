@@ -8,6 +8,7 @@ use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Mime\Email;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -108,12 +109,12 @@ class RegistrationController extends AbstractController
         $context = array('user' => $user, 'confirmationUrl' => $confirmationUrl);
         $twigTemplate = $this->get('twig')->load($template);
 
-        $message = (new \Swift_Message())
-            ->setSubject(trim($twigTemplate->renderBlock('subject', $context)))
-            ->setFrom($this->getParameter('mailer_sender_address'))
-            ->setTo($user->getEmail())
-            ->setBody($twigTemplate->renderBlock('body_text', $context), 'text/plain')
-            ->addPart($twigTemplate->renderBlock('body_html', $context), 'text/html')
+        $message = (new Email())
+            ->subject(trim($twigTemplate->renderBlock('subject', $context)))
+            ->from($this->getParameter('mailer_sender_address'))
+            ->to($user->getEmail())
+            ->text($twigTemplate->renderBlock('body_text', $context))
+            ->html($twigTemplate->renderBlock('body_html', $context))
         ;
 
         $this->get('mailer')->send($message);
