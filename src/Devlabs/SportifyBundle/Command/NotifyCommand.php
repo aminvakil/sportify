@@ -18,7 +18,7 @@ use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 class NotifyCommand extends Command implements ContainerAwareInterface
 {
     use ContainerAwareTrait;
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('sportify:notify')
@@ -31,7 +31,7 @@ class NotifyCommand extends Command implements ContainerAwareInterface
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $reason = $input->getArgument('reason');
 

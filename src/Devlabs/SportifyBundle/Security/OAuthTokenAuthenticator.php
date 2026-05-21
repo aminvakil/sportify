@@ -57,7 +57,7 @@ class OAuthTokenAuthenticator extends AbstractAuthenticator implements Authentic
         ), 401);
     }
 
-    public function start(Request $request, ?AuthenticationException $authException = null)
+    public function start(Request $request, ?AuthenticationException $authException = null): Response
     {
         return new JsonResponse(array(
             'error' => 'access_denied',

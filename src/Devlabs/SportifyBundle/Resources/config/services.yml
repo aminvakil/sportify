@@ -112,11 +112,13 @@ services:
 
     app.command.create_oauth_client:
         class: Devlabs\SportifyBundle\Command\CreateOAuthClientCommand
+        arguments: ['@doctrine.orm.entity_manager']
         tags:
             - { name: console.command }
 
     app.command.data_update:
         class: Devlabs\SportifyBundle\Command\DataUpdateCommand
+        arguments: ['@service_container']
         tags:
             - { name: console.command }
 

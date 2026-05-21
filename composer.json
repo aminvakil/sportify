@@ -18,7 +18,6 @@
     },
     "require": {
         "php": ">=8.2",
-        "symfony/symfony": "6.4.*",
         "doctrine/orm": "^2.11",
         "doctrine/doctrine-bundle": "^2.18",
         "symfony/monolog-bundle": "^3.10",
@@ -30,12 +29,51 @@
         "doctrine/dbal": "^3.6",
         "doctrine/persistence": "^3.1",
         "symfony/contracts": "^3.0",
-        "symfony/doctrine-messenger": "^6.4",
+        "symfony/doctrine-messenger": "^7.4",
         "egulias/email-validator": "^3.2",
         "psr/cache": "^3.0",
         "psr/link": "^2.0",
         "masterminds/html5": "^2.9",
-        "doctrine/event-manager": "^2"
+        "doctrine/event-manager": "^2",
+        "symfony/asset": "7.4.*",
+        "symfony/browser-kit": "7.4.*",
+        "symfony/cache": "7.4.*",
+        "symfony/config": "7.4.*",
+        "symfony/console": "7.4.*",
+        "symfony/css-selector": "7.4.*",
+        "symfony/debug-bundle": "7.4.*",
+        "symfony/dependency-injection": "7.4.*",
+        "symfony/doctrine-bridge": "7.4.*",
+        "symfony/dotenv": "7.4.*",
+        "symfony/error-handler": "7.4.*",
+        "symfony/event-dispatcher": "7.4.*",
+        "symfony/expression-language": "7.4.*",
+        "symfony/filesystem": "7.4.*",
+        "symfony/finder": "7.4.*",
+        "symfony/form": "7.4.*",
+        "symfony/framework-bundle": "7.4.*",
+        "symfony/http-foundation": "7.4.*",
+        "symfony/http-kernel": "7.4.*",
+        "symfony/mailer": "7.4.*",
+        "symfony/mime": "7.4.*",
+        "symfony/options-resolver": "7.4.*",
+        "symfony/password-hasher": "7.4.*",
+        "symfony/property-access": "7.4.*",
+        "symfony/property-info": "7.4.*",
+        "symfony/routing": "7.4.*",
+        "symfony/security-bundle": "7.4.*",
+        "symfony/security-core": "7.4.*",
+        "symfony/security-csrf": "7.4.*",
+        "symfony/security-http": "7.4.*",
+        "symfony/serializer": "7.4.*",
+        "symfony/stopwatch": "7.4.*",
+        "symfony/string": "7.4.*",
+        "symfony/translation": "7.4.*",
+        "symfony/twig-bridge": "7.4.*",
+        "symfony/twig-bundle": "7.4.*",
+        "symfony/validator": "7.4.*",
+        "symfony/web-profiler-bundle": "7.4.*",
+        "symfony/yaml": "7.4.*"
     },
     "config": {
         "platform": {
@@ -51,6 +89,6 @@
         "symfony-assets-install": "relative"
     },
     "require-dev": {
-        "symfony/phpunit-bridge": "^6.4"
+        "symfony/phpunit-bridge": "^7.4"
     }
 }

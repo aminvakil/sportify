@@ -7,17 +7,23 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Class DataUpdateCommand
  * @package Devlabs\SportifyBundle\Command
  */
-class DataUpdateCommand extends Command implements ContainerAwareInterface
+class DataUpdateCommand extends Command
 {
-    use ContainerAwareTrait;
-    protected function configure()
+    private $container;
+
+    public function __construct(ContainerInterface $container)
+    {
+        parent::__construct();
+        $this->container = $container;
+    }
+
+    protected function configure(): void
     {
         $this
             ->setName('sportify:data:update')
@@ -35,12 +41,12 @@ class DataUpdateCommand extends Command implements ContainerAwareInterface
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $updateType = $input->getArgument('type');
         $days = $input->getArgument('days');
 
-        $dataUpdatesManager = $this->getContainer()->get('app.data_updates.manager');
+        $dataUpdatesManager = $this->container->get('app.data_updates.manager');
         $dataUpdated = false;
         $msgText = '';
         $logText = 'Command for updating '.$updateType.' executed at: '.date("Y-m-d H:i:s");
@@ -63,10 +69,10 @@ class DataUpdateCommand extends Command implements ContainerAwareInterface
             $status = $dataUpdatesManager->updateFixtures($dateFrom, $dateTo);
 
             if ($status['total_updated'] > 0) {
-                $em = $this->getContainer()->get('doctrine.orm.entity_manager');
+                $em = $this->container->get('doctrine.orm.entity_manager');
 
                 // Get the ScoreUpdater service and update all scores
-                $tournamentsModified = $this->getContainer()
+                $tournamentsModified = $this->container
                     ->get('app.score_updater')->updateAll();
 
                 $scores = $em->getRepository(Score::class)
@@ -101,7 +107,7 @@ class DataUpdateCommand extends Command implements ContainerAwareInterface
 
         if ($dataUpdated) {
             // Get instance of the Slack service and send notification
-            $this->getContainer()->get('app.slack')->setText($msgText)->post();
+            $this->container->get('app.slack')->setText($msgText)->post();
 
             $logText = $logText . "\n" . $msgText . "\n";
             $botToken = "your_bot_token";
