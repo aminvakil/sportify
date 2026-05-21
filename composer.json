@@ -20,7 +20,7 @@
         "php": ">=8.1",
         "symfony/symfony": "6.4.*",
         "doctrine/orm": "^2.11",
-        "doctrine/doctrine-bundle": "^2.7",
+        "doctrine/doctrine-bundle": "^2.18",
         "symfony/monolog-bundle": "^3.10",
         "symfony/polyfill-apcu": "^1.0",
         "incenteev/composer-parameter-handler": "^2.0",
@@ -28,14 +28,15 @@
         "intervention/image": "^2.3",
         "jms/serializer-bundle": "^5.5",
         "willdurand/hateoas-bundle": "^2.4",
-        "doctrine/dbal": "^2.13",
-        "doctrine/persistence": "^2.2",
+        "doctrine/dbal": "^3.6",
+        "doctrine/persistence": "^3.1",
         "symfony/contracts": "^3.0",
         "symfony/doctrine-messenger": "^6.4",
         "egulias/email-validator": "^3.2",
         "psr/cache": "^3.0",
         "psr/link": "^2.0",
-        "masterminds/html5": "^2.9"
+        "masterminds/html5": "^2.9",
+        "doctrine/event-manager": "^2"
     },
     "scripts": {
         "post-install-cmd": [
