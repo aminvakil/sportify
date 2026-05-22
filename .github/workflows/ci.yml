@@ -41,7 +41,6 @@ jobs:
       - name: Build frontend assets
         run: |
           docker compose run --rm node npm install
-          docker compose run --rm node bower install
           docker compose run --rm node gulp
 
       - name: Run Symfony and Doctrine smoke checks
