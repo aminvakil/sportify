@@ -34,9 +34,10 @@
 - `phpunit.xml.dist` has been migrated to the PHPUnit 9.6 schema.
 - Symfony 7.4 is installed and locked; deprecation re-check is clean for self and direct notices. The remaining 403 indirect notices are a single vendor deprecation (`Subscribing to onSchemaCreateTable events is deprecated`, doctrine/dbal) that needs a future DBAL major upgrade and is not actionable from app code.
 - Minimal frontend smoke coverage exists through `npm test`.
-- Docker Node runtime has been upgraded from Node 6 / npm 3 to Node 7 / npm 4, the newest runtime the current `laravel-elixir`/`node-sass` stack supports without dependency changes.
+- Docker Node runtime has been upgraded from Node 6 / npm 3 to Node 20 / npm 10.
 - Bower has been removed; frontend dependencies now install through npm.
 - Gulp 3 and Laravel Elixir have been replaced with a plain Gulp 4 build.
+- `node-sass` has been replaced with Dart Sass via `gulp-sass` 5.
 
 ## Next steps
 
@@ -56,7 +57,7 @@ Use bigger PRs, but keep them coherent:
 
 This is the active track. Keep each step as its own PR.
 
-1. Continue frontend dependency/runtime modernization now that the build no longer depends on Gulp 3/Laravel Elixir.
+1. Upgrade Docker Node from 20 to 26 in a separate focused PR.
 
 ## Deferred backend infrastructure path
 
