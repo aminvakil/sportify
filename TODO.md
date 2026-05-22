@@ -34,14 +34,14 @@
 - `phpunit.xml.dist` has been migrated to the PHPUnit 9.6 schema.
 - Symfony 7.4 is installed and locked; deprecation re-check is clean for self and direct notices. The remaining 403 indirect notices are a single vendor deprecation (`Subscribing to onSchemaCreateTable events is deprecated`, doctrine/dbal) that needs a future DBAL major upgrade and is not actionable from app code.
 - Minimal frontend smoke coverage exists through `npm test`.
-- Docker Node runtime has been upgraded from Node 6 / npm 3 to Node 20 / npm 10.
+- Docker Node runtime has been upgraded from Node 6 / npm 3 to Node 26 / npm 11.
 - Bower has been removed; frontend dependencies now install through npm.
 - Gulp 3 and Laravel Elixir have been replaced with a plain Gulp 4 build.
 - `node-sass` has been replaced with Dart Sass via `gulp-sass` 5.
 
 ## Next steps
 
-Backend infrastructure (PHP runtime, Symfony, Doctrine) is good enough for now. The active track is frontend modernization (see "Frontend modernization path" below). Remaining backend infrastructure upgrades (MySQL 5.7 → 8 → 9) are deferred until the frontend track is complete.
+Backend infrastructure (PHP runtime, Symfony, Doctrine) is good enough for now. The active frontend runtime modernization step is complete. Remaining backend infrastructure upgrades (MySQL 5.7 → 8 → 9) are deferred until the frontend track is complete.
 
 ## PR sizing strategy
 
@@ -57,7 +57,7 @@ Use bigger PRs, but keep them coherent:
 
 This is the active track. Keep each step as its own PR.
 
-1. Upgrade Docker Node from 20 to 26 in a separate focused PR.
+1. Done: upgrade Docker Node from 20 to 26 in a separate focused PR.
 
 ## Deferred backend infrastructure path
 
