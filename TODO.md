@@ -67,9 +67,9 @@ Separate the deployment stack from the local development stack. Keep `docker-com
 
 ### Backend deployment tasks
 
-1. Add a production Docker Compose stack separate from the dev stack.
+1. ~~Add a production Docker Compose stack separate from the dev stack.~~ Done — `docker-compose.prod.yml` with a php-fpm + httpd runtime built from `docker/Dockerfile.prod`.
 2. Make deployment configuration environment-driven instead of requiring manual `app/config/parameters.yml` edits.
-3. Add an idempotent first-deploy/init path that waits for the database, creates/updates schema, and clears/warms prod cache.
+3. Add an idempotent first-deploy/init path that waits for the database, creates/updates schema, runs `assets:install`, and clears/warms prod cache.
 4. Decide how first admin creation should work now that FOSUserBundle is gone.
 5. Add an app-owned scheduled command that sends users' predictions to the configured Telegram chat shortly after each match starts, without hardcoded secrets. This is separate from the existing Telegram result notification sent after matches end and scores are updated.
 6. Document required env vars, first deployment, upgrades, scheduled commands, and smoke checks.
