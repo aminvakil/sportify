@@ -57,7 +57,7 @@ Use bigger PRs, but keep them coherent:
 
 This is the active track. Keep each step as its own PR.
 
-1. Continue frontend dependency/runtime modernization now that the build no longer depends on Gulp 3/Laravel Elixir.
+1. Upgrade Docker Node from 20 to 26 in a separate focused PR.
 
 ## Deferred backend infrastructure path
 
