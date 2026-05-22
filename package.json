@@ -1,6 +1,9 @@
 {
   "name": "dev-sportify",
   "version": "0.1.0",
+  "scripts": {
+    "test": "node tests/frontend-smoke.js"
+  },
   "devDependencies": {
     "gulp": "^3.9.1"
   },
