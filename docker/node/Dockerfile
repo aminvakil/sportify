@@ -1,4 +1,4 @@
-FROM node:6.17.1-stretch
+FROM node:7.10.1-stretch
 
 RUN set -eux; \
     printf '%s\n' \

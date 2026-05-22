@@ -33,6 +33,8 @@
 - The unsupported `symfony/symfony` meta-package has been replaced with explicit Symfony component packages pinned to 7.4.*.
 - `phpunit.xml.dist` has been migrated to the PHPUnit 9.6 schema.
 - Symfony 7.4 is installed and locked; deprecation re-check is clean for self and direct notices. The remaining 403 indirect notices are a single vendor deprecation (`Subscribing to onSchemaCreateTable events is deprecated`, doctrine/dbal) that needs a future DBAL major upgrade and is not actionable from app code.
+- Minimal frontend smoke coverage exists through `npm test`.
+- Docker Node runtime has been upgraded from Node 6 / npm 3 to Node 7 / npm 4, the newest runtime the current `laravel-elixir`/`node-sass` stack supports without dependency changes.
 
 ## Next steps
 
@@ -52,12 +54,8 @@ Use bigger PRs, but keep them coherent:
 
 This is the active track. Keep each step as its own PR.
 
-1. Add a frontend test suite before changing the frontend toolchain:
-   - The repo currently has no automated frontend tests. Pick a minimal runner that fits the existing Gulp/Bower setup (or the chosen replacement) and add smoke-level coverage for the assets the app actually ships (`web/css/style.css`, `web/js/all-scripts.js`, and the templates that load them).
-   - Until this exists, frontend changes can only be verified manually in a browser; CI cannot gate them.
-2. Upgrade the Node/npm runtime in Docker in a focused PR.
-3. Replace Bower with an npm-based dependency flow in a focused PR.
-4. Replace Gulp 3 with a current build setup in a focused PR.
+1. Replace Bower with an npm-based dependency flow in a focused PR.
+2. Replace Gulp 3 with a current build setup in a focused PR.
 
 ## Deferred backend infrastructure path
 
