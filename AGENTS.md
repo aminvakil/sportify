@@ -69,9 +69,8 @@ Do not run the frontend asset pipeline for PHP-only changes.
 
 ```sh
 docker compose run --rm node npm install
-docker compose run --rm node bower install
+docker compose run --rm node npm test
 docker compose run --rm node gulp
-# docker compose run --rm node npm test   # once a frontend test suite exists — see TODO
 curl -fsSI --max-time 10 http://localhost:8000/css/style.css
 curl -fsSI --max-time 10 http://localhost:8000/js/all-scripts.js
 ```

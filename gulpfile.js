@@ -2,7 +2,7 @@
 
 var gulp = require('gulp');
 var concat = require('gulp-concat');
-var sass = require('gulp-sass');
+var sass = require('gulp-sass')(require('sass'));
 
 var cssSources = [
     'sass/bootstrap.scss',
