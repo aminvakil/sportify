@@ -29,6 +29,7 @@ The project is intentionally old. Do not modernize broad areas unless the curren
 - Do not push on `main` unless explicitly asked.
 - Keep PR descriptions concise; do not add a detailed summary unless asked.
 - For user-facing web changes, verify the affected flow in a real local browser in addition to command-line smoke checks.
+- If Chromium fails to start during browser verification, try launching it with `--no-sandbox`.
 - For changes limited to `AGENTS.md` and/or `TODO.md`, still commit and push on a non-`main` branch, but do not run local Docker verification or wait for CI unless explicitly asked.
 
 ## Output and token discipline
