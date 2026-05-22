@@ -34,14 +34,14 @@
 - `phpunit.xml.dist` has been migrated to the PHPUnit 9.6 schema.
 - Symfony 7.4 is installed and locked; deprecation re-check is clean for self and direct notices. The remaining 403 indirect notices are a single vendor deprecation (`Subscribing to onSchemaCreateTable events is deprecated`, doctrine/dbal) that needs a future DBAL major upgrade and is not actionable from app code.
 - Minimal frontend smoke coverage exists through `npm test`.
-- Docker Node runtime has been upgraded from Node 6 / npm 3 to Node 20 / npm 10.
+- Docker Node runtime has been upgraded from Node 6 / npm 3 to Node 26 / npm 11.
 - Bower has been removed; frontend dependencies now install through npm.
 - Gulp 3 and Laravel Elixir have been replaced with a plain Gulp 4 build.
 - `node-sass` has been replaced with Dart Sass via `gulp-sass` 5.
 
 ## Next steps
 
-Backend infrastructure (PHP runtime, Symfony, Doctrine) is good enough for now. The active track is frontend modernization (see "Frontend modernization path" below). Remaining backend infrastructure upgrades (MySQL 5.7 → 8 → 9) are deferred until the frontend track is complete.
+Backend infrastructure (PHP runtime, Symfony, Doctrine) is good enough for now. The active frontend runtime modernization step is complete. Remaining backend infrastructure upgrades (MySQL 5.7 → 8 → 9) are deferred until the frontend track is complete.
 
 ## PR sizing strategy
 
@@ -55,9 +55,25 @@ Use bigger PRs, but keep them coherent:
 
 ## Frontend modernization path
 
-This is the active track. Keep each step as its own PR.
+Complete for now. Keep the completed steps in "Current status" above so the upgrade path remains visible.
 
-1. Upgrade Docker Node from 20 to 26 in a separate focused PR.
+## Deployment path
+
+Separate the deployment stack from the local development stack. Keep `docker-compose.yml` focused on local testing, and add deployment-specific Docker files/Compose configuration so production can be env-driven and easier to operate.
+
+### Backend deployment tasks
+
+1. Add a production Docker Compose stack separate from the dev stack.
+2. Make deployment configuration environment-driven instead of requiring manual `app/config/parameters.yml` edits.
+3. Add an idempotent first-deploy/init path that waits for the database, creates/updates schema, and clears/warms prod cache.
+4. Decide how first admin creation should work now that FOSUserBundle is gone.
+5. Document required env vars, first deployment, upgrades, scheduled commands, and smoke checks.
+
+### Frontend deployment tasks
+
+1. Build frontend assets during image build or deployment, not manually on the server.
+2. Ensure built assets are available in `web/` for the runtime httpd container.
+3. Keep Node/npm out of the final runtime image unless needed.
 
 ## Deferred backend infrastructure path
 
