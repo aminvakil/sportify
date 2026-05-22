@@ -1,6 +1,6 @@
 # Docker development baseline
 
-This setup is intentionally old: it is for reproducing the legacy PHP 7.0/Bower/Gulp stack while upgrading it incrementally.
+This setup is intentionally old: it is for reproducing the legacy PHP 7.0/Gulp stack while upgrading it incrementally.
 
 ## First run
 
@@ -10,7 +10,6 @@ cp docker/symfony/parameters.yml app/config/parameters.yml
 docker compose build
 docker compose run --rm php composer install --no-interaction --no-progress
 docker compose run --rm node npm install
-docker compose run --rm node bower install
 docker compose run --rm node gulp
 docker compose run --rm php vendor/bin/simple-phpunit --testsuite 'Project Test Suite'
 docker compose up php

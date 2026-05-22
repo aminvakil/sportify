@@ -35,10 +35,11 @@
 - Symfony 7.4 is installed and locked; deprecation re-check is clean for self and direct notices. The remaining 403 indirect notices are a single vendor deprecation (`Subscribing to onSchemaCreateTable events is deprecated`, doctrine/dbal) that needs a future DBAL major upgrade and is not actionable from app code.
 - Minimal frontend smoke coverage exists through `npm test`.
 - Docker Node runtime has been upgraded from Node 6 / npm 3 to Node 7 / npm 4, the newest runtime the current `laravel-elixir`/`node-sass` stack supports without dependency changes.
+- Bower has been removed; frontend dependencies now install through npm.
 
 ## Next steps
 
-Backend infrastructure (PHP runtime, Symfony, Doctrine) is good enough for now. The active track is frontend modernization (see "Frontend modernization path" below): Node 6 / Bower / Gulp 3 are far past EOL and are the most painful remaining baseline. Remaining backend infrastructure upgrades (MySQL 5.7 → 8 → 9) are deferred until the frontend track is complete.
+Backend infrastructure (PHP runtime, Symfony, Doctrine) is good enough for now. The active track is frontend modernization (see "Frontend modernization path" below): Gulp 3 is the most painful remaining baseline. Remaining backend infrastructure upgrades (MySQL 5.7 → 8 → 9) are deferred until the frontend track is complete.
 
 ## PR sizing strategy
 
@@ -54,8 +55,7 @@ Use bigger PRs, but keep them coherent:
 
 This is the active track. Keep each step as its own PR.
 
-1. Replace Bower with an npm-based dependency flow in a focused PR.
-2. Replace Gulp 3 with a current build setup in a focused PR.
+1. Replace Gulp 3 with a current build setup in a focused PR.
 
 ## Deferred backend infrastructure path
 

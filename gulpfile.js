@@ -9,19 +9,19 @@ elixir(function(mix) {
     .sass([
 
         'bootstrap.scss',
-        '../lib/owl.carousel/dist/assets/owl.carousel.min.css',
-        '../lib/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css',
-        '../lib/chosen/chosen.css',
+        '../node_modules/owl.carousel/dist/assets/owl.carousel.min.css',
+        '../node_modules/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css',
+        '../node_modules/chosen-js/chosen.css',
         'flag-icon.scss',
         'style.scss'
 
         ],'web/css/style.css')
     .scripts([
-        '../lib/jquery/dist/jquery.min.js',
-        '../lib/bootstrap-sass/assets/javascripts/bootstrap.min.js',
-        '../lib/owl.carousel/dist/owl.carousel.min.js',
-        '../lib/chosen/chosen.jquery.js',
-        '../lib/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js',
+        '../node_modules/jquery/dist/jquery.min.js',
+        '../node_modules/bootstrap-sass/assets/javascripts/bootstrap.min.js',
+        '../node_modules/owl.carousel/dist/owl.carousel.min.js',
+        '../node_modules/chosen-js/chosen.jquery.js',
+        '../node_modules/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js',
         '../web/js/script.js',
         ],'web/js/all-scripts.js');
 });
