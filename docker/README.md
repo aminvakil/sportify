@@ -37,3 +37,31 @@ docker compose run --rm php vendor/bin/simple-phpunit --testsuite 'Project Test 
 ```
 
 The upgrade milestone is to keep these smoke checks passing after each step.
+
+## Production stack
+
+`docker-compose.prod.yml` is a separate stack intended for deployments. It builds two
+runtime images from `docker/Dockerfile.prod` — `php` (php-fpm) and `httpd` — with the
+application source, vendor, and built frontend assets baked in. There is no bind
+mount and no Node/Composer in the runtime images.
+
+Before building, place a production `app/config/parameters.yml` on the host (this file
+is gitignored). Making this env-driven is a separate, follow-up step on the deployment
+track.
+
+Database credentials and the host port come from environment variables; the stack
+will fail to start if they are missing:
+
+```sh
+export MYSQL_DATABASE=sportify
+export MYSQL_USER=sportify
+export MYSQL_PASSWORD=...
+export MYSQL_ROOT_PASSWORD=...
+export HTTP_PORT=8080
+
+docker compose -f docker-compose.prod.yml build
+docker compose -f docker-compose.prod.yml up -d
+```
+
+Initial schema creation, prod cache warm, and operational documentation are tracked
+as follow-up tasks in `TODO.md`.

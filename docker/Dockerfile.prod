@@ -1,0 +1,87 @@
+# syntax=docker/dockerfile:1
+#
+# Production multi-stage build. Two targets are exposed:
+#   * php   — php-fpm runtime with vendor and source baked in.
+#   * httpd — Apache runtime that serves web/ and proxies PHP to php-fpm.
+#
+# app/config/parameters.yml must exist before building (the deployment
+# config track will replace this with env-driven config).
+
+FROM composer:2.2.25 AS composer-bin
+
+# Stage 1: install PHP dependencies without dev packages.
+FROM php:8.5-cli-bookworm AS composer-build
+COPY --from=composer-bin /usr/bin/composer /usr/local/bin/composer
+RUN set -eux; \
+    apt-get update; \
+    apt-get install -y --no-install-recommends \
+        ca-certificates \
+        curl \
+        git \
+        unzip \
+        zlib1g-dev \
+        libicu-dev \
+        libcurl4-openssl-dev \
+        libfreetype6-dev \
+        libjpeg62-turbo-dev \
+        libpng-dev \
+        libzip-dev \
+        libonig-dev \
+    ; \
+    docker-php-ext-configure gd --with-freetype --with-jpeg; \
+    docker-php-ext-install -j"$(nproc)" curl gd intl mbstring pdo_mysql zip; \
+    rm -rf /var/lib/apt/lists/*
+WORKDIR /app
+ENV COMPOSER_ALLOW_SUPERUSER=1 \
+    COMPOSER_MEMORY_LIMIT=-1 \
+    COMPOSER_FUND=0 \
+    SYMFONY_ENV=prod
+COPY composer.json composer.lock ./
+COPY app app
+COPY src src
+COPY web web
+COPY bin bin
+RUN composer install --no-dev --no-interaction --no-progress --optimize-autoloader --no-scripts
+
+# Stage 2: build frontend assets.
+FROM node:26-trixie AS asset-build
+RUN npm install -g gulp-cli@2.3.0
+WORKDIR /app
+COPY package.json package-lock.json gulpfile.js ./
+COPY sass sass
+COPY web web
+RUN npm install --no-audit --no-fund
+RUN gulp
+
+# Stage 3: php-fpm runtime.
+FROM php:8.5-fpm-bookworm AS php
+RUN set -eux; \
+    apt-get update; \
+    apt-get install -y --no-install-recommends \
+        libicu-dev \
+        libcurl4-openssl-dev \
+        libfreetype6-dev \
+        libjpeg62-turbo-dev \
+        libpng-dev \
+        libzip-dev \
+        libonig-dev \
+    ; \
+    docker-php-ext-configure gd --with-freetype --with-jpeg; \
+    docker-php-ext-install -j"$(nproc)" curl gd intl mbstring pdo_mysql zip; \
+    rm -rf /var/lib/apt/lists/*
+WORKDIR /app
+COPY --chown=www-data:www-data --from=composer-build /app /app
+COPY --chown=www-data:www-data --from=asset-build /app/web/css /app/web/css
+COPY --chown=www-data:www-data --from=asset-build /app/web/js /app/web/js
+RUN set -eux; \
+    mkdir -p var/cache var/logs var/sessions web/bundles; \
+    chown -R www-data:www-data var web/bundles
+USER www-data
+EXPOSE 9000
+CMD ["php-fpm"]
+
+# Stage 4: Apache httpd runtime.
+FROM httpd:2.4 AS httpd
+COPY docker/httpd/httpd.prod.conf /usr/local/apache2/conf/httpd.conf
+COPY --from=php /app/web /app/web
+EXPOSE 80

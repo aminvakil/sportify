@@ -62,3 +62,36 @@ jobs:
           curl -fsSI --max-time 10 http://localhost:8000/css/style.css
           curl -fsSI --max-time 10 http://localhost:8000/js/all-scripts.js
 
+  build-prod:
+    if: github.event_name == 'push' || github.event.pull_request.user.login == github.repository_owner
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    env:
+      MYSQL_DATABASE: sportify
+      MYSQL_USER: sportify
+      MYSQL_PASSWORD: sportify
+      MYSQL_ROOT_PASSWORD: root
+      HTTP_PORT: "8080"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Prepare Symfony parameters
+        env:
+          FOOTBALL_DATA_API_TOKEN: ${{ secrets.FOOTBALL_DATA_API_TOKEN }}
+        run: |
+          test -n "$FOOTBALL_DATA_API_TOKEN"
+          cp docker/symfony/parameters.yml app/config/parameters.yml
+          sed -i "s/football_api.token: check_the_README_file/football_api.token: '$FOOTBALL_DATA_API_TOKEN'/" app/config/parameters.yml
+
+      - name: Build Docker images
+        run: docker compose -f docker-compose.prod.yml build
+
+      - name: HTTP smoke test
+        run: |
+          docker compose -f docker-compose.prod.yml up --wait httpd
+          curl -fsSI --max-time 10 http://localhost:8080/
+          curl -fsSI --max-time 10 http://localhost:8080/css/style.css
+          curl -fsSI --max-time 10 http://localhost:8080/js/all-scripts.js
