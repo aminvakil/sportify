@@ -55,9 +55,25 @@ Use bigger PRs, but keep them coherent:
 
 ## Frontend modernization path
 
-This is the active track. Keep each step as its own PR.
+Complete for now. Keep the completed steps in "Current status" above so the upgrade path remains visible.
 
-1. Done: upgrade Docker Node from 20 to 26 in a separate focused PR.
+## Deployment path
+
+Separate the deployment stack from the local development stack. Keep `docker-compose.yml` focused on local testing, and add deployment-specific Docker files/Compose configuration so production can be env-driven and easier to operate.
+
+### Backend deployment tasks
+
+1. Add a production Docker Compose stack separate from the dev stack.
+2. Make deployment configuration environment-driven instead of requiring manual `app/config/parameters.yml` edits.
+3. Add an idempotent first-deploy/init path that waits for the database, creates/updates schema, and clears/warms prod cache.
+4. Decide how first admin creation should work now that FOSUserBundle is gone.
+5. Document required env vars, first deployment, upgrades, scheduled commands, and smoke checks.
+
+### Frontend deployment tasks
+
+1. Build frontend assets during image build or deployment, not manually on the server.
+2. Ensure built assets are available in `web/` for the runtime httpd container.
+3. Keep Node/npm out of the final runtime image unless needed.
 
 ## Deferred backend infrastructure path
 
