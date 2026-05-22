@@ -6,7 +6,7 @@ This is a football (soccer :) match prediction game with a simple concept - you 
 * Symfony [system requirements](http://symfony.com/doc/current/reference/requirements.html)
 * [composer](https://getcomposer.org/)
 * [npm](https://docs.npmjs.com/getting-started/installing-node)
-* [bower](https://bower.io/) & [gulp](http://gulpjs.com/) installed globally 
+* [gulp](http://gulpjs.com/) installed globally 
 
 # Installation and Environment Setup
 The project can be run without issues on both *nix and Windows (Mac OS X, Ubuntu and Windows with LAMP tested :). Check [the A to Z wiki article](https://github.com/dev-labs-bg/sportify/wiki/Setting-up-the-project-on-DigitalOcean-droplet-from-A-to-Z) for a step by step guide on how to prepare a 5$ 512MB DigitalOcean Ubuntu LAMP 16.04 droplet for the task.
@@ -15,7 +15,6 @@ The major steps needed to set-up Symfony and all the tools (for both development
 
 `composer install` - *for a basic install you just need username and password for mysql, all are written to _app/config/parameters.yml_ check here for those the advanced parameters.*  
 `npm install` *(if running on a machine with 0.5/1GB RAM add swap)*  
-`bower install` *(you may need --allow-root as a parameter if running as sudo)*  
 `gulp`
 
 We suggest that you setup your web server to use `web/` as root directory.

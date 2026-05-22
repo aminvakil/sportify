@@ -8,8 +8,14 @@
     "gulp": "^3.9.1"
   },
   "dependencies": {
+    "bootstrap-datepicker": "^1.6.1",
+    "bootstrap-sass": "3.4.1",
+    "chosen-js": "^1.5.1",
+    "flag-icon-css": "^2.3.1",
+    "jquery": "2.2.4",
     "laravel-elixir": "^3.0.0",
     "material-datetime-picker": "^1.0.1",
+    "owl.carousel": "^2.1.5",
     "browser-sync": "2.26.7",
     "browser-sync-client": "2.26.6",
     "browser-sync-ui": "2.26.4"
