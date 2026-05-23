@@ -61,6 +61,7 @@ Complete for now. Keep the completed steps in "Current status" above so the upgr
 ## Optional scoring rules
 
 - Add an opt-in scoring mode for predictions that awards separate points for correct goal difference when the predicted score differs from the real score by exactly one goal for each team. Example personal rule: outcome = 4 points, exact score = 10 points, matching goal difference with exactly one-goal offset = 6 points. Keep the legacy scoring behavior as the default unless explicitly enabled.
+- Evaluate replacing exact-point prediction scoring with an upstream betting/probability API. Each game prediction would score based on the probability percentage of the chosen outcome, so correctly betting on less likely outcomes can be rewarded differently than high-probability outcomes.
 
 ## Deployment path
 
