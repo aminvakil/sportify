@@ -56,7 +56,7 @@ vim app/config/parameters.yml
 Docker Compose infrastructure settings live in `.env` (also gitignored). Start
 from the example file and replace the placeholder secrets before deploying. Keep
 the MySQL values in `.env` in sync with the database values in
-`app/config/parameters.yml`:
+`app/config/parameters.yml`.
 
 ```sh
 cp .env.example .env

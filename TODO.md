@@ -40,11 +40,11 @@
 - `node-sass` has been replaced with Dart Sass via `gulp-sass` 5.
 - A production Docker Compose stack (`docker-compose.prod.yml`) is separate from the dev stack, with a php-fpm + httpd runtime built from `docker/Dockerfile.prod`.
 - Production app configuration remains host-provided through `app/config/parameters.yml`; production Compose infrastructure settings are documented in `.env.example`.
-- Docker MySQL has been upgraded from 5.7 to 8.0, with explicit utf8mb4 server and Doctrine table defaults.
+- Docker MySQL has been upgraded from 5.7 to 9.7, with explicit utf8mb4 server and Doctrine table defaults. Schema validation, reserved-word checks, SQL mode, and charset/collation checks are clean against MySQL 9.7.
 
 ## Next steps
 
-Backend infrastructure (PHP runtime, Symfony, Doctrine) is good enough for now. The active frontend runtime modernization step is complete. Remaining backend infrastructure upgrades (MySQL 8 → 9) are deferred until the frontend track is complete.
+Backend infrastructure (PHP runtime, Symfony, Doctrine, MySQL) is good enough for now. The active frontend runtime modernization step is complete.
 
 ## PR sizing strategy
 
@@ -84,12 +84,9 @@ Separate the deployment stack from the local development stack. Keep `docker-com
 
 ## Deferred backend infrastructure path
 
-Pick this back up only after the frontend modernization path is complete. Keep each milestone as its own PR.
+Defer structural modernization until a framework step requires it:
 
-1. Infrastructure runtime upgrades:
-   - Upgrade Docker MySQL from 8 to 9 in a focused PR after the MySQL 8 runtime is stable. Re-check schema compatibility, reserved words, SQL modes, charset/collation behavior, and Doctrine schema validation output against MySQL 9.
-2. Defer structural modernization until a framework step requires it:
-   - Prefer compatibility shims and focused route/config changes over broad rewrites unless a milestone explicitly calls for a replacement.
+- Prefer compatibility shims and focused route/config changes over broad rewrites unless a milestone explicitly calls for a replacement.
 
 ## Always verify each step
 
