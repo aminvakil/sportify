@@ -4,8 +4,8 @@ set -eu
 cd /app
 
 CONSOLE="php bin/console --env=prod --no-debug"
-DB_WAIT_SECONDS="${DEPLOY_INIT_DB_WAIT_SECONDS:-120}"
-DB_WAIT_INTERVAL_SECONDS="${DEPLOY_INIT_DB_WAIT_INTERVAL_SECONDS:-2}"
+DB_WAIT_SECONDS=120
+DB_WAIT_INTERVAL_SECONDS=2
 DB_WAIT_LOG="/tmp/sportify-prod-db-wait.log"
 
 run_console() {
