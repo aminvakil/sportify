@@ -4,8 +4,6 @@ set -eu
 cd /app
 
 CONSOLE="php bin/console --env=prod --no-debug"
-DB_WAIT_INTERVAL_SECONDS=2
-DB_WAIT_LOG="/tmp/sportify-prod-db-wait.log"
 
 run_console() {
     echo "> $CONSOLE $*"
@@ -14,13 +12,13 @@ run_console() {
 
 wait_for_database() {
     while true; do
-        if $CONSOLE doctrine:database:create --if-not-exists --no-interaction >"$DB_WAIT_LOG" 2>&1; then
-            rm -f "$DB_WAIT_LOG"
+        if $CONSOLE doctrine:database:create --if-not-exists --no-interaction >/tmp/sportify-prod-db-wait.log 2>&1; then
+            rm -f /tmp/sportify-prod-db-wait.log
             return 0
         fi
 
         echo "Waiting for database..." >&2
-        sleep "$DB_WAIT_INTERVAL_SECONDS"
+        sleep 2
     done
 }
 
