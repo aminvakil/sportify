@@ -58,10 +58,6 @@ from the example file and replace the placeholder secrets before deploying. Keep
 the MySQL values in `.env` in sync with the database values in
 `app/config/parameters.yml`.
 
-Existing MySQL 8.0 data directories must be upgraded by starting them once with a
-MySQL 8.4 container before starting the MySQL 9.7 stack; take a database backup
-before doing that production upgrade.
-
 ```sh
 cp .env.example .env
 vim .env
