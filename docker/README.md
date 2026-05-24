@@ -45,19 +45,22 @@ runtime images from `docker/Dockerfile.prod` — `php` (php-fpm) and `httpd` —
 application source, vendor, and built frontend assets baked in. There is no bind
 mount and no Node/Composer in the runtime images.
 
-Before building, place a production `app/config/parameters.yml` on the host (this file
-is gitignored). Making this env-driven is a separate, follow-up step on the deployment
-track.
-
-Database credentials and the host port come from environment variables; the stack
-will fail to start if they are missing:
+Before building, create a production `app/config/parameters.yml` on the host
+(this file is gitignored) and edit it for the deployment:
 
 ```sh
-export MYSQL_DATABASE=sportify
-export MYSQL_USER=sportify
-export MYSQL_PASSWORD=...
-export MYSQL_ROOT_PASSWORD=...
-export HTTP_PORT=8080
+cp app/config/parameters.yml.dist app/config/parameters.yml
+$EDITOR app/config/parameters.yml
+```
+
+Docker Compose infrastructure settings live in `.env` (also gitignored). Start
+from the example file and replace the placeholder secrets before deploying. Keep
+the MySQL values in `.env` in sync with the database values in
+`app/config/parameters.yml`:
+
+```sh
+cp .env.example .env
+$EDITOR .env
 
 docker compose -f docker-compose.prod.yml build
 docker compose -f docker-compose.prod.yml up -d

@@ -4,8 +4,7 @@
 #   * php   — php-fpm runtime with vendor and source baked in.
 #   * httpd — Apache runtime that serves web/ and proxies PHP to php-fpm.
 #
-# app/config/parameters.yml must exist before building (the deployment
-# config track will replace this with env-driven config).
+# app/config/parameters.yml must exist before building.
 
 FROM composer:2.2.25 AS composer-bin
 

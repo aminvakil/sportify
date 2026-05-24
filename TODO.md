@@ -39,6 +39,7 @@
 - Gulp 3 and Laravel Elixir have been replaced with a plain Gulp 4 build.
 - `node-sass` has been replaced with Dart Sass via `gulp-sass` 5.
 - A production Docker Compose stack (`docker-compose.prod.yml`) is separate from the dev stack, with a php-fpm + httpd runtime built from `docker/Dockerfile.prod`.
+- Production app configuration remains host-provided through `app/config/parameters.yml`; production Compose infrastructure settings are documented in `.env.example`.
 
 ## Next steps
 
@@ -65,15 +66,14 @@ Complete for now. Keep the completed steps in "Current status" above so the upgr
 
 ## Deployment path
 
-Separate the deployment stack from the local development stack. Keep `docker-compose.yml` focused on local testing, and add deployment-specific Docker files/Compose configuration so production can be env-driven and easier to operate.
+Separate the deployment stack from the local development stack. Keep `docker-compose.yml` focused on local testing, and add deployment-specific Docker files/Compose configuration so production is easier to operate.
 
 ### Backend deployment tasks
 
-1. Make deployment configuration environment-driven instead of requiring manual `app/config/parameters.yml` edits.
-2. Add an idempotent first-deploy/init path that waits for the database, creates/updates schema, runs `assets:install`, and clears/warms prod cache.
-3. Decide how first admin creation should work now that FOSUserBundle is gone.
-4. Add an app-owned scheduled command that sends users' predictions to the configured Telegram chat shortly after each match starts, without hardcoded secrets. This is separate from the existing Telegram result notification sent after matches end and scores are updated.
-5. Document required env vars, first deployment, upgrades, scheduled commands, and smoke checks.
+1. Add an idempotent first-deploy/init path that waits for the database, creates/updates schema, runs `assets:install`, and clears/warms prod cache.
+2. Decide how first admin creation should work now that FOSUserBundle is gone.
+3. Add an app-owned scheduled command that sends users' predictions to the configured Telegram chat shortly after each match starts, without hardcoded secrets. This is separate from the existing Telegram result notification sent after matches end and scores are updated.
+4. Document required env vars, first deployment, upgrades, scheduled commands, and smoke checks.
 
 ### Frontend deployment tasks
 

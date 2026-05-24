@@ -26,15 +26,13 @@ services:
 
   db:
     image: mysql:5.7
-    environment:
-      MYSQL_DATABASE: ${MYSQL_DATABASE:?set MYSQL_DATABASE}
-      MYSQL_USER: ${MYSQL_USER:?set MYSQL_USER}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD:?set MYSQL_PASSWORD}
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?set MYSQL_ROOT_PASSWORD}
+    env_file:
+      - path: .env
+        required: false
     volumes:
       - db-data:/var/lib/mysql
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-P", "3306", "-u${MYSQL_USER}", "-p${MYSQL_PASSWORD}"]
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -P 3306 -u\"$${MYSQL_USER}\" -p\"$${MYSQL_PASSWORD}\""]
       interval: 5s
       timeout: 5s
       retries: 20

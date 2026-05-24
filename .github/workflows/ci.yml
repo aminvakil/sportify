@@ -86,6 +86,16 @@ jobs:
           cp docker/symfony/parameters.yml app/config/parameters.yml
           sed -i "s/football_api.token: check_the_README_file/football_api.token: '$FOOTBALL_DATA_API_TOKEN'/" app/config/parameters.yml
 
+      - name: Prepare Docker Compose env
+        run: |
+          cat > .env <<EOF
+          HTTP_PORT=$HTTP_PORT
+          MYSQL_DATABASE=$MYSQL_DATABASE
+          MYSQL_USER=$MYSQL_USER
+          MYSQL_PASSWORD=$MYSQL_PASSWORD
+          MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD
+          EOF
+
       - name: Build Docker images
         run: docker compose -f docker-compose.prod.yml build
 
