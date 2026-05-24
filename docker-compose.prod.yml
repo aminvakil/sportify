@@ -13,7 +13,6 @@ services:
     volumes:
       - bundle-assets:/app/web/bundles
       - prod-cache:/app/var/cache
-    restart: "no"
 
   php:
     build:
