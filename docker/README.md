@@ -50,7 +50,7 @@ Before building, create a production `app/config/parameters.yml` on the host
 
 ```sh
 cp app/config/parameters.yml.dist app/config/parameters.yml
-$EDITOR app/config/parameters.yml
+vim app/config/parameters.yml
 ```
 
 Docker Compose infrastructure settings live in `.env` (also gitignored). Start
@@ -60,7 +60,7 @@ the MySQL values in `.env` in sync with the database values in
 
 ```sh
 cp .env.example .env
-$EDITOR .env
+vim .env
 
 docker compose -f docker-compose.prod.yml build
 docker compose -f docker-compose.prod.yml up -d
