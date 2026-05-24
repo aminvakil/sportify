@@ -1,4 +1,20 @@
 services:
+  init:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.prod
+      target: php
+    command: ["sportify-prod-init"]
+    environment:
+      SYMFONY_ENV: prod
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - bundle-assets:/app/web/bundles
+      - prod-cache:/app/var/cache
+    restart: "no"
+
   php:
     build:
       context: .
@@ -7,8 +23,11 @@ services:
     environment:
       SYMFONY_ENV: prod
     depends_on:
-      db:
-        condition: service_healthy
+      init:
+        condition: service_completed_successfully
+    volumes:
+      - bundle-assets:/app/web/bundles
+      - prod-cache:/app/var/cache
     expose:
       - "9000"
     restart: unless-stopped
@@ -19,9 +38,12 @@ services:
       dockerfile: docker/Dockerfile.prod
       target: httpd
     depends_on:
-      - php
+      php:
+        condition: service_started
     ports:
       - "${HTTP_PORT:-8080}:80"
+    volumes:
+      - bundle-assets:/app/web/bundles:ro
     restart: unless-stopped
 
   db:
@@ -39,4 +61,6 @@ services:
     restart: unless-stopped
 
 volumes:
+  bundle-assets:
+  prod-cache:
   db-data:

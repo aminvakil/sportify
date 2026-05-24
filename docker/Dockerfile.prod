@@ -72,7 +72,9 @@ WORKDIR /app
 COPY --chown=www-data:www-data --from=composer-build /app /app
 COPY --chown=www-data:www-data --from=asset-build /app/web/css /app/web/css
 COPY --chown=www-data:www-data --from=asset-build /app/web/js /app/web/js
+COPY docker/prod/init.sh /usr/local/bin/sportify-prod-init
 RUN set -eux; \
+    chmod +x /usr/local/bin/sportify-prod-init; \
     mkdir -p var/cache var/logs var/sessions web/bundles; \
     chown -R www-data:www-data var web/bundles
 USER www-data
