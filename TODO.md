@@ -41,6 +41,7 @@
 - A production Docker Compose stack (`docker-compose.prod.yml`) is separate from the dev stack, with a php-fpm + httpd runtime built from `docker/Dockerfile.prod`.
 - Production app configuration remains host-provided through `app/config/parameters.yml`; production Compose infrastructure settings are documented in `.env.example`.
 - Docker MySQL has been upgraded from 5.7 to 9.7, with explicit utf8mb4 server and Doctrine table defaults. Schema validation, reserved-word checks, SQL mode, and charset/collation checks are clean against MySQL 9.7.
+- Production Compose includes an idempotent `init` service that waits for the database, creates/updates schema, installs bundle assets, and clears/warms prod cache before app startup.
 
 ## Next steps
 
@@ -71,10 +72,9 @@ Separate the deployment stack from the local development stack. Keep `docker-com
 
 ### Backend deployment tasks
 
-1. Add an idempotent first-deploy/init path that waits for the database, creates/updates schema, runs `assets:install`, and clears/warms prod cache.
-2. Decide how first admin creation should work now that FOSUserBundle is gone.
-3. Add an app-owned scheduled command that sends users' predictions to the configured Telegram chat shortly after each match starts, without hardcoded secrets. This is separate from the existing Telegram result notification sent after matches end and scores are updated.
-4. Document required env vars, first deployment, upgrades, scheduled commands, and smoke checks.
+1. Decide how first admin creation should work now that FOSUserBundle is gone.
+2. Add an app-owned scheduled command that sends users' predictions to the configured Telegram chat shortly after each match starts, without hardcoded secrets. This is separate from the existing Telegram result notification sent after matches end and scores are updated.
+3. Document required env vars, first deployment, upgrades, scheduled commands, and smoke checks.
 
 ### Frontend deployment tasks
 

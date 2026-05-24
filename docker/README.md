@@ -66,5 +66,11 @@ docker compose -f docker-compose.prod.yml build
 docker compose -f docker-compose.prod.yml up -d
 ```
 
-Initial schema creation, prod cache warm, and operational documentation are tracked
-as follow-up tasks in `TODO.md`.
+On startup, the `init` service waits for MySQL, creates the configured database if
+needed, updates the schema, installs bundle assets into a shared `web/bundles`
+volume, and clears/warms the shared prod cache before `php` and `httpd` start. To
+rerun that idempotent initialization after a deployment or parameter change:
+
+```sh
+docker compose -f docker-compose.prod.yml run --rm init
+```
