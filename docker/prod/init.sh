@@ -8,5 +8,3 @@ php bin/console --env=prod --no-debug doctrine:schema:update --force --no-intera
 php bin/console --env=prod --no-debug assets:install web --symlink --relative
 php bin/console --env=prod --no-debug cache:clear --no-warmup
 php bin/console --env=prod --no-debug cache:warmup
-
-set +x
