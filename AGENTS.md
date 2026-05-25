@@ -42,10 +42,10 @@ The project is intentionally old. Do not modernize broad areas unless the curren
 
 ## Verification rule
 
-Do not reset Docker state (`docker compose down -v`) before verification. If the stack is already up, reuse it. If it isn't, bring it up and make sure the database schema is in place before running checks:
+Do not reset Docker state (`docker compose down -v`) before verification. `app/config/parameters.yml` contains a valid local `FOOTBALL_DATA_API_TOKEN`; local testing should use it when exercising football-data API paths, and the token must never be shown in chat or command output. If the stack is already up, reuse it. If it isn't, bring it up and make sure the database schema is in place before running checks:
 
 ```sh
-cp docker/symfony/parameters.yml app/config/parameters.yml
+[ -f app/config/parameters.yml ] || cp docker/symfony/parameters.yml app/config/parameters.yml
 docker compose up --wait httpd
 docker compose run --rm php php bin/console doctrine:database:create --if-not-exists
 docker compose run --rm php php bin/console doctrine:schema:update --force
