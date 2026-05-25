@@ -6,6 +6,25 @@ use Devlabs\SportifyBundle\Entity\Tournament;
 
 class AdminDataUpdatesTest extends FunctionalTestCase
 {
+    public function testAdminTournamentSubmitAcceptsArrayPayload()
+    {
+        $this->createUser('admin_tournament_create', 'testpass', true, array('ROLE_ADMIN'));
+        $this->login('admin_tournament_create@example.com', 'testpass');
+        $this->assertTrue($this->client->getResponse()->isRedirect());
+
+        $this->client->request('POST', '/admin/tournaments/modify', array(
+            'tournament_entity' => array(
+                'id' => '',
+                'action' => 'CREATE',
+                'name' => 'Browser Verify Cup',
+                'startDate' => '2026-01-01',
+                'endDate' => '2026-12-31',
+            ),
+        ));
+
+        $this->assertTrue($this->client->getResponse()->isRedirect('/admin/tournaments'));
+    }
+
     public function testAdminDataUpdatesShowsFlashWhenNoUpdatesAreApplied()
     {
         $this->createUser('admin_data_updates', 'testpass', true, array('ROLE_ADMIN'));

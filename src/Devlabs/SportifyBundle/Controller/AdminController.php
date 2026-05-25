@@ -161,8 +161,10 @@ class AdminController extends AbstractController
             return $this->redirectToRoute('fos_user_security_login');
         }
 
+        $submittedApiMapping = $request->request->all('api_mapping');
+
         // redirect to admin/api_mappings page if the 'api_mapping' parameter is NOT set in the POST data
-        if (!$request->request->get('api_mapping')) {
+        if (!$submittedApiMapping) {
             return $this->redirectToRoute('admin_api_mappings');
         }
 
@@ -173,19 +175,19 @@ class AdminController extends AbstractController
         $em = $this->container->get('doctrine')->getManager();
 
         // set the ApiMapping object based on whether it's new or existing one
-        if ($request->request->get('api_mapping')['id']) {
+        if ($submittedApiMapping['id']) {
             $apiMapping = $em->getRepository(ApiMapping::class)
-                ->findOneById($request->request->get('api_mapping')['id']);
+                ->findOneById($submittedApiMapping['id']);
         } else {
             $apiMapping = new ApiMapping();
-            $apiMapping->setEntityId($request->request->get('api_mapping')['entityId']);
-            $apiMapping->setEntityType($request->request->get('api_mapping')['entityType']);
-            $apiMapping->setApiName($request->request->get('api_mapping')['apiName']);
+            $apiMapping->setEntityId($submittedApiMapping['entityId']);
+            $apiMapping->setEntityType($submittedApiMapping['entityType']);
+            $apiMapping->setApiName($submittedApiMapping['apiName']);
         }
 
-        $apiMapping->setApiObjectId($request->request->get('api_mapping')['apiObjectId']);
+        $apiMapping->setApiObjectId($submittedApiMapping['apiObjectId']);
 
-        $buttonAction = $request->request->get('api_mapping')['action'];
+        $buttonAction = $submittedApiMapping['action'];
 
         $form = $adminHelper->createApiMappingForm($apiMapping, $buttonAction);
         $form->handleRequest($request);
@@ -241,8 +243,10 @@ class AdminController extends AbstractController
             return $this->redirectToRoute('fos_user_security_login');
         }
 
+        $submittedTournament = $request->request->all('tournament_entity');
+
         // redirect to admin/tournaments page if the 'tournament_entity' parameter is NOT set in the POST data
-        if (!$request->request->get('tournament_entity')) {
+        if (!$submittedTournament) {
             return $this->redirectToRoute('admin_tournaments');
         }
 
@@ -253,22 +257,22 @@ class AdminController extends AbstractController
         $em = $this->container->get('doctrine')->getManager();
 
         // set the tournament object based on whether it's new or existing one
-        if ($request->request->get('tournament_entity')['id']) {
+        if ($submittedTournament['id']) {
             $tournament = $em->getRepository(Tournament::class)
-                ->findOneById($request->request->get('tournament_entity')['id']);
+                ->findOneById($submittedTournament['id']);
         } else {
             $tournament = new Tournament();
         }
 
         // create DateTime object from the datetime string in the POST request
-        $startDate = \DateTime::createFromFormat('Y-m-d', $request->request->get('tournament_entity')['startDate']);
-        $endDate = \DateTime::createFromFormat('Y-m-d', $request->request->get('tournament_entity')['endDate']);
+        $startDate = \DateTime::createFromFormat('Y-m-d', $submittedTournament['startDate']);
+        $endDate = \DateTime::createFromFormat('Y-m-d', $submittedTournament['endDate']);
 
-        $tournament->setName($request->request->get('tournament_entity')['name']);
+        $tournament->setName($submittedTournament['name']);
         $tournament->setStartDate($startDate);
         $tournament->setEndDate($endDate);
 
-        $buttonAction = $request->request->get('tournament_entity')['action'];
+        $buttonAction = $submittedTournament['action'];
 //        $formInputData = $adminHelper->getTournamentFormInputData($tournament);
 
         $form = $adminHelper->createTournamentForm($tournament, $buttonAction);
@@ -325,8 +329,10 @@ class AdminController extends AbstractController
             return $this->redirectToRoute('fos_user_security_login');
         }
 
+        $submittedTeam = $request->request->all('team_entity');
+
         // redirect to admin/teams page if the 'team_entity' parameter is NOT set in the POST data
-        if (!$request->request->get('team_entity')) {
+        if (!$submittedTeam) {
             return $this->redirectToRoute('admin_teams');
         }
 
@@ -337,16 +343,16 @@ class AdminController extends AbstractController
         $em = $this->container->get('doctrine')->getManager();
 
         // set the team object based on whether it's new or existing one
-        if ($request->request->get('team_entity')['id']) {
+        if ($submittedTeam['id']) {
             $team = $em->getRepository(Team::class)
-                ->findOneById($request->request->get('team_entity')['id']);
+                ->findOneById($submittedTeam['id']);
         } else {
             $team = new Team();
         }
 
-        $team->setName($request->request->get('team_entity')['name']);
+        $team->setName($submittedTeam['name']);
 
-        $buttonAction = $request->request->get('team_entity')['action'];
+        $buttonAction = $submittedTeam['action'];
 
         $form = $adminHelper->createTeamForm($team, $buttonAction);
         $form->handleRequest($request);
@@ -455,8 +461,10 @@ class AdminController extends AbstractController
             return $this->redirectToRoute('fos_user_security_login');
         }
 
+        $submittedMatch = $request->request->all('match_entity');
+
         // redirect to admin/matches page if the 'match_entity' parameter is NOT set in the POST data
-        if (!$request->request->get('match_entity')) {
+        if (!$submittedMatch) {
             return $this->redirectToRoute('admin_matches');
         }
 
@@ -472,9 +480,9 @@ class AdminController extends AbstractController
             ->findOneById($tournament_id);
 
         // set the match object based on whether it's new or existing one
-        if ($request->request->get('match_entity')['id']) {
+        if ($submittedMatch['id']) {
             $match = $em->getRepository(MatchEntity::class)
-                ->findOneById($request->request->get('match_entity')['id']);
+                ->findOneById($submittedMatch['id']);
         } else {
             $match = new MatchEntity();
             $match->setTournamentId($tournament);
@@ -482,12 +490,12 @@ class AdminController extends AbstractController
 
         // prep data for use in Match object setter methods
         $homeTeam = $em->getRepository(Team::class)
-            ->findOneById($request->request->get('match_entity')['homeTeamId']['id']);
+            ->findOneById($submittedMatch['homeTeamId']['id']);
         $awayTeam = $em->getRepository(Team::class)
-            ->findOneById($request->request->get('match_entity')['awayTeamId']['id']);
-        $datetime = \DateTime::createFromFormat('Y-m-d H:i', $request->request->get('match_entity')['datetime']);
-        $notificationSent = (array_key_exists('notificationSent', $request->request->get('match_entity')))
-            ? $request->request->get('match_entity')['notificationSent']
+            ->findOneById($submittedMatch['awayTeamId']['id']);
+        $datetime = \DateTime::createFromFormat('Y-m-d H:i', $submittedMatch['datetime']);
+        $notificationSent = (array_key_exists('notificationSent', $submittedMatch))
+            ? $submittedMatch['notificationSent']
             : 0;
 
         $match->setDatetime($datetime);
@@ -495,13 +503,13 @@ class AdminController extends AbstractController
         $match->setAwayTeamId($awayTeam);
         $match->setNotificationSent($notificationSent);
 
-        if (($request->request->get('match_entity')['homeGoals'] !== null) &&
-            ($request->request->get('match_entity')['awayGoals'] !== null)) {
-            $match->setHomeGoals($request->request->get('match_entity')['homeGoals']);
-            $match->setAwayGoals($request->request->get('match_entity')['awayGoals']);
+        if (($submittedMatch['homeGoals'] !== null) &&
+            ($submittedMatch['awayGoals'] !== null)) {
+            $match->setHomeGoals($submittedMatch['homeGoals']);
+            $match->setAwayGoals($submittedMatch['awayGoals']);
         }
 
-        $buttonAction = $request->request->get('match_entity')['action'];
+        $buttonAction = $submittedMatch['action'];
         $formInputData = $adminHelper->getMatchFormInputData($match);
 
         $form = $adminHelper->createMatchForm($urlParams, $match, $buttonAction, $formInputData);
