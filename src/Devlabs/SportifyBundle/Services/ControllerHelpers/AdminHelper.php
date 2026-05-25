@@ -4,6 +4,7 @@ namespace Devlabs\SportifyBundle\Services\ControllerHelpers;
 
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -28,11 +29,13 @@ class AdminHelper
     use ContainerAwareTrait;
 
     private $em;
+    private $requestStack;
 
-    public function __construct(ContainerInterface $container, EntityManager $entityManager)
+    public function __construct(ContainerInterface $container, EntityManager $entityManager, RequestStack $requestStack)
     {
         $this->container = $container;
         $this->em = $entityManager;
+        $this->requestStack = $requestStack;
     }
 
     /**
@@ -121,7 +124,7 @@ class AdminHelper
 
         if ($msgText === '') $msgText = 'No fixtures/results added or updated.';
 
-        $this->container->get('session')->getFlashBag()->add('message', $msgText);
+        $this->requestStack->getSession()->getFlashBag()->add('message', $msgText);
     }
 
     /**

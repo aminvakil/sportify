@@ -71,7 +71,7 @@ services:
 
     app.admin.helper:
         class: Devlabs\SportifyBundle\Services\ControllerHelpers\AdminHelper
-        arguments: ['@service_container', '@doctrine.orm.entity_manager']
+        arguments: ['@service_container', '@doctrine.orm.entity_manager', '@request_stack']
 
     app.matches.helper:
         class: Devlabs\SportifyBundle\Services\ControllerHelpers\MatchesHelper
