@@ -73,9 +73,10 @@ Separate the deployment stack from the local development stack. Keep `docker-com
 
 ### Backend deployment tasks
 
-1. Add an app-owned regular-user creation command for deployments without SMTP, similar to `sportify:user:create-admin` but without admin roles.
-2. Add an app-owned scheduled command that sends users' predictions to the configured Telegram chat shortly after each match starts, without hardcoded secrets. This is separate from the existing Telegram result notification sent after matches end and scores are updated.
-3. Document required env vars, first deployment, upgrades, scheduled commands, and smoke checks.
+1. Investigate and fix the admin panel Data Updates section failure.
+2. Add an app-owned regular-user creation command for deployments without SMTP, similar to `sportify:user:create-admin` but without admin roles.
+3. Add an app-owned scheduled command that sends users' predictions to the configured Telegram chat shortly after each match starts, without hardcoded secrets. This is separate from the existing Telegram result notification sent after matches end and scores are updated.
+4. Document required env vars, first deployment, upgrades, scheduled commands, and smoke checks.
 
 ### Frontend deployment tasks
 
