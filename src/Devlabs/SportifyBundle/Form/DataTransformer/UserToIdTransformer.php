@@ -22,7 +22,7 @@ class UserToIdTransformer implements DataTransformerInterface
      * @param  User|null $user
      * @return string
      */
-    public function transform($user)
+    public function transform(mixed $user): mixed
     {
         if (null === $user) {
             return '';
@@ -38,11 +38,11 @@ class UserToIdTransformer implements DataTransformerInterface
      * @return User|null
      * @throws TransformationFailedException if object (user) is not found.
      */
-    public function reverseTransform($userId)
+    public function reverseTransform(mixed $userId): mixed
     {
         // return if no user id
         if (!$userId) {
-            return;
+            return null;
         }
 
         $user = $this->manager
