@@ -141,15 +141,15 @@ class MatchesController extends AbstractController
             return $this->redirectToRoute('fos_user_security_login');
         }
 
+        $formsArray = $request->request->all('matches');
+
         // redirect to the matches main page if the 'matches' array is NOT set in the POST data
-        if (!$request->request->get('matches')) {
+        if (!$formsArray) {
             return $this->redirectToRoute('matches_index');
         }
 
         // Get an instance of the Entity Manager
         $em = $this->container->get('doctrine')->getManager();
-
-        $formsArray = $request->request->get('matches');
 
         foreach ($formsArray as $submittedForm) {
             $match = $em->getRepository(MatchEntity::class)

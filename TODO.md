@@ -43,6 +43,7 @@
 - Docker MySQL has been upgraded from 5.7 to 9.7, with explicit utf8mb4 server and Doctrine table defaults. Schema validation, reserved-word checks, SQL mode, and charset/collation checks are clean against MySQL 9.7.
 - Production Compose includes an idempotent `init` service that waits for the database, creates/updates schema, installs bundle assets, and clears/warms prod cache before app startup.
 - First admin creation is handled by the app-owned `sportify:user:create-admin` command.
+- Admin panel Data Updates now shows the no-updates flash message without calling the removed `session` service.
 
 ## Next steps
 
@@ -73,10 +74,9 @@ Separate the deployment stack from the local development stack. Keep `docker-com
 
 ### Backend deployment tasks
 
-1. Investigate and fix the admin panel Data Updates failure; it still occurs with a tournament configured and currently calls the removed `session` service for flash messages when no updates are applied.
-2. Add an app-owned regular-user creation command for deployments without SMTP, similar to `sportify:user:create-admin` but without admin roles.
-3. Add an app-owned scheduled command that sends users' predictions to the configured Telegram chat shortly after each match starts, without hardcoded secrets. This is separate from the existing Telegram result notification sent after matches end and scores are updated.
-4. Document required env vars, first deployment, upgrades, scheduled commands, and smoke checks.
+1. Add an app-owned regular-user creation command for deployments without SMTP, similar to `sportify:user:create-admin` but without admin roles.
+2. Add an app-owned scheduled command that sends users' predictions to the configured Telegram chat shortly after each match starts, without hardcoded secrets. This is separate from the existing Telegram result notification sent after matches end and scores are updated.
+3. Document required env vars, first deployment, upgrades, scheduled commands, and smoke checks.
 
 ### Frontend deployment tasks
 
