@@ -22,7 +22,7 @@ class TournamentToIdTransformer implements DataTransformerInterface
      * @param Tournament|null $tournament
      * @return string
      */
-    public function transform($tournament)
+    public function transform(mixed $tournament): mixed
     {
         if (null === $tournament) {
             return '';
@@ -38,11 +38,11 @@ class TournamentToIdTransformer implements DataTransformerInterface
      * @return Tournament|null
      * @throws TransformationFailedException if object (tournament) is not found.
      */
-    public function reverseTransform($tournamentId)
+    public function reverseTransform(mixed $tournamentId): mixed
     {
         // return if no tournament id
         if (!$tournamentId) {
-            return;
+            return null;
         }
 
         $tournament = $this->manager

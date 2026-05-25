@@ -61,8 +61,7 @@ class MatchesHelper
     public function getPrediction(User $user, MatchEntity $match, array $predictions)
     {
         if (isset($predictions[$match->getId()])) {
-            // link/merge prediction with EntityManager (set entity as managed by EM)
-            $prediction = $this->em->merge($predictions[$match->getId()]);
+            $prediction = $predictions[$match->getId()];
         } else {
             $prediction = new Prediction();
             $prediction->setMatchId($match);
@@ -116,7 +115,9 @@ class MatchesHelper
      */
     public function formHandleRequest(Request $request, Form $form, MatchEntity $match)
     {
-        if ($request->request->get('prediction')['matchId'] == $match->getId()) {
+        $submittedPrediction = $request->request->all('prediction');
+
+        if ($submittedPrediction && $submittedPrediction['matchId'] == $match->getId()) {
             $form->handleRequest($request);
         }
     }

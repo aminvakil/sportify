@@ -22,7 +22,7 @@ class TeamToIdTransformer implements DataTransformerInterface
      * @param  Team|null $team
      * @return string
      */
-    public function transform($team)
+    public function transform(mixed $team): mixed
     {
         if (null === $team) {
             return '';
@@ -38,11 +38,11 @@ class TeamToIdTransformer implements DataTransformerInterface
      * @return Team|null
      * @throws TransformationFailedException if object (team) is not found.
      */
-    public function reverseTransform($teamId)
+    public function reverseTransform(mixed $teamId): mixed
     {
         // return if no match id
         if (!$teamId) {
-            return;
+            return null;
         }
 
         $team = $this->manager

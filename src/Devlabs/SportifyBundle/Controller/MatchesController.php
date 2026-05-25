@@ -84,8 +84,10 @@ class MatchesController extends AbstractController
             return $this->redirectToRoute('fos_user_security_login');
         }
 
+        $submittedPrediction = $request->request->all('prediction');
+
         // redirect to the matches main page if the 'prediction' parameter is NOT set in the POST data
-        if (!$request->request->get('prediction')) {
+        if (!$submittedPrediction) {
             return $this->redirectToRoute('matches_index');
         }
 
@@ -100,23 +102,23 @@ class MatchesController extends AbstractController
 
         // get the submitted form's match object
         $match = $em->getRepository(MatchEntity::class)
-            ->findOneById($request->request->get('prediction')['matchId']);
+            ->findOneById($submittedPrediction['matchId']);
 
         // set the prediction object based on whether it's new or existing one
-        if ($request->request->get('prediction')['id']) {
+        if ($submittedPrediction['id']) {
             $prediction = $em->getRepository(Prediction::class)
-                ->findOneById($request->request->get('prediction')['id']);
-            $prediction->setHomeGoals($request->request->get('prediction')['homeGoals']);
-            $prediction->setAwayGoals($request->request->get('prediction')['awayGoals']);
+                ->findOneById($submittedPrediction['id']);
+            $prediction->setHomeGoals($submittedPrediction['homeGoals']);
+            $prediction->setAwayGoals($submittedPrediction['awayGoals']);
         } else {
             $prediction = new Prediction();
             $prediction->setMatchId($match);
             $prediction->setUserId($user);
-            $prediction->setHomeGoals($request->request->get('prediction')['homeGoals']);
-            $prediction->setAwayGoals($request->request->get('prediction')['awayGoals']);
+            $prediction->setHomeGoals($submittedPrediction['homeGoals']);
+            $prediction->setAwayGoals($submittedPrediction['awayGoals']);
         }
 
-        $buttonAction = $request->request->get('prediction')['action'];
+        $buttonAction = $submittedPrediction['action'];
 
         $form = $matchesHelper->createForm($request, $urlParams, $match, $prediction, $buttonAction);
 

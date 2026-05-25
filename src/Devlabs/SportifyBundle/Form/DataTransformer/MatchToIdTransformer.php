@@ -22,7 +22,7 @@ class MatchToIdTransformer implements DataTransformerInterface
      * @param  Match|null $match
      * @return string
      */
-    public function transform($match)
+    public function transform(mixed $match): mixed
     {
         if (null === $match) {
             return '';
@@ -38,11 +38,11 @@ class MatchToIdTransformer implements DataTransformerInterface
      * @return Match|null
      * @throws TransformationFailedException if object (match) is not found.
      */
-    public function reverseTransform($matchId)
+    public function reverseTransform(mixed $matchId): mixed
     {
         // return if no match id
         if (!$matchId) {
-            return;
+            return null;
         }
 
         $match = $this->manager

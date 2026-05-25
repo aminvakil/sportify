@@ -30,12 +30,11 @@ The app has two main environments:
 # Application parameters and initial setup
 * Database schema update (migrations):
     + `php bin/console doctrine:schema:update --force`
-* Create your admin user (follow the steps):
-    + `php bin/console fos:user:create`
-* Give yourself Admin access from the command line: 
-    + `php bin/console fos:user:promote your-username ROLE_ADMIN`
+* Create the first admin user:
+    + `php bin/console sportify:user:create-admin admin@example.com admin --password='change-me'`
+    + Omit `--password` to enter it interactively.
 * You can now access the web interface :)
-* If the emails are not configured (SMTP credentials not set), users will not abe able to make a registration by themselves because sending confirmation emails will not be possible. In this case you can fallback to creating user accounts with `php bin/console fos:user:create`
+* If the emails are not configured (SMTP credentials not set), users will not abe able to make a registration by themselves because sending confirmation emails will not be possible. Configure SMTP before opening registration to users.
 
 **N.B.**
 After doing any changes on **app/config/parameters.yml** run `php bin/console cache:clear --env=prod` for them to take effect.
