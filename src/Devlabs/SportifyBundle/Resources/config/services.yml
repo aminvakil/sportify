@@ -110,6 +110,14 @@ services:
     app.data_updates.parsers.football_data_org:
         class: Devlabs\SportifyBundle\Services\DataUpdates\Parsers\FootballDataOrg
 
+    app.command.create_admin_user:
+        class: Devlabs\SportifyBundle\Command\CreateAdminUserCommand
+        arguments:
+            - '@doctrine.orm.entity_manager'
+            - '@security.user_password_hasher'
+        tags:
+            - { name: console.command }
+
     app.command.create_oauth_client:
         class: Devlabs\SportifyBundle\Command\CreateOAuthClientCommand
         arguments: ['@doctrine.orm.entity_manager']

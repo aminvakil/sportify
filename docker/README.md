@@ -74,3 +74,11 @@ rerun that idempotent initialization after a deployment or parameter change:
 ```sh
 docker compose -f docker-compose.prod.yml run --rm init
 ```
+
+Create the first admin account after the schema is initialized:
+
+```sh
+docker compose -f docker-compose.prod.yml run --rm php php bin/console --env=prod --no-debug sportify:user:create-admin admin@example.com admin --password='change-me'
+```
+
+Omit `--password` to enter it interactively. The command refuses to run after an admin user already exists.
