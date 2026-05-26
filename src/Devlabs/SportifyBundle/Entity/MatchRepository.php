@@ -156,6 +156,29 @@ class MatchRepository extends \Doctrine\ORM\EntityRepository
     }
 
     /**
+     * Method for getting a list of recently started matches awaiting prediction notification
+     *
+     * @param $dateFrom
+     * @param $dateTo
+     * @return array
+     */
+    public function getStartedAwaitingPredictionNotification($dateFrom, $dateTo)
+    {
+        return $this->getEntityManager()->createQueryBuilder()
+            ->select('m')
+            ->from(MatchEntity::class, 'm')
+            ->join('m.homeTeamId', 'tm')
+            ->where('m.predictionsNotificationSent = 0')
+            ->andWhere('m.datetime >= :date_from AND m.datetime < :date_to')
+            ->orderBy('m.datetime')
+            ->addOrderBy('tm.name')
+            ->setParameter('date_from', $dateFrom)
+            ->setParameter('date_to', $dateTo)
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
      * Get a list all matches for a tournament
      *
      * @param Tournament $tournament

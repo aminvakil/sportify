@@ -184,6 +184,36 @@ class PredictionRepository extends \Doctrine\ORM\EntityRepository
     }
 
     /**
+     * Get predictions for matches ordered by match and username
+     *
+     * @param array $matches
+     * @return array
+     */
+    public function getByMatches(array $matches)
+    {
+        if (!$matches) {
+            return array();
+        }
+
+        $matchIds = array_map(function (MatchEntity $match) {
+            return $match->getId();
+        }, $matches);
+
+        return $this->getEntityManager()->createQueryBuilder()
+            ->select('p')
+            ->from(Prediction::class, 'p')
+            ->join('p.matchId', 'm')
+            ->join('p.userId', 'u')
+            ->where('m.id IN (:match_ids)')
+            ->orderBy('m.datetime')
+            ->addOrderBy('m.id')
+            ->addOrderBy('u.username')
+            ->setParameter('match_ids', $matchIds)
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
      * Get predictions by complex filter criteria -
      * a custom query based on various parameters passed
      *

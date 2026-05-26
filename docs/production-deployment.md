@@ -53,6 +53,7 @@ At minimum, set:
 - `mailer_dsn` and `mailer_sender_address` for registration/password reset emails
 - `football_api.token` from football-data.org if API fixture/result imports are used
 - `slack.url` and `slack.channel` if Slack notifications are used
+- `telegram.bot_token` and `telegram.chat_id` if Telegram notifications are used
 - `sportify_api.client_id` and `sportify_api.client_secret` only if the API token flow is used
 
 `app/config/parameters.yml` is copied into the production image at build time. Rebuild and redeploy the images after changing it.
@@ -125,6 +126,12 @@ Notify users who have not predicted matches starting soon:
 
 ```cron
 5,35 * * * * cd /srv/sportify && docker compose -f docker-compose.prod.yml exec -T php php bin/console --env=prod --no-debug sportify:notify users-not-predicted >> /var/log/sportify-notify.log 2>&1
+```
+
+Send submitted predictions to Telegram five minutes after matches start. This assumes matches start at `xx:00` or `xx:30` and uses the command's default five-minute lookback window:
+
+```cron
+5,35 * * * * cd /srv/sportify && docker compose -f docker-compose.prod.yml exec -T php php bin/console --env=prod --no-debug sportify:telegram:send-predictions >> /var/log/sportify-telegram.log 2>&1
 ```
 
 Adjust `/srv/sportify`, schedule frequency, and log paths for your host.

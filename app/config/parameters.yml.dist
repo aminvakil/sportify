@@ -27,6 +27,10 @@ parameters:
     slack.url: check_the_README_file
     # Slack channel to which notifications will be sent
     slack.channel: check_the_README_file
+    # Telegram bot token for scheduled notifications
+    telegram.bot_token: check_the_README_file
+    # Telegram chat id for scheduled notifications
+    telegram.chat_id: check_the_README_file
 
     # sportify API params used for generating tokens
     sportify_api.client_id:     ~

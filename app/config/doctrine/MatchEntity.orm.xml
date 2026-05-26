@@ -8,6 +8,7 @@
     <field name="homeGoals" type="integer" column="home_goals" nullable="true"/>
     <field name="awayGoals" type="integer" column="away_goals" nullable="true"/>
     <field name="notificationSent" type="boolean" column="notification_sent" nullable="false"/>
+    <field name="predictionsNotificationSent" type="boolean" column="predictions_notification_sent" nullable="false"/>
     <one-to-many field="predictions" target-entity="Prediction" mapped-by="matchId" fetch="LAZY">
       <cascade>
         <cascade-all/>
