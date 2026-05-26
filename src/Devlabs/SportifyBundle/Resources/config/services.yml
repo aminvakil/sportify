@@ -61,6 +61,10 @@ services:
         class: Devlabs\SportifyBundle\Services\Slack
         arguments: ['@service_container', '%slack.url%', '%slack.channel%']
 
+    app.telegram:
+        class: Devlabs\SportifyBundle\Services\Telegram
+        arguments: ['@service_container', '%telegram.bot_token%', '%telegram.chat_id%']
+
     app.score_updater:
         class: Devlabs\SportifyBundle\Services\ScoreUpdater
         arguments: ['@service_container', '@doctrine.orm.entity_manager']
@@ -140,5 +144,11 @@ services:
 
     app.command.notify:
         class: Devlabs\SportifyBundle\Command\NotifyCommand
+        tags:
+            - { name: console.command }
+
+    app.command.telegram_predictions:
+        class: Devlabs\SportifyBundle\Command\TelegramPredictionsCommand
+        arguments: ['@doctrine.orm.entity_manager', '@app.telegram']
         tags:
             - { name: console.command }

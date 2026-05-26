@@ -29,6 +29,8 @@ class MatchEntity
     private $disabledAttribute = false;
 
     private $notificationSent = 0;
+
+    private $predictionsNotificationSent = 0;
     
     /**
      * Constructor
@@ -310,6 +312,30 @@ class MatchEntity
     public function getNotificationSent()
     {
         return (bool) $this->notificationSent;
+    }
+
+    /**
+     * Set predictionsNotificationSent
+     *
+     * @param boolean $predictionsNotificationSent
+     *
+     * @return Match
+     */
+    public function setPredictionsNotificationSent($predictionsNotificationSent)
+    {
+        $this->predictionsNotificationSent = $predictionsNotificationSent;
+
+        return $this;
+    }
+
+    /**
+     * Get predictionsNotificationSent
+     *
+     * @return boolean
+     */
+    public function getPredictionsNotificationSent()
+    {
+        return (bool) $this->predictionsNotificationSent;
     }
 
     /**

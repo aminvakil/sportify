@@ -47,6 +47,7 @@
 - Admin panel Data Updates now shows the no-updates flash message without calling the removed `session` service.
 - Production deployment documentation covers required local config files, first deployment, upgrades, scheduled commands, and smoke checks.
 - Production Docker builds frontend assets in a Node build stage, copies generated `web/css` and `web/js` assets into the php-fpm/httpd runtime images, and keeps Node/npm out of the final runtime images.
+- Submitted predictions can be sent to the configured Telegram chat shortly after kickoff with `sportify:telegram:send-predictions`.
 
 ## Next steps
 
@@ -77,7 +78,7 @@ Separate the deployment stack from the local development stack. Keep `docker-com
 
 ### Backend deployment tasks
 
-1. Add an app-owned scheduled command that sends users' predictions to the configured Telegram chat shortly after each match starts, without hardcoded secrets. This is separate from the existing Telegram result notification sent after matches end and scores are updated.
+Complete for now. Keep the completed steps in "Current status" above so the deployment path remains visible.
 
 ### Frontend deployment tasks
 
