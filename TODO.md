@@ -45,6 +45,7 @@
 - First admin creation is handled by the app-owned `sportify:user:create-admin` command.
 - Regular user creation for deployments without SMTP is handled by the app-owned `sportify:user:create` command.
 - Admin panel Data Updates now shows the no-updates flash message without calling the removed `session` service.
+- Production deployment documentation covers required local config files, first deployment, upgrades, scheduled commands, and smoke checks.
 
 ## Next steps
 
@@ -76,7 +77,6 @@ Separate the deployment stack from the local development stack. Keep `docker-com
 ### Backend deployment tasks
 
 1. Add an app-owned scheduled command that sends users' predictions to the configured Telegram chat shortly after each match starts, without hardcoded secrets. This is separate from the existing Telegram result notification sent after matches end and scores are updated.
-2. Document required env vars, first deployment, upgrades, scheduled commands, and smoke checks.
 
 ### Frontend deployment tasks
 
