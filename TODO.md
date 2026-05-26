@@ -46,6 +46,7 @@
 - Regular user creation for deployments without SMTP is handled by the app-owned `sportify:user:create` command.
 - Admin panel Data Updates now shows the no-updates flash message without calling the removed `session` service.
 - Production deployment documentation covers required local config files, first deployment, upgrades, scheduled commands, and smoke checks.
+- Production Docker builds frontend assets in a Node build stage, copies generated `web/css` and `web/js` assets into the php-fpm/httpd runtime images, and keeps Node/npm out of the final runtime images.
 
 ## Next steps
 
@@ -80,9 +81,7 @@ Separate the deployment stack from the local development stack. Keep `docker-com
 
 ### Frontend deployment tasks
 
-1. Build frontend assets during image build or deployment, not manually on the server.
-2. Ensure built assets are available in `web/` for the runtime httpd container.
-3. Keep Node/npm out of the final runtime image unless needed.
+Complete for now. Keep the completed steps in "Current status" above so the deployment path remains visible.
 
 ## Deferred backend infrastructure path
 
