@@ -40,10 +40,12 @@ The upgrade milestone is to keep these smoke checks passing after each step.
 
 ## Production stack
 
+See [../docs/production-deployment.md](../docs/production-deployment.md) for the full deployment guide.
+
 `docker-compose.prod.yml` is a separate stack intended for deployments. It builds two
 runtime images from `docker/Dockerfile.prod` — `php` (php-fpm) and `httpd` — with the
-application source, vendor, and built frontend assets baked in. There is no bind
-mount and no Node/Composer in the runtime images.
+application source, vendor, built frontend assets, and `app/config/parameters.yml`
+baked in. There is no bind mount and no Node/Composer in the runtime images.
 
 Before building, create a production `app/config/parameters.yml` on the host
 (this file is gitignored) and edit it for the deployment:
@@ -68,8 +70,9 @@ docker compose -f docker-compose.prod.yml up -d
 
 On startup, the `init` service waits for MySQL, creates the configured database if
 needed, updates the schema, installs bundle assets into a shared `web/bundles`
-volume, and clears/warms the shared prod cache before `php` and `httpd` start. To
-rerun that idempotent initialization after a deployment or parameter change:
+volume, and clears/warms the shared prod cache before `php` and `httpd` start.
+Because `app/config/parameters.yml` is baked into the image, rebuild and redeploy
+after parameter changes. To rerun the idempotent initialization after a deployment:
 
 ```sh
 docker compose -f docker-compose.prod.yml run --rm init

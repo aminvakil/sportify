@@ -8,6 +8,8 @@ This is a football (soccer :) match prediction game with a simple concept - you 
 * [npm](https://docs.npmjs.com/getting-started/installing-node)
 * [gulp](http://gulpjs.com/) installed globally 
 
+For the Docker production deployment flow, see [docs/production-deployment.md](docs/production-deployment.md).
+
 # Installation and Environment Setup
 The project can be run without issues on both *nix and Windows (Mac OS X, Ubuntu and Windows with LAMP tested :). Check [the A to Z wiki article](https://github.com/dev-labs-bg/sportify/wiki/Setting-up-the-project-on-DigitalOcean-droplet-from-A-to-Z) for a step by step guide on how to prepare a 5$ 512MB DigitalOcean Ubuntu LAMP 16.04 droplet for the task.
 
