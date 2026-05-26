@@ -78,7 +78,7 @@ Separate the deployment stack from the local development stack. Keep `docker-com
 
 ### Backend deployment tasks
 
-Complete for now. Keep the completed steps in "Current status" above so the deployment path remains visible.
+- Remove the legacy hardcoded Telegram send/pin block from `src/Devlabs/SportifyBundle/Command/DataUpdateCommand.php`; replace it with the app-owned Telegram service/config if result update Telegram notifications are still needed.
 
 ### Frontend deployment tasks
 
