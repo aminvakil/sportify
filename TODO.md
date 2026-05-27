@@ -66,6 +66,7 @@ Possible default values the admin may switch to later:
 Probability bonus rules:
 
 - A cron/command should look ahead a configurable number of days, for example 7 or 14 days.
+- Focus imported competitions on national-team tournaments such as World Cup, World Cup qualifying, UEFA Euro, Nations League, Gold Cup, Copa America, and Africa Cup of Nations; do not add club competitions unless explicitly requested later.
 - It should add upcoming matches that are not already in the database only when The Odds API is reachable and returns a complete odds snapshot, snapshotting the current default base scoring values onto each new match.
 - It should set normalized betting probabilities when adding a new match: home win, draw, away win, and source.
 - If The Odds API is unreachable or does not return all three home/draw/away outcomes, do not add the match.
@@ -129,6 +130,7 @@ Use fewer, milestone-sized PRs for this feature:
 
 1. Research and choose a betting-probability source. ✅
    - Selected provider: The Odds API v4.
+   - Focus: national-team competitions; API-Football/API-Sports was checked in browser and not selected for v1 odds because its coverage table showed no odds coverage for the checked World Cup/Euro/AFCON/CONCACAF national rows.
    - Research deliverable: `docs/betting-probability-source.md`.
    - For future provider/documentation research, open blocked sites in a real browser and let the user solve CAPTCHAs instead of stopping at command-line Cloudflare/JavaScript challenges.
 2. Add probability/scoring persistence and scoring engine.
@@ -143,6 +145,7 @@ Use fewer, milestone-sized PRs for this feature:
    - Include scoring unit/integration tests in this PR.
 3. Add upcoming-match/probability import and fixture-added Telegram notification.
    - Add/update the cron/command to look ahead a configurable number of days, for example 7 or 14 days.
+   - Import only configured national-team tournaments for v1.
    - Add missing upcoming matches only when The Odds API is reachable and returns complete home/draw/away odds, with the current default base scoring values snapshotted onto each new match.
    - Set probabilities only when creating newly added matches; never refresh probabilities for existing matches.
    - Do not add a match when probabilities are unavailable.
