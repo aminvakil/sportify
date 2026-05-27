@@ -58,7 +58,7 @@ Base scoring by stage:
 
 Probability bonus rules:
 
-- Store a betting-probability snapshot for each match before kickoff: home win, draw, away win, source, and updated time.
+- Store a betting-probability snapshot once when each match is added: home win, draw, away win, and source. Do not update it later and do not store an updated-time field.
 - Apply the probability bonus only when the predicted outcome is correct.
 - Add the probability bonus on top of the normal stage score; do not replace the normal score.
 - Cap the probability bonus at the exact-score value for that match stage.
@@ -83,6 +83,11 @@ Example: in a quarter-final, the base scores are outcome 5 and exact 10. If a us
 - Show the betting-probability snapshot on each prediction card: home win, draw, and away win percentages.
 - Show the scoring meaning clearly enough that users can understand what each predicted outcome is worth, including the probability bonus and the exact-score base for the stage.
 
+### Telegram fixture-added message
+
+- When fixture updates add new matches, include the added match list in the notification.
+- Print each added match with its stored betting-probability snapshot.
+
 ### Telegram prediction message after kickoff
 
 - Keep sending submitted predictions shortly after the match starts.
@@ -98,7 +103,7 @@ Example: in a quarter-final, the base scores are outcome 5 and exact 10. If a us
 ### Implementation notes
 
 - Exact-prediction percentage should not depend on a fixed point value once exact scores become variable by stage and probability bonus. Store or derive a scoring result such as wrong/outcome/exact.
-- Add tests for probability bonus boundaries, stage base scores, exact score handling, wrong-outcome zero points, exact-prediction percentage, prediction-page display data, and both Telegram message formats.
+- Add tests for probability bonus boundaries, stage base scores, exact score handling, wrong-outcome zero points, exact-prediction percentage, prediction-page display data, fixture-added notification content, and both Telegram match prediction/result message formats.
 
 Deferred infrastructure work:
 
