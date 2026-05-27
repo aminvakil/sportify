@@ -67,9 +67,9 @@ Probability bonus rules:
 
 - A cron/command should look ahead a configurable number of days, for example 7 or 14 days.
 - It should add upcoming matches that are not already in the database, using the default base scoring values.
-- It should set/update normalized betting probabilities for upcoming matches: home win, draw, away win, and source.
+- It should set normalized betting probabilities only when adding a new match: home win, draw, away win, and source.
 - If the provider returns bookmaker odds, normalize implied probabilities before storing them so the three outcomes total about 100%.
-- Do not update probabilities for matches that have already started, are locked, or have been scored; their stored probabilities are the scoring snapshot.
+- Do not update probabilities after a match has been created. The initially stored probabilities are the scoring snapshot.
 - Store probabilities as exact integers, preferably basis points where `10000 = 100%`, to avoid floating-point scoring/rounding surprises.
 - Keep the source simple but auditable, for example provider/bookmaker/market when available.
 - Apply the probability bonus only when the predicted outcome is correct.
@@ -144,7 +144,7 @@ Use fewer, milestone-sized PRs for this feature:
 3. Add upcoming-match/probability import and fixture-added Telegram notification.
    - Add/update the cron/command to look ahead a configurable number of days, for example 7 or 14 days.
    - Add missing upcoming matches with default base scoring values.
-   - Set/update probabilities for upcoming matches before they start, but never for started/locked/scored matches.
+   - Set probabilities only when creating newly added matches; never refresh probabilities for existing matches.
    - Add matches even when probabilities are unavailable.
    - Return added match details for notifications.
    - Send the Telegram fixture-added message with added matches and stored probabilities.
