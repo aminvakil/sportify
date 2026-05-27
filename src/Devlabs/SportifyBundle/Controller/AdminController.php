@@ -3,9 +3,10 @@
 namespace Devlabs\SportifyBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Devlabs\SportifyBundle\Entity\ApiMapping;
 use Devlabs\SportifyBundle\Entity\Tournament;
@@ -54,24 +55,29 @@ class AdminController extends AbstractController
             'outcomePoints' => $scoringDefaults->getOutcomePoints(),
             'exactPoints' => $scoringDefaults->getExactPoints(),
         ))
-            ->add('outcomePoints', ChoiceType::class, array(
-                'label' => 'Correct outcome',
-                'choices' => array('2' => 2, '3' => 3, '5' => 5),
-            ))
-            ->add('exactPoints', ChoiceType::class, array(
-                'label' => 'Exact score',
-                'choices' => array('5' => 5, '7' => 7, '10' => 10, '12' => 12),
-            ))
+            ->add('outcomePoints', IntegerType::class, array('label' => 'Correct outcome'))
+            ->add('exactPoints', IntegerType::class, array('label' => 'Exact score'))
             ->add('button', SubmitType::class, array('label' => 'Save'))
             ->getForm();
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
-            $scoringDefaults->updateDefaults($data['outcomePoints'], $data['exactPoints']);
-            $this->addFlash('message', 'Default base scoring updated.');
 
-            return $this->redirectToRoute('admin_scoring');
+            if ($data['outcomePoints'] < 1) {
+                $form->get('outcomePoints')->addError(new FormError('Correct outcome points must be at least 1.'));
+            }
+
+            if ($data['exactPoints'] < $data['outcomePoints']) {
+                $form->get('exactPoints')->addError(new FormError('Exact score points must be greater than or equal to correct outcome points.'));
+            }
+
+            if ($form->isValid()) {
+                $scoringDefaults->updateDefaults($data['outcomePoints'], $data['exactPoints']);
+                $this->addFlash('message', 'Default base scoring updated.');
+
+                return $this->redirectToRoute('admin_scoring');
+            }
         }
 
         $this->container->get('app.twig.helper')->setUserScores($user);

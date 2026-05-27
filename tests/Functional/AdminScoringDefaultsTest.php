@@ -14,8 +14,8 @@ class AdminScoringDefaultsTest extends FunctionalTestCase
         $this->assertStringContainsString('Default base scoring', $crawler->filter('body')->text());
 
         $form = $crawler->selectButton('Save')->form(array(
-            'scoring_defaults[outcomePoints]' => 3,
-            'scoring_defaults[exactPoints]' => 7,
+            'scoring_defaults[outcomePoints]' => 4,
+            'scoring_defaults[exactPoints]' => 9,
         ));
         $this->client->submit($form);
 
@@ -23,19 +23,19 @@ class AdminScoringDefaultsTest extends FunctionalTestCase
         $this->client->followRedirect();
 
         $defaults = $this->client->getContainer()->get('app.scoring_defaults');
-        $this->assertSame(3, $defaults->getOutcomePoints());
-        $this->assertSame(7, $defaults->getExactPoints());
+        $this->assertSame(4, $defaults->getOutcomePoints());
+        $this->assertSame(9, $defaults->getExactPoints());
     }
 
-    public function testAdminCannotSaveUnsupportedDefaultBaseScoring()
+    public function testAdminCannotSaveInvalidDefaultBaseScoring()
     {
         $this->createUser('admin_invalid_scoring_defaults', 'testpass', true, array('ROLE_ADMIN'));
         $this->login('admin_invalid_scoring_defaults@example.com', 'testpass');
 
         $this->client->request('POST', '/admin/scoring', array(
             'scoring_defaults' => array(
-                'outcomePoints' => -1,
-                'exactPoints' => 0,
+                'outcomePoints' => 5,
+                'exactPoints' => 4,
                 'button' => '',
             ),
         ));
