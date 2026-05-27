@@ -48,6 +48,7 @@
 - Production deployment documentation covers required local config files, first deployment, upgrades, scheduled commands, and smoke checks.
 - Production Docker builds frontend assets in a Node build stage, copies generated `web/css` and `web/js` assets into the php-fpm/httpd runtime images, and keeps Node/npm out of the final runtime images.
 - Submitted predictions can be sent to the configured Telegram chat shortly after kickoff with `sportify:telegram:send-predictions`.
+- Data update Telegram notifications use the app-owned Telegram service/config instead of legacy hardcoded send/pin URLs; sent messages are pinned by default and can be disabled with `telegram.pin_messages: false`.
 
 ## Next steps
 
@@ -78,7 +79,7 @@ Separate the deployment stack from the local development stack. Keep `docker-com
 
 ### Backend deployment tasks
 
-- Remove the legacy hardcoded Telegram send/pin block from `src/Devlabs/SportifyBundle/Command/DataUpdateCommand.php`; replace it with the app-owned Telegram service/config if result update Telegram notifications are still needed.
+Complete for now.
 
 ### Frontend deployment tasks
 

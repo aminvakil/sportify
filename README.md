@@ -52,6 +52,7 @@ Best practice is to use a transactional mail service, like Mailgun, Amazon SES, 
  `football_api.token` - you can get one free from [football-data.org](http://www.football-data.org/register). If you use the service for a longer time, consider [donating](http://api.football-data.org/about) :)  
 ` slack.url, slack.channel` - Generate them in [Slack](https://slack.com/apps/A0F7XDUAZ-incoming-webhooks) in order to get notifications.  
 `telegram.bot_token, telegram.chat_id` - Configure these to send scheduled Telegram notifications.
+`telegram.pin_messages` - Set to `false` to disable pinning Telegram data update notifications. Defaults to `true`.
 `secret` - Symfony variable - generate it by going [here](http://nux.net/secret) or running in shell `openssl rand -hex 20`
 
 **N.B.**
