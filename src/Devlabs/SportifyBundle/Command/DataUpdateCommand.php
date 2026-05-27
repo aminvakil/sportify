@@ -110,14 +110,16 @@ class DataUpdateCommand extends Command
             $this->container->get('app.slack')->setText($msgText)->post();
 
             $logText = $logText . "\n" . $msgText . "\n";
-            $botToken = "your_bot_token";
-            $website = "https://api.telegram.org/bot" . $botToken;
-            $channelId = "@your_channel_id";
-            $url = $website."/sendmessage?chat_id=".$channelId."&text=".urlencode($logText);
-            $telegram_result = (json_decode(file_get_contents($url), true));
-            $message_id = $telegram_result["result"]["message_id"];
-            $url = $website."/pinChatMessage?chat_id=".$channelId."&message_id=".$message_id;
-            file_get_contents($url);
+
+            $telegram = $this->container->get('app.telegram');
+            $telegramResponse = $telegram->sendMessage($logText);
+            if ($telegramResponse->getStatusCode() >= 200 && $telegramResponse->getStatusCode() < 300) {
+                $telegramResult = json_decode((string) $telegramResponse->getBody(), true);
+
+                if ($this->shouldPinTelegramMessages() && isset($telegramResult['result']['message_id'])) {
+                    $telegram->pinMessage($telegramResult['result']['message_id']);
+                }
+            }
         } else {
             $logText = $logText . "\n" . 'No fixtures/results added or updated.' . "\n";
         }
@@ -125,5 +127,14 @@ class DataUpdateCommand extends Command
         $output->writeln($logText);
 
         return 0;
+    }
+
+    private function shouldPinTelegramMessages()
+    {
+        if (!$this->container->hasParameter('telegram.pin_messages')) {
+            return true;
+        }
+
+        return filter_var($this->container->getParameter('telegram.pin_messages'), FILTER_VALIDATE_BOOLEAN);
     }
 }

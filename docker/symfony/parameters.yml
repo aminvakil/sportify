@@ -15,6 +15,7 @@ parameters:
     slack.channel: check_the_README_file
     telegram.bot_token: check_the_README_file
     telegram.chat_id: check_the_README_file
+    telegram.pin_messages: true
 
     sportify_api.client_id: ~
     sportify_api.client_secret: ~
