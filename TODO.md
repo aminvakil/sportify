@@ -130,6 +130,7 @@ Use fewer, milestone-sized PRs for this feature:
 1. Research and choose a betting-probability source. ✅
    - Selected provider: The Odds API v4.
    - Research deliverable: `docs/betting-probability-source.md`.
+   - For future provider/documentation research, open blocked sites in a real browser and let the user solve CAPTCHAs instead of stopping at command-line Cloudflare/JavaScript challenges.
 2. Add probability/scoring persistence and scoring engine.
    - Add nullable match fields for home/draw/away probabilities and source. Existing matches must remain valid.
    - Add match fields for base outcome points and base exact points, populated from the current defaults when each match is created.
@@ -171,4 +172,4 @@ Use bigger PRs, but keep them coherent. Group related TODO implementation tasks 
 
 ## Verification
 
-See the "Verification rule" section of `AGENTS.md`. CI also replaces `football_api.token` with the `FOOTBALL_DATA_API_TOKEN` secret before running.
+See the "Verification rule" section of `AGENTS.md`. Documentation-only changes, including `AGENTS.md`, `TODO.md`, and files under `docs/`, do not need local Docker verification or waiting for CI unless explicitly requested. CI also replaces `football_api.token` with the `FOOTBALL_DATA_API_TOKEN` secret before running.
