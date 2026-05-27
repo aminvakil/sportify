@@ -112,7 +112,7 @@ abstract class DatabaseTestCase extends KernelTestCase
         return $match;
     }
 
-    protected function createPrediction($user, MatchEntity $match, $homeGoals, $awayGoals, $scoreAdded = null, $points = null)
+    protected function createPrediction($user, MatchEntity $match, $homeGoals, $awayGoals, $scoreAdded = null, $points = null, $scoringResult = null)
     {
         $prediction = new Prediction();
         $prediction->setUserId($user);
@@ -126,6 +126,10 @@ abstract class DatabaseTestCase extends KernelTestCase
 
         if ($points !== null) {
             $prediction->setPoints($points);
+        }
+
+        if ($scoringResult !== null) {
+            $prediction->setScoringResult($scoringResult);
         }
 
         $this->em->persist($prediction);
