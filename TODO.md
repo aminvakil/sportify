@@ -37,9 +37,9 @@
 
 ## Next steps
 
-No required backend, frontend, or deployment infrastructure modernization is currently pending.
+No backend, frontend, or deployment infrastructure modernization is currently pending.
 
-Optional product work:
+Required product work:
 
 ### Probability-weighted scoring
 
@@ -126,11 +126,9 @@ Example with outcome 2 and exact 5: if a user predicts the exact score for a 10%
 
 Use fewer, milestone-sized PRs for this feature:
 
-1. Research and choose a betting-probability source.
-   - Only consider providers with a usable free tier.
-   - Criteria: upcoming football/soccer fixtures and odds coverage, pre-kickoff odds availability, API stability, terms that allow storing/displaying derived probabilities, rate limits, and reliable matching to existing fixtures/teams.
-   - Likely candidates: The Odds API and API-Football odds. Avoid direct bookmaker scraping unless no API source works.
-   - Deliverable: document the selected provider, sample response, rate limits, required config/env vars, normalization rule, source/bookmaker/market choice, whether fixtures and odds come from the same provider or separate providers, and matching strategy.
+1. Research and choose a betting-probability source. ✅
+   - Selected provider: The Odds API v4.
+   - Research deliverable: `docs/betting-probability-source.md`.
 2. Add probability/scoring persistence and scoring engine.
    - Add nullable match fields for home/draw/away probabilities and source. Existing matches must remain valid.
    - Add match fields for base outcome points and base exact points, populated from the current defaults when each match is created.
