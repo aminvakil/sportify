@@ -121,6 +121,7 @@ Example with outcome 2 and exact 5: if a user predicts the exact score for a 10%
 - Exact-prediction percentage should not depend on a fixed point value once probability bonus exists. Store a scoring result such as wrong/outcome/exact on each prediction when it is scored.
 - Store scoring breakdown fields on each scored prediction, such as base points, probability bonus, and total points, so Telegram/result history can explain historical calculations even if defaults or match base points change later.
 - Existing `api_mappings` can map matches/teams/tournaments to provider IDs; use it for the odds provider if the provider exposes stable IDs. If not, document and test the team/date matching strategy.
+- Keep odds-provider setup simple: only require one secret/config parameter, `odds_api.token`, like the existing `football_api.token`.
 - Do not add match stage fields for v1. Per-stage scoring is represented by admin-controlled default base points that are snapshotted onto newly added matches.
 - Add tests for probability bonus boundaries, base scores, exact score handling, wrong-outcome zero points, stored scoring breakdown, exact-prediction percentage, prediction-page display data, fixture-added notification content, and both Telegram match prediction/result message formats.
 

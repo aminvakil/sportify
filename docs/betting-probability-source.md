@@ -30,18 +30,13 @@ Base URL:
 https://api.the-odds-api.com
 ```
 
-Configuration needed later:
+Only one deployment-provided setting should be required, matching the existing `football_api.token` style:
 
 ```yaml
-odds_api.name: the_odds_api
-odds_api.base_uri: https://api.the-odds-api.com
-odds_api.key: '%env(ODDS_API_KEY)%'
-odds_api.regions: eu
-odds_api.markets: h2h
-odds_api.odds_format: decimal
-odds_api.lookahead_days: 14
-odds_api.bookmaker_preference: ['pinnacle', 'betfair_ex_eu', 'betfair', 'unibet_eu', 'unibet']
+odds_api.token: check_the_README_file
 ```
+
+Keep provider defaults in app config/code: base URL `https://api.the-odds-api.com`, region `eu`, market `h2h`, decimal odds, 14-day lookahead, and the bookmaker preference order.
 
 Use competition sport keys configured per local tournament. For this product, prioritize national-team competitions over club leagues. The Odds API docs sample confirms `soccer_uefa_european_championship`; other national competitions, including World Cup and World Cup qualifiers, must be selected only when `/v4/sports` returns an active sport key for them. Do not use the special `upcoming` sport key for the cron because its time filters do not apply and it only returns the next eight events across sports.
 
@@ -120,8 +115,8 @@ Use the away value as the remainder so the stored values always total exactly `1
 
 ## Implementation notes for later PRs
 
-- Add `ODDS_API_KEY` to deployment documentation and local parameter setup; do not commit real keys.
-- Add an admin/config step that lists active The Odds API soccer sport keys and lets national-team tournaments be mapped only to keys currently returned by `/v4/sports`.
+- Add `odds_api.token` to deployment documentation and local parameter setup; do not commit real keys.
+- Keep the odds-provider setup simple: the only required secret/config value should be `odds_api.token`.
 - Store probabilities only when creating a match. Do not refresh probabilities for existing matches.
 - Store probabilities as integer basis points.
 - Do not add imported matches when odds are missing or The Odds API is unreachable; every newly imported match must have a stored probability snapshot.
