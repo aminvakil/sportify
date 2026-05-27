@@ -4,7 +4,7 @@
 
 Use **The Odds API v4** as the first betting-probability source.
 
-The first implementation should continue using `football-data.org` for results/status updates unless a later PR explicitly replaces that flow. Use The Odds API for upcoming fixture discovery and pre-kickoff head-to-head odds snapshots. When a match is created from The Odds API, store the provider event id if the local mapping can support its string id; otherwise store enough audited source text on the match and use team/date matching until `api_mappings.api_object_id` is widened from integer to string.
+The first implementation should continue using `football-data.org` for results/status updates unless a later PR explicitly replaces that flow. Use The Odds API for upcoming fixture discovery and pre-kickoff head-to-head odds snapshots. Imported upcoming matches must have a complete odds snapshot; if The Odds API cannot be reached or does not return all three home/draw/away outcomes, do not create the match. When a match is created from The Odds API, store the provider event id if the local mapping can support its string id; otherwise store enough audited source text on the match and use team/date matching until `api_mappings.api_object_id` is widened from integer to string.
 
 ## Why this provider
 
@@ -108,7 +108,7 @@ draw_bps = round(raw_draw / raw_total * 10000)
 away_bps = 10000 - home_bps - draw_bps
 ```
 
-Use the away value as the remainder so the stored values always total exactly `10000`. If any of the three h2h outcomes is missing, create the match without probabilities.
+Use the away value as the remainder so the stored values always total exactly `10000`. If any of the three h2h outcomes is missing, skip the event and do not create a local match.
 
 ## Matching strategy
 
@@ -123,7 +123,7 @@ Use the away value as the remainder so the stored values always total exactly `1
 - Add `ODDS_API_KEY` to deployment documentation and local parameter setup; do not commit real keys.
 - Store probabilities only when creating a match. Do not refresh probabilities for existing matches.
 - Store probabilities as integer basis points.
-- Keep adding matches even when odds are missing; in that case leave probability fields null and show no probability bonus.
+- Do not add imported matches when odds are missing or The Odds API is unreachable; every newly imported match must have a stored probability snapshot.
 - Track response headers `x-requests-remaining`, `x-requests-used`, and `x-requests-last` in debug logs or command output summaries.
 - The Odds API terms mention responsible-gambling messaging when the service is used to promote bookmakers or gambling services. Sportify uses derived probabilities for a private prediction game, not bookmaker promotion, but the user-facing copy should avoid betting calls to action.
 

@@ -66,8 +66,9 @@ Possible default values the admin may switch to later:
 Probability bonus rules:
 
 - A cron/command should look ahead a configurable number of days, for example 7 or 14 days.
-- It should add upcoming matches that are not already in the database, snapshotting the current default base scoring values onto each new match.
-- It should set normalized betting probabilities only when adding a new match: home win, draw, away win, and source.
+- It should add upcoming matches that are not already in the database only when The Odds API is reachable and returns a complete odds snapshot, snapshotting the current default base scoring values onto each new match.
+- It should set normalized betting probabilities when adding a new match: home win, draw, away win, and source.
+- If The Odds API is unreachable or does not return all three home/draw/away outcomes, do not add the match.
 - If the provider returns bookmaker odds, normalize implied probabilities before storing them so the three outcomes total about 100%.
 - Do not update probabilities after a match has been created. The initially stored probabilities are the scoring snapshot.
 - Store probabilities as exact integers, preferably basis points where `10000 = 100%`, to avoid floating-point scoring/rounding surprises.
@@ -81,7 +82,7 @@ Probability bonus rules:
   - If `p < 50`, bonus is `ceil((50 - p) * cap / 50)`, capped to `cap`.
   - With basis-point storage, use the equivalent integer formula: if `p_bps < 5000`, bonus is `ceil((5000 - p_bps) * cap / 5000)`.
 - Example with cap `10`: probabilities near 50% give +1, around 40% gives +2, around 25% gives +5, around 10% gives +8, and very low probabilities can reach +10.
-- If probabilities are missing, the probability bonus is `0`.
+- If probabilities are missing on legacy/pre-feature matches, the probability bonus is `0`.
 
 Total scoring:
 
@@ -95,7 +96,7 @@ Example with outcome 2 and exact 5: if a user predicts the exact score for a 10%
 
 - Show the betting-probability snapshot on each prediction card: home win, draw, and away win percentages.
 - Show the points available for each possible outcome on the match card, for example correct home win / draw / away win totals and exact-score totals after the probability bonus is applied.
-- If probabilities are missing, show that no probability bonus is available instead of hiding the scoring rule.
+- If probabilities are missing on legacy/pre-feature matches, show that no probability bonus is available instead of hiding the scoring rule.
 
 ### Telegram fixture-added message
 
@@ -141,12 +142,12 @@ Use fewer, milestone-sized PRs for this feature:
    - Include scoring unit/integration tests in this PR.
 3. Add upcoming-match/probability import and fixture-added Telegram notification.
    - Add/update the cron/command to look ahead a configurable number of days, for example 7 or 14 days.
-   - Add missing upcoming matches with the current default base scoring values snapshotted onto each new match.
+   - Add missing upcoming matches only when The Odds API is reachable and returns complete home/draw/away odds, with the current default base scoring values snapshotted onto each new match.
    - Set probabilities only when creating newly added matches; never refresh probabilities for existing matches.
-   - Add matches even when probabilities are unavailable.
+   - Do not add a match when probabilities are unavailable.
    - Return added match details for notifications.
    - Send the Telegram fixture-added message with added matches and stored probabilities.
-   - Include tests for import matching, missing-probability behavior, and fixture-added notification content.
+   - Include tests for import matching, unavailable-odds skip behavior, and fixture-added notification content.
 4. Add probability/scoring visibility across user-facing surfaces.
    - Show probabilities and scoring information on the predictions page.
    - Include probabilities and derived outcomes in the after-kickoff Telegram prediction message.
