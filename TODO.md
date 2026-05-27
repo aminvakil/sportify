@@ -122,33 +122,35 @@ Example with outcome 2 and exact 5: if a user predicts the exact score for a 10%
 
 ### Suggested PR sequence
 
+Use fewer, milestone-sized PRs for this feature:
+
 1. Research and choose a betting-probability source.
    - Only consider providers with a usable free tier.
    - Criteria: upcoming football/soccer fixtures and odds coverage, pre-kickoff odds availability, API stability, terms that allow storing/displaying derived probabilities, rate limits, and reliable matching to existing fixtures/teams.
    - Likely candidates: The Odds API and API-Football odds. Avoid direct bookmaker scraping unless no API source works.
    - Deliverable: document the selected provider, sample response, rate limits, required config/env vars, normalization rule, source/bookmaker/market choice, and matching strategy.
-2. Add the data model for match probability snapshots, match base scoring, and prediction scoring breakdown.
+2. Add probability/scoring persistence and scoring engine.
    - Add nullable match fields for home/draw/away probabilities and source. Existing matches must remain valid.
    - Add match fields for base outcome points and base exact points, with defaults equivalent to outcome 2 and exact 5.
    - Add nullable prediction fields for scoring result, base points, and probability bonus.
-   - Use probability bonus `0` when probabilities are missing.
-3. Extract scoring into a dedicated service while preserving current behavior.
-   - Keep this PR behavior-equivalent to reduce risk before changing the scoring rules.
-   - Return a structured scoring result, not just an integer, so later PRs can persist/explain the calculation.
-4. Implement the new match-base-score/probability-bonus scoring rules.
-   - Use each match's stored base scores, probability bonus calculation, bonus cap by the match's exact-score value, wrong-outcome zero points, and wrong/outcome/exact classification.
+   - Extract scoring into a dedicated service that returns a structured scoring result, not just an integer.
+   - Implement match-base-score/probability-bonus scoring: stored match base scores, bonus cap by the match's exact-score value, wrong-outcome zero points, and wrong/outcome/exact classification.
    - Persist the scoring breakdown on predictions.
    - Fix exact-prediction percentage so it uses scoring result, not a fixed exact-score point value.
-5. Add/update the upcoming-match cron/command.
-   - Look ahead a configurable number of days, for example 7 or 14 days.
+   - Include scoring unit/integration tests in this PR.
+3. Add upcoming-match/probability import and fixture-added Telegram notification.
+   - Add/update the cron/command to look ahead a configurable number of days, for example 7 or 14 days.
    - Add missing upcoming matches with default base scoring values.
    - Set/update probabilities for upcoming matches before they start.
-   - Return added match details for Telegram notifications.
    - Add matches even when probabilities are unavailable.
-6. Show probabilities and scoring information on the predictions page.
-7. Include added matches and probabilities in the fixture-added Telegram notification.
-8. Include probabilities and derived outcomes in the after-kickoff Telegram prediction message.
-9. Include final result, per-user scoring calculations, and standings changes in the after-full-time Telegram result/scoring message.
+   - Return added match details for notifications.
+   - Send the Telegram fixture-added message with added matches and stored probabilities.
+   - Include tests for import matching, missing-probability behavior, and fixture-added notification content.
+4. Add probability/scoring visibility across user-facing surfaces.
+   - Show probabilities and scoring information on the predictions page.
+   - Include probabilities and derived outcomes in the after-kickoff Telegram prediction message.
+   - Include final result, per-user scoring calculations, and standings changes in the after-full-time Telegram result/scoring message.
+   - Include tests for prediction-page display data and both Telegram match prediction/result message formats.
 
 Deferred infrastructure work:
 
