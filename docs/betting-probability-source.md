@@ -11,8 +11,8 @@ The first implementation should keep `football-data.org` as the fixture source, 
 - Has a documented free starter plan: **500 credits per month**.
 - Soccer coverage includes UEFA national competitions when active; the implementation should prioritize national-team competitions such as World Cup, World Cup qualifying, UEFA Euro, Nations League, Gold Cup, Copa America, and Africa Cup of Nations when they are available from the provider.
 - The `/v4/sports` and `/v4/sports/{sport}/events` endpoints do not count against quota.
-- The main `/v4/sports/{sport}/odds` endpoint returns upcoming/live events with bookmaker odds in one response.
-- For the needed market, quota cost is predictable: `1 market * 1 region = 1 credit` per competition request.
+- The event odds endpoint returns bookmaker odds for one matched event.
+- For the needed market, quota cost is predictable: `1 market * 1 region = 1 credit` per matched-event odds request.
 - Terms allow use in websites, mobile apps, dashboards, analytical tools, and other user-facing applications, provided the data is not resold or redistributed as a standalone data product.
 
 ## Provider comparison
@@ -44,7 +44,7 @@ Keep provider constants in app config/code so deployment only supplies `odds_api
 | Region | `eu` | The `/odds` endpoint needs `regions` or `bookmakers`; do not rely on a provider default. |
 | Market | `h2h` | The provider defaults to `h2h`, but send it explicitly for clarity. |
 | Odds format | `decimal` | The provider defaults to `decimal`, but send it explicitly for clarity. |
-| Bookmaker preference | App-owned ordered list | No provider default; if no preferred bookmaker is present, use the first bookmaker with all three h2h outcomes. |
+| Bookmaker preference | App-owned code constant | No provider default; if no preferred bookmaker is present, use the first bookmaker with all three h2h outcomes. |
 
 There should be no separate odds-provider lookahead setting. Reuse the existing football-data fixture update window/behavior. The flow is:
 
@@ -97,7 +97,7 @@ The `/odds` response contains one object per event:
 }
 ```
 
-For soccer, the `h2h` market has three outcomes: home win, draw, and away win. Pick one bookmaker deterministically from `odds_api.bookmaker_preference`; if none are present, use the first bookmaker returned that has all three `h2h` outcomes. Store the source as:
+For soccer, the `h2h` market has three outcomes: home win, draw, and away win. Pick one bookmaker deterministically from an app-owned preference list in code; if none are present, use the first bookmaker returned that has all three `h2h` outcomes. Do not make this another deployment parameter. Store the source as:
 
 ```text
 the_odds_api:{sport_key}:{event_id}:{bookmaker_key}:h2h
