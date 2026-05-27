@@ -105,6 +105,31 @@ Example: in a quarter-final, the base scores are outcome 5 and exact 10. If a us
 - Exact-prediction percentage should not depend on a fixed point value once exact scores become variable by stage and probability bonus. Store or derive a scoring result such as wrong/outcome/exact.
 - Add tests for probability bonus boundaries, stage base scores, exact score handling, wrong-outcome zero points, exact-prediction percentage, prediction-page display data, fixture-added notification content, and both Telegram match prediction/result message formats.
 
+### Suggested PR sequence
+
+1. Research and choose a betting-probability source.
+   - Only consider providers with a usable free tier.
+   - Criteria: football/soccer odds coverage, supported competitions, pre-kickoff odds availability, API stability, terms that allow storing/displaying derived probabilities, rate limits, and reliable matching to existing fixtures/teams.
+   - Likely candidates: The Odds API and API-Football odds. Avoid direct bookmaker scraping unless no API source works.
+   - Deliverable: document the selected provider, sample response, rate limits, required config/env vars, and matching strategy.
+2. Add the match probability/stage data model.
+   - Store home win, draw, away win probabilities and source on each match.
+   - Store or derive the match stage needed for stage-based scoring.
+   - Use probability bonus `0` when probabilities are missing.
+3. Extract scoring into a dedicated service while preserving current behavior.
+   - Keep this PR behavior-equivalent to reduce risk before changing the scoring rules.
+4. Implement the new stage/probability scoring rules.
+   - Add stage base scores, probability bonus calculation, bonus cap by stage exact score, wrong-outcome zero points, and wrong/outcome/exact classification.
+   - Fix exact-prediction percentage so it does not rely on a fixed exact-score point value.
+5. Fetch and store probabilities when fixtures are added.
+   - Store the snapshot once for newly added matches only.
+   - Normalize bookmaker odds into probabilities if the provider returns odds instead of direct percentages.
+   - Add matches even when probabilities are unavailable.
+6. Show probabilities and scoring information on the predictions page.
+7. Include added matches and probabilities in the fixture-added Telegram notification.
+8. Include probabilities and derived outcomes in the after-kickoff Telegram prediction message.
+9. Include final result, per-user scoring calculations, and standings changes in the after-full-time Telegram result/scoring message.
+
 Deferred infrastructure work:
 
 - Defer structural backend modernization until a framework step requires it.
