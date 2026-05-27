@@ -45,7 +45,9 @@ Optional product work:
 
 Users should still predict only scores. The predicted score determines the predicted outcome: home win, draw, or away win. Do not add a goal-difference or close-score bonus.
 
-Each match needs a stored stage for scoring. Do not infer stage from date, because knockout schedules and imported fixture dates can change.
+Scope this feature to FIFA World Cup and UEFA Euro tournaments, starting with World Cup 2026 and later World Cup/Euro tournaments.
+
+Each match needs a stored stage for scoring. World Cup/Euro match dates are fixed, but knockout teams are not known until previous stages finish, so stage should be stored explicitly from provider metadata or a competition schedule mapping rather than inferred ad hoc during scoring.
 
 Base scoring by stage:
 
@@ -60,7 +62,7 @@ Base scoring by stage:
 
 Probability bonus rules:
 
-- Store a normalized betting-probability snapshot once when each match is added: home win, draw, away win, and source. Do not update it later and do not store an updated-time field.
+- Store a normalized betting-probability snapshot once when each real match is added with known home/away teams: home win, draw, away win, and source. Do not update it later and do not store an updated-time field.
 - Prefer exact integer storage for probabilities, for example basis points where `10000 = 100%`, to avoid floating-point scoring/rounding surprises.
 - Make the source specific enough to audit later, for example provider/bookmaker/market, not only the provider name.
 - Apply the probability bonus only when the predicted outcome is correct.
@@ -109,20 +111,21 @@ Example: in a quarter-final, the base scores are outcome 5 and exact 10. If a us
 
 - Exact-prediction percentage should not depend on a fixed point value once exact scores become variable by stage and probability bonus. Store a scoring result such as wrong/outcome/exact on each prediction when it is scored.
 - Store scoring breakdown fields on each scored prediction, such as base points and probability bonus, so Telegram/result history can explain historical calculations even if scoring constants change later.
-- Existing `api_mappings` can map matches/teams/tournaments to provider IDs; use it for the odds provider if the provider exposes stable IDs. If not, document and test the team/date matching strategy.
+- Existing `api_mappings` can map matches/teams/tournaments to provider IDs; use it for the odds provider if the provider exposes stable IDs. If not, document and test the team/date/stage matching strategy.
+- Knockout fixtures with unknown teams should not become prediction-visible matches until both teams are known. When they are later imported as real matches, store the stage and the one-time probability snapshot then.
 - Add tests for probability bonus boundaries, stage base scores, exact score handling, wrong-outcome zero points, stored scoring breakdown, exact-prediction percentage, prediction-page display data, fixture-added notification content, and both Telegram match prediction/result message formats.
 
 ### Suggested PR sequence
 
 1. Research and choose a betting-probability source.
    - Only consider providers with a usable free tier.
-   - Criteria: football/soccer odds coverage, supported competitions, pre-kickoff odds availability, API stability, terms that allow storing/displaying derived probabilities, rate limits, and reliable matching to existing fixtures/teams.
+   - Criteria: FIFA World Cup and UEFA Euro odds coverage, pre-kickoff odds availability, API stability, terms that allow storing/displaying derived probabilities, rate limits, and reliable matching to existing fixtures/teams/stages.
    - Likely candidates: The Odds API and API-Football odds. Avoid direct bookmaker scraping unless no API source works.
    - Deliverable: document the selected provider, sample response, rate limits, required config/env vars, normalization rule, source/bookmaker/market choice, and matching strategy.
 2. Add the data model for match probability snapshots, match stage, and prediction scoring breakdown.
    - Add nullable match fields for stage, home/draw/away probabilities, and source. Existing matches must remain valid.
    - Add nullable prediction fields for scoring result, base points, and probability bonus.
-   - Add admin/import handling for match stage; default only when the stage is genuinely known.
+   - Add admin/import handling for match stage; use provider metadata or a World Cup/Euro schedule mapping, and default only when the stage is genuinely known.
    - Use probability bonus `0` when probabilities are missing.
 3. Extract scoring into a dedicated service while preserving current behavior.
    - Keep this PR behavior-equivalent to reduce risk before changing the scoring rules.
@@ -134,7 +137,7 @@ Example: in a quarter-final, the base scores are outcome 5 and exact 10. If a us
    - Persist the scoring breakdown on predictions.
    - Fix exact-prediction percentage so it uses scoring result, not a fixed exact-score point value.
 6. Fetch and store probabilities when fixtures are added.
-   - Store the snapshot once for newly added matches only.
+   - Store the snapshot once for newly added matches with known teams only.
    - Normalize bookmaker odds into probabilities if the provider returns odds instead of direct percentages.
    - Add matches even when probabilities are unavailable.
 7. Show probabilities and scoring information on the predictions page.
