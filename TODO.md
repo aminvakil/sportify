@@ -65,11 +65,13 @@ Possible default values the admin may switch to later:
 
 Probability bonus rules:
 
-- A cron/command should look ahead a configurable number of days, for example 7 or 14 days.
+- A cron/command should retrieve upcoming fixtures from `football-data.org` using the existing data-update flow/window.
 - Focus imported competitions on national-team tournaments such as World Cup, World Cup qualifying, UEFA Euro, Nations League, Gold Cup, Copa America, and Africa Cup of Nations; do not add club competitions unless explicitly requested later.
-- It should add upcoming matches that are not already in the database only when The Odds API is reachable and returns a complete odds snapshot, snapshotting the current default base scoring values onto each new match.
+- For each not-yet-imported football-data fixture, query The Odds API only for the matching event's odds.
+- It should add upcoming matches only when The Odds API is reachable and returns a complete odds snapshot, snapshotting the current default base scoring values onto each new match.
 - It should set normalized betting probabilities when adding a new match: home win, draw, away win, and source.
-- If The Odds API is unreachable or does not return all three home/draw/away outcomes, do not add the match.
+- Add the match and its odds snapshot to the database together.
+- If The Odds API is unreachable, no matching event is found, or it does not return all three home/draw/away outcomes, do not add the match.
 - If the provider returns bookmaker odds, normalize implied probabilities before storing them so the three outcomes total about 100%.
 - Do not update probabilities after a match has been created. The initially stored probabilities are the scoring snapshot.
 - Store probabilities as exact integers, preferably basis points where `10000 = 100%`, to avoid floating-point scoring/rounding surprises.
@@ -145,9 +147,11 @@ Use fewer, milestone-sized PRs for this feature:
    - Fix exact-prediction percentage so it uses scoring result, not a fixed exact-score point value.
    - Include scoring unit/integration tests in this PR.
 3. Add upcoming-match/probability import and fixture-added Telegram notification.
-   - Add/update the cron/command to look ahead a configurable number of days, for example 7 or 14 days.
+   - Keep `football-data.org` as the fixture source and reuse the existing data-update flow/window.
    - Import only configured national-team tournaments for v1.
+   - For each missing football-data fixture, query The Odds API only for the matching event's odds.
    - Add missing upcoming matches only when The Odds API is reachable and returns complete home/draw/away odds, with the current default base scoring values snapshotted onto each new match.
+   - Create the match and probability snapshot together in the same database write/transaction.
    - Set probabilities only when creating newly added matches; never refresh probabilities for existing matches.
    - Do not add a match when probabilities are unavailable.
    - Return added match details for notifications.
