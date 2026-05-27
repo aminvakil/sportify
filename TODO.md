@@ -41,8 +41,64 @@ No required backend, frontend, or deployment infrastructure modernization is cur
 
 Optional product work:
 
-- Add an opt-in scoring mode for predictions that awards separate points for correct goal difference when the predicted score differs from the real score by exactly one goal for each team. Example personal rule: outcome = 4 points, exact score = 10 points, matching goal difference with exactly one-goal offset = 6 points. Keep legacy scoring as the default unless explicitly enabled.
-- Evaluate replacing exact-point prediction scoring with an upstream betting/probability API. Each game prediction would score based on the probability percentage of the chosen outcome, so correctly betting on less likely outcomes can be rewarded differently than high-probability outcomes.
+### Probability-weighted scoring
+
+Users should still predict only scores. The predicted score determines the predicted outcome: home win, draw, or away win. Do not add a goal-difference or close-score bonus.
+
+Base scoring by stage:
+
+| Stage | Correct outcome | Exact score |
+| --- | ---: | ---: |
+| Group | 2 | 5 |
+| Round of 32 / 1⁄16 | 3 | 7 |
+| Round of 16 / 1⁄8 | 4 | 8 |
+| Quarter-final / 1⁄4 | 5 | 10 |
+| Semi-final | 5 | 12 |
+| Final | 5 | 12 |
+
+Probability bonus rules:
+
+- Store a betting-probability snapshot for each match before kickoff: home win, draw, away win, source, and updated time.
+- Apply the probability bonus only when the predicted outcome is correct.
+- Add the probability bonus on top of the normal stage score; do not replace the normal score.
+- Cap the probability bonus at the exact-score value for that match stage.
+- Suggested probability bonus scale:
+  - 50% or more: +0
+  - 33%–49.99%: +25% of stage exact score
+  - 20%–32.99%: +50% of stage exact score
+  - 10%–19.99%: +75% of stage exact score
+  - Less than 10%: +100% of stage exact score
+- Round calculated bonus values to integer points.
+
+Total scoring:
+
+- Wrong outcome: 0 points.
+- Correct outcome only: `stage outcome score + probability bonus`.
+- Exact score: `stage exact score + probability bonus`.
+
+Example: in a quarter-final, the base scores are outcome 5 and exact 10. If a user predicts the exact score for a less-than-10% probable winner, they should receive `10 + 10 = 20` points. If they predict only the correct outcome for the same match, they should receive `5 + 10 = 15` points.
+
+### Prediction page changes
+
+- Show the betting-probability snapshot on each prediction card: home win, draw, and away win percentages.
+- Show the scoring meaning clearly enough that users can understand what each predicted outcome is worth, including the probability bonus and the exact-score base for the stage.
+
+### Telegram prediction message after kickoff
+
+- Keep sending submitted predictions shortly after the match starts.
+- Include the betting-probability snapshot in this pre-result message.
+- Include each user's predicted score and derived predicted outcome.
+
+### Telegram result/scoring message after full time
+
+- When match results are updated and scores are calculated, send a Telegram result/scoring message.
+- Include the final result, betting-probability snapshot, each user's prediction, whether it was wrong outcome/correct outcome/exact score, and how the final points were calculated.
+- Include standings changes as the existing data update message does today.
+
+### Implementation notes
+
+- Exact-prediction percentage should not depend on a fixed point value once exact scores become variable by stage and probability bonus. Store or derive a scoring result such as wrong/outcome/exact.
+- Add tests for probability bonus boundaries, stage base scores, exact score handling, wrong-outcome zero points, exact-prediction percentage, prediction-page display data, and both Telegram message formats.
 
 Deferred infrastructure work:
 
