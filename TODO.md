@@ -45,9 +45,9 @@ Optional product work:
 
 Users should still predict only scores. The predicted score determines the predicted outcome: home win, draw, or away win. Do not add a goal-difference or close-score bonus.
 
-Scope this feature to FIFA World Cup and UEFA Euro tournaments, starting with World Cup 2026 and later World Cup/Euro tournaments.
+Scope this feature to World Cup and Euro national-team tournaments only, starting with World Cup 2026 and applying the same approach to later Euro tournaments such as Euro 2028. Do not include club competitions.
 
-Each match needs a stored stage for scoring. World Cup/Euro match dates are fixed, but knockout teams are not known until previous stages finish, so stage should be stored explicitly from provider metadata or a competition schedule mapping rather than inferred ad hoc during scoring.
+Each match needs a stored stage for scoring. World Cup and Euro match dates are fixed, but knockout teams are not known until previous stages finish, so stage should be stored explicitly from provider metadata or a competition schedule mapping rather than inferred ad hoc during scoring.
 
 Base scoring by stage:
 
@@ -119,13 +119,13 @@ Example: in a quarter-final, the base scores are outcome 5 and exact 10. If a us
 
 1. Research and choose a betting-probability source.
    - Only consider providers with a usable free tier.
-   - Criteria: FIFA World Cup and UEFA Euro odds coverage, pre-kickoff odds availability, API stability, terms that allow storing/displaying derived probabilities, rate limits, and reliable matching to existing fixtures/teams/stages.
+   - Criteria: World Cup and Euro national-team tournament odds coverage, pre-kickoff odds availability, API stability, terms that allow storing/displaying derived probabilities, rate limits, and reliable matching to existing fixtures/teams/stages.
    - Likely candidates: The Odds API and API-Football odds. Avoid direct bookmaker scraping unless no API source works.
    - Deliverable: document the selected provider, sample response, rate limits, required config/env vars, normalization rule, source/bookmaker/market choice, and matching strategy.
 2. Add the data model for match probability snapshots, match stage, and prediction scoring breakdown.
    - Add nullable match fields for stage, home/draw/away probabilities, and source. Existing matches must remain valid.
    - Add nullable prediction fields for scoring result, base points, and probability bonus.
-   - Add admin/import handling for match stage; use provider metadata or a World Cup/Euro schedule mapping, and default only when the stage is genuinely known.
+   - Add admin/import handling for match stage; use provider metadata or a World Cup/Euro national-team tournament schedule mapping, and default only when the stage is genuinely known.
    - Use probability bonus `0` when probabilities are missing.
 3. Extract scoring into a dedicated service while preserving current behavior.
    - Keep this PR behavior-equivalent to reduce risk before changing the scoring rules.
