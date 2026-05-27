@@ -10,7 +10,7 @@ Current baseline:
 - Apache httpd 2.4 in Docker serving `web/` and proxying dynamic requests to PHP
 - MySQL 9.7 in Docker
 - Composer 2.2.x in Docker
-- Node 6 / npm 3 / Bower / Gulp 3 in Docker
+- Node 26 / npm 11 / Gulp 4 in Docker; frontend dependencies install through npm
 
 The project is intentionally old. Do not modernize broad areas unless the current step requires it.
 
