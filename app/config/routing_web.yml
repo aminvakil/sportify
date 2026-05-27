@@ -7,6 +7,10 @@ admin_data_updates:
     path: /admin/data_updates
     defaults: { _controller: Devlabs\SportifyBundle\Controller\AdminController::dataUpdatesAction }
 
+admin_scoring:
+    path: /admin/scoring
+    defaults: { _controller: Devlabs\SportifyBundle\Controller\AdminController::scoringAction }
+
 admin_data_updates_match_fixtures:
     path: /admin/data_updates/match_fixtures
     defaults: { _controller: Devlabs\SportifyBundle\Controller\AdminController::matchFixturesUpdateAction }

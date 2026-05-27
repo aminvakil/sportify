@@ -10,6 +10,10 @@
     <field name="homeGoals" type="integer" column="home_goals" nullable="false"/>
     <field name="awayGoals" type="integer" column="away_goals" nullable="false"/>
     <field name="points" type="integer" column="points" nullable="true"/>
+    <field name="scoringResult" type="string" column="scoring_result" length="20" nullable="true"/>
+    <field name="basePoints" type="integer" column="base_points" nullable="true"/>
+    <field name="probabilityBonus" type="integer" column="probability_bonus" nullable="true"/>
+    <field name="totalPoints" type="integer" column="total_points" nullable="true"/>
     <field name="scoreAdded" type="boolean" column="score_added" nullable="false"/>
     <many-to-one field="matchId" target-entity="MatchEntity" inversed-by="predictions" fetch="LAZY">
       <join-columns>

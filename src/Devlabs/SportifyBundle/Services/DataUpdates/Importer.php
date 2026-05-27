@@ -9,6 +9,7 @@ use Devlabs\SportifyBundle\Entity\Tournament;
 use Devlabs\SportifyBundle\Entity\MatchEntity;
 use Devlabs\SportifyBundle\Entity\Team;
 use Devlabs\SportifyBundle\Entity\ApiMapping;
+use Devlabs\SportifyBundle\Services\ScoringDefaults;
 
 /**
  * Class Importer
@@ -19,11 +20,13 @@ class Importer
     use ContainerAwareTrait;
 
     private $em;
+    private $scoringDefaults;
 
-    public function __construct(ContainerInterface $container, EntityManager $entityManager)
+    public function __construct(ContainerInterface $container, EntityManager $entityManager, ScoringDefaults $scoringDefaults)
     {
         $this->container = $container;
         $this->em = $entityManager;
+        $this->scoringDefaults = $scoringDefaults;
     }
 
     /**
@@ -125,6 +128,7 @@ class Importer
                 $match->setDatetime($datetime);
                 $match->setHomeTeamId($homeTeam);
                 $match->setAwayTeamId($awayTeam);
+                $this->scoringDefaults->applyToMatch($match);
 
                 // prepare and execute queries
                 $this->em->persist($match);

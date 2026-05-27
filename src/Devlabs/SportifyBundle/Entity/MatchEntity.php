@@ -17,6 +17,18 @@ class MatchEntity
 
     private $awayGoals;
 
+    private $homeWinProbabilityBps;
+
+    private $drawProbabilityBps;
+
+    private $awayWinProbabilityBps;
+
+    private $probabilitySource;
+
+    private $baseOutcomePoints = 2;
+
+    private $baseExactPoints = 5;
+
     private $tournamentId;
 
     private $predictions;
@@ -134,6 +146,93 @@ class MatchEntity
     public function getAwayGoals()
     {
         return $this->awayGoals;
+    }
+
+    public function setHomeWinProbabilityBps($homeWinProbabilityBps)
+    {
+        $this->homeWinProbabilityBps = $homeWinProbabilityBps;
+
+        return $this;
+    }
+
+    public function getHomeWinProbabilityBps()
+    {
+        return $this->homeWinProbabilityBps;
+    }
+
+    public function setDrawProbabilityBps($drawProbabilityBps)
+    {
+        $this->drawProbabilityBps = $drawProbabilityBps;
+
+        return $this;
+    }
+
+    public function getDrawProbabilityBps()
+    {
+        return $this->drawProbabilityBps;
+    }
+
+    public function setAwayWinProbabilityBps($awayWinProbabilityBps)
+    {
+        $this->awayWinProbabilityBps = $awayWinProbabilityBps;
+
+        return $this;
+    }
+
+    public function getAwayWinProbabilityBps()
+    {
+        return $this->awayWinProbabilityBps;
+    }
+
+    public function setProbabilitySource($probabilitySource)
+    {
+        $this->probabilitySource = $probabilitySource;
+
+        return $this;
+    }
+
+    public function getProbabilitySource()
+    {
+        return $this->probabilitySource;
+    }
+
+    public function setBaseOutcomePoints($baseOutcomePoints)
+    {
+        $this->baseOutcomePoints = $baseOutcomePoints;
+
+        return $this;
+    }
+
+    public function getBaseOutcomePoints()
+    {
+        return $this->baseOutcomePoints;
+    }
+
+    public function setBaseExactPoints($baseExactPoints)
+    {
+        $this->baseExactPoints = $baseExactPoints;
+
+        return $this;
+    }
+
+    public function getBaseExactPoints()
+    {
+        return $this->baseExactPoints;
+    }
+
+    public function getProbabilityBpsForOutcome($outcome)
+    {
+        if ($outcome === '1') {
+            return $this->homeWinProbabilityBps;
+        }
+        if ($outcome === 'X') {
+            return $this->drawProbabilityBps;
+        }
+        if ($outcome === '2') {
+            return $this->awayWinProbabilityBps;
+        }
+
+        return null;
     }
 
     /**
