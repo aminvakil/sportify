@@ -45,18 +45,18 @@ Optional product work:
 
 Keep the first version simple. Users still predict only scores. The predicted score determines the predicted outcome: home win, draw, or away win. Do not add a goal-difference or close-score bonus.
 
-Do not model competition type or match stage for v1. Instead, store the base scoring values directly on each match. New matches should get default values, and admins can manually change important matches later without Sportify needing to know whether a match is group, quarter-final, semi-final, etc.
+Do not model competition type or match stage for v1. Instead, keep configurable default base scoring values and snapshot those values onto each match when it is added. When the admin knows that upcoming matches should be worth more, they change the defaults from that point onward; existing matches keep their stored values.
 
-Default base scoring for newly added matches:
+Initial default base scoring for newly added matches:
 
 | Result | Points |
 | --- | ---: |
 | Correct outcome | 2 |
 | Exact score | 5 |
 
-Optional manual examples for important matches, if desired:
+Possible default values the admin may switch to later:
 
-| Match importance | Correct outcome | Exact score |
+| Importance from now on | Correct outcome | Exact score |
 | --- | ---: | ---: |
 | Default | 2 | 5 |
 | Medium | 3 | 7 |
@@ -66,7 +66,7 @@ Optional manual examples for important matches, if desired:
 Probability bonus rules:
 
 - A cron/command should look ahead a configurable number of days, for example 7 or 14 days.
-- It should add upcoming matches that are not already in the database, using the default base scoring values.
+- It should add upcoming matches that are not already in the database, snapshotting the current default base scoring values onto each new match.
 - It should set normalized betting probabilities only when adding a new match: home win, draw, away win, and source.
 - If the provider returns bookmaker odds, normalize implied probabilities before storing them so the three outcomes total about 100%.
 - Do not update probabilities after a match has been created. The initially stored probabilities are the scoring snapshot.
@@ -117,9 +117,9 @@ Example with outcome 2 and exact 5: if a user predicts the exact score for a 10%
 ### Implementation notes
 
 - Exact-prediction percentage should not depend on a fixed point value once probability bonus exists. Store a scoring result such as wrong/outcome/exact on each prediction when it is scored.
-- Store scoring breakdown fields on each scored prediction, such as base points, probability bonus, and total points, so Telegram/result history can explain historical calculations even if scoring constants or match base points change later.
+- Store scoring breakdown fields on each scored prediction, such as base points, probability bonus, and total points, so Telegram/result history can explain historical calculations even if defaults or match base points change later.
 - Existing `api_mappings` can map matches/teams/tournaments to provider IDs; use it for the odds provider if the provider exposes stable IDs. If not, document and test the team/date matching strategy.
-- Do not add match stage fields for v1. Per-stage scoring is represented by manually editable match base points instead of a stage model.
+- Do not add match stage fields for v1. Per-stage scoring is represented by admin-controlled default base points that are snapshotted onto newly added matches.
 - Add tests for probability bonus boundaries, base scores, exact score handling, wrong-outcome zero points, stored scoring breakdown, exact-prediction percentage, prediction-page display data, fixture-added notification content, and both Telegram match prediction/result message formats.
 
 ### Suggested PR sequence
@@ -133,8 +133,8 @@ Use fewer, milestone-sized PRs for this feature:
    - Deliverable: document the selected provider, sample response, rate limits, required config/env vars, normalization rule, source/bookmaker/market choice, whether fixtures and odds come from the same provider or separate providers, and matching strategy.
 2. Add probability/scoring persistence and scoring engine.
    - Add nullable match fields for home/draw/away probabilities and source. Existing matches must remain valid.
-   - Add match fields for base outcome points and base exact points, with defaults equivalent to outcome 2 and exact 5.
-   - Add admin match create/edit support for those base point fields so important matches can be adjusted manually before scoring.
+   - Add match fields for base outcome points and base exact points, populated from the current defaults when each match is created.
+   - Add admin support for changing the current default outcome/exact base points used for future imported matches; existing matches should not be changed by default changes.
    - Add nullable prediction fields for scoring result, base points, probability bonus, and total points if needed for a stable scoring breakdown.
    - Extract scoring into a dedicated service that returns a structured scoring result, not just an integer.
    - Implement match-base-score/probability-bonus scoring: stored match base scores, bonus cap by the match's exact-score value, wrong-outcome zero points, and wrong/outcome/exact classification.
@@ -143,7 +143,7 @@ Use fewer, milestone-sized PRs for this feature:
    - Include scoring unit/integration tests in this PR.
 3. Add upcoming-match/probability import and fixture-added Telegram notification.
    - Add/update the cron/command to look ahead a configurable number of days, for example 7 or 14 days.
-   - Add missing upcoming matches with default base scoring values.
+   - Add missing upcoming matches with the current default base scoring values snapshotted onto each new match.
    - Set probabilities only when creating newly added matches; never refresh probabilities for existing matches.
    - Add matches even when probabilities are unavailable.
    - Return added match details for notifications.
