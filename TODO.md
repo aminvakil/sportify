@@ -37,9 +37,9 @@
 
 ## Next steps
 
-No required backend, frontend, or deployment infrastructure modernization is currently pending.
+No backend, frontend, or deployment infrastructure modernization is currently pending.
 
-Optional product work:
+Required product work:
 
 ### Probability-weighted scoring
 
@@ -65,9 +65,13 @@ Possible default values the admin may switch to later:
 
 Probability bonus rules:
 
-- A cron/command should look ahead a configurable number of days, for example 7 or 14 days.
-- It should add upcoming matches that are not already in the database, snapshotting the current default base scoring values onto each new match.
-- It should set normalized betting probabilities only when adding a new match: home win, draw, away win, and source.
+- A cron/command should retrieve upcoming fixtures from `football-data.org` using the existing data-update flow/window.
+- Focus imported competitions on national-team tournaments such as World Cup, World Cup qualifying, UEFA Euro, Nations League, Gold Cup, Copa America, and Africa Cup of Nations; do not add club competitions unless explicitly requested later.
+- For each not-yet-imported football-data fixture, query The Odds API only for the matching event's odds.
+- It should add upcoming matches only when The Odds API is reachable and returns a complete odds snapshot, snapshotting the current default base scoring values onto each new match.
+- It should set normalized betting probabilities when adding a new match: home win, draw, away win, and source.
+- Add the match and its odds snapshot to the database together.
+- If The Odds API is unreachable, no matching event is found, or it does not return all three home/draw/away outcomes, do not add the match.
 - If the provider returns bookmaker odds, normalize implied probabilities before storing them so the three outcomes total about 100%.
 - Do not update probabilities after a match has been created. The initially stored probabilities are the scoring snapshot.
 - Store probabilities as exact integers, preferably basis points where `10000 = 100%`, to avoid floating-point scoring/rounding surprises.
@@ -81,7 +85,7 @@ Probability bonus rules:
   - If `p < 50`, bonus is `ceil((50 - p) * cap / 50)`, capped to `cap`.
   - With basis-point storage, use the equivalent integer formula: if `p_bps < 5000`, bonus is `ceil((5000 - p_bps) * cap / 5000)`.
 - Example with cap `10`: probabilities near 50% give +1, around 40% gives +2, around 25% gives +5, around 10% gives +8, and very low probabilities can reach +10.
-- If probabilities are missing, the probability bonus is `0`.
+- If probabilities are missing on legacy/pre-feature matches, the probability bonus is `0`.
 
 Total scoring:
 
@@ -95,7 +99,7 @@ Example with outcome 2 and exact 5: if a user predicts the exact score for a 10%
 
 - Show the betting-probability snapshot on each prediction card: home win, draw, and away win percentages.
 - Show the points available for each possible outcome on the match card, for example correct home win / draw / away win totals and exact-score totals after the probability bonus is applied.
-- If probabilities are missing, show that no probability bonus is available instead of hiding the scoring rule.
+- If probabilities are missing on legacy/pre-feature matches, show that no probability bonus is available instead of hiding the scoring rule.
 
 ### Telegram fixture-added message
 
@@ -119,6 +123,7 @@ Example with outcome 2 and exact 5: if a user predicts the exact score for a 10%
 - Exact-prediction percentage should not depend on a fixed point value once probability bonus exists. Store a scoring result such as wrong/outcome/exact on each prediction when it is scored.
 - Store scoring breakdown fields on each scored prediction, such as base points, probability bonus, and total points, so Telegram/result history can explain historical calculations even if defaults or match base points change later.
 - Existing `api_mappings` can map matches/teams/tournaments to provider IDs; use it for the odds provider if the provider exposes stable IDs. If not, document and test the team/date matching strategy.
+- Keep odds-provider setup simple: only require one secret/config parameter, `odds_api.token`, like the existing `football_api.token`.
 - Do not add match stage fields for v1. Per-stage scoring is represented by admin-controlled default base points that are snapshotted onto newly added matches.
 - Add tests for probability bonus boundaries, base scores, exact score handling, wrong-outcome zero points, stored scoring breakdown, exact-prediction percentage, prediction-page display data, fixture-added notification content, and both Telegram match prediction/result message formats.
 
@@ -126,11 +131,11 @@ Example with outcome 2 and exact 5: if a user predicts the exact score for a 10%
 
 Use fewer, milestone-sized PRs for this feature:
 
-1. Research and choose a betting-probability source.
-   - Only consider providers with a usable free tier.
-   - Criteria: upcoming football/soccer fixtures and odds coverage, pre-kickoff odds availability, API stability, terms that allow storing/displaying derived probabilities, rate limits, and reliable matching to existing fixtures/teams.
-   - Likely candidates: The Odds API and API-Football odds. Avoid direct bookmaker scraping unless no API source works.
-   - Deliverable: document the selected provider, sample response, rate limits, required config/env vars, normalization rule, source/bookmaker/market choice, whether fixtures and odds come from the same provider or separate providers, and matching strategy.
+1. Research and choose a betting-probability source. ✅
+   - Selected provider: The Odds API v4.
+   - Focus: national-team competitions; API-Football/API-Sports was checked in browser and not selected for v1 odds because its coverage table showed no odds coverage for the checked World Cup/Euro/AFCON/CONCACAF national rows.
+   - Research deliverable: `docs/betting-probability-source.md`.
+   - For future provider/documentation research, open blocked sites in a real browser and let the user solve CAPTCHAs instead of stopping at command-line Cloudflare/JavaScript challenges.
 2. Add probability/scoring persistence and scoring engine.
    - Add nullable match fields for home/draw/away probabilities and source. Existing matches must remain valid.
    - Add match fields for base outcome points and base exact points, populated from the current defaults when each match is created.
@@ -142,13 +147,16 @@ Use fewer, milestone-sized PRs for this feature:
    - Fix exact-prediction percentage so it uses scoring result, not a fixed exact-score point value.
    - Include scoring unit/integration tests in this PR.
 3. Add upcoming-match/probability import and fixture-added Telegram notification.
-   - Add/update the cron/command to look ahead a configurable number of days, for example 7 or 14 days.
-   - Add missing upcoming matches with the current default base scoring values snapshotted onto each new match.
+   - Keep `football-data.org` as the fixture source and reuse the existing data-update flow/window.
+   - Import only configured national-team tournaments for v1.
+   - For each missing football-data fixture, query The Odds API only for the matching event's odds.
+   - Add missing upcoming matches only when The Odds API is reachable and returns complete home/draw/away odds, with the current default base scoring values snapshotted onto each new match.
+   - Create the match and probability snapshot together in the same database write/transaction.
    - Set probabilities only when creating newly added matches; never refresh probabilities for existing matches.
-   - Add matches even when probabilities are unavailable.
+   - Do not add a match when probabilities are unavailable.
    - Return added match details for notifications.
    - Send the Telegram fixture-added message with added matches and stored probabilities.
-   - Include tests for import matching, missing-probability behavior, and fixture-added notification content.
+   - Include tests for import matching, unavailable-odds skip behavior, and fixture-added notification content.
 4. Add probability/scoring visibility across user-facing surfaces.
    - Show probabilities and scoring information on the predictions page.
    - Include probabilities and derived outcomes in the after-kickoff Telegram prediction message.
@@ -172,4 +180,4 @@ Use bigger PRs, but keep them coherent. Group related TODO implementation tasks 
 
 ## Verification
 
-See the "Verification rule" section of `AGENTS.md`. CI also replaces `football_api.token` with the `FOOTBALL_DATA_API_TOKEN` secret before running.
+See the "Verification rule" section of `AGENTS.md`. Documentation-only changes, including `AGENTS.md`, `TODO.md`, and files under `docs/`, do not need local Docker verification or waiting for CI unless explicitly requested. CI also replaces `football_api.token` with the `FOOTBALL_DATA_API_TOKEN` secret before running.
