@@ -74,13 +74,11 @@ Probability bonus rules:
 - Apply the probability bonus only when the predicted outcome is correct.
 - Add the probability bonus on top of the normal score; do not replace the normal score.
 - Cap the probability bonus at the match's exact-score value.
-- Suggested probability bonus scale:
-  - 50% or more: +0
-  - 33%–49.99%: +25% of the match's exact-score value
-  - 20%–32.99%: +50% of the match's exact-score value
-  - 10%–19.99%: +75% of the match's exact-score value
-  - Less than 10%: +100% of the match's exact-score value
-- Round calculated bonus values to integer points.
+- Probability bonus should be an integer from `0` through the match's exact-score value, so every value up to the cap is possible.
+- Suggested formula, where `p` is the predicted outcome probability as a percentage and `cap` is the match's exact-score value:
+  - If `p >= 50`, bonus is `0`.
+  - If `p < 50`, bonus is `ceil((50 - p) * cap / 50)`, capped to `cap`.
+- Example with cap `10`: probabilities near 50% give +1, around 40% gives +2, around 25% gives +5, around 10% gives +8, and very low probabilities can reach +10.
 - If probabilities are missing, the probability bonus is `0`.
 
 Total scoring:
@@ -89,7 +87,7 @@ Total scoring:
 - Correct outcome only: `outcome score + probability bonus`.
 - Exact score: `exact score + probability bonus`.
 
-Example with outcome 2 and exact 5: if a user predicts the exact score for a less-than-10% probable winner, they receive `5 + 5 = 10` points. If they predict only the correct outcome for the same match, they receive `2 + 5 = 7` points.
+Example with outcome 2 and exact 5: if a user predicts the exact score for a 10% probable winner, the probability bonus is `ceil((50 - 10) * 5 / 50) = 4`, so they receive `5 + 4 = 9` points. If they predict only the correct outcome for the same match, they receive `2 + 4 = 6` points.
 
 ### Prediction page changes
 
@@ -159,7 +157,7 @@ Deferred infrastructure work:
 
 ## PR sizing strategy
 
-Use bigger PRs, but keep them coherent:
+Use bigger PRs, but keep them coherent. Group related TODO implementation tasks into one PR when they belong to the same milestone; do not create many tiny PRs for tightly coupled pieces:
 
 - Good larger PR: "remove a Doctrine blocker with mapping coverage" or "stabilize Symfony 7.4 by fixing one coherent group of deprecations/config breaks".
 - Bad larger PR: mixing Symfony upgrades, frontend build modernization, broad directory layout changes, and unrelated cleanup.
