@@ -68,8 +68,9 @@ Probability bonus rules:
 - A cron/command should look ahead a configurable number of days, for example 7 or 14 days.
 - It should add upcoming matches that are not already in the database, using the default base scoring values.
 - It should set/update normalized betting probabilities for upcoming matches: home win, draw, away win, and source.
-- Once a match has started/locked, the stored probabilities should be treated as the scoring snapshot.
-- Prefer exact integer storage for probabilities, for example basis points where `10000 = 100%`, to avoid floating-point scoring/rounding surprises.
+- If the provider returns bookmaker odds, normalize implied probabilities before storing them so the three outcomes total about 100%.
+- Do not update probabilities for matches that have already started, are locked, or have been scored; their stored probabilities are the scoring snapshot.
+- Store probabilities as exact integers, preferably basis points where `10000 = 100%`, to avoid floating-point scoring/rounding surprises.
 - Keep the source simple but auditable, for example provider/bookmaker/market when available.
 - Apply the probability bonus only when the predicted outcome is correct.
 - Add the probability bonus on top of the normal score; do not replace the normal score.
@@ -78,6 +79,7 @@ Probability bonus rules:
 - Suggested formula, where `p` is the predicted outcome probability as a percentage and `cap` is the match's exact-score value:
   - If `p >= 50`, bonus is `0`.
   - If `p < 50`, bonus is `ceil((50 - p) * cap / 50)`, capped to `cap`.
+  - With basis-point storage, use the equivalent integer formula: if `p_bps < 5000`, bonus is `ceil((5000 - p_bps) * cap / 5000)`.
 - Example with cap `10`: probabilities near 50% give +1, around 40% gives +2, around 25% gives +5, around 10% gives +8, and very low probabilities can reach +10.
 - If probabilities are missing, the probability bonus is `0`.
 
@@ -115,7 +117,7 @@ Example with outcome 2 and exact 5: if a user predicts the exact score for a 10%
 ### Implementation notes
 
 - Exact-prediction percentage should not depend on a fixed point value once probability bonus exists. Store a scoring result such as wrong/outcome/exact on each prediction when it is scored.
-- Store scoring breakdown fields on each scored prediction, such as base points and probability bonus, so Telegram/result history can explain historical calculations even if scoring constants change later.
+- Store scoring breakdown fields on each scored prediction, such as base points, probability bonus, and total points, so Telegram/result history can explain historical calculations even if scoring constants or match base points change later.
 - Existing `api_mappings` can map matches/teams/tournaments to provider IDs; use it for the odds provider if the provider exposes stable IDs. If not, document and test the team/date matching strategy.
 - Do not add match stage fields for v1. Per-stage scoring is represented by manually editable match base points instead of a stage model.
 - Add tests for probability bonus boundaries, base scores, exact score handling, wrong-outcome zero points, stored scoring breakdown, exact-prediction percentage, prediction-page display data, fixture-added notification content, and both Telegram match prediction/result message formats.
@@ -128,11 +130,12 @@ Use fewer, milestone-sized PRs for this feature:
    - Only consider providers with a usable free tier.
    - Criteria: upcoming football/soccer fixtures and odds coverage, pre-kickoff odds availability, API stability, terms that allow storing/displaying derived probabilities, rate limits, and reliable matching to existing fixtures/teams.
    - Likely candidates: The Odds API and API-Football odds. Avoid direct bookmaker scraping unless no API source works.
-   - Deliverable: document the selected provider, sample response, rate limits, required config/env vars, normalization rule, source/bookmaker/market choice, and matching strategy.
+   - Deliverable: document the selected provider, sample response, rate limits, required config/env vars, normalization rule, source/bookmaker/market choice, whether fixtures and odds come from the same provider or separate providers, and matching strategy.
 2. Add probability/scoring persistence and scoring engine.
    - Add nullable match fields for home/draw/away probabilities and source. Existing matches must remain valid.
    - Add match fields for base outcome points and base exact points, with defaults equivalent to outcome 2 and exact 5.
-   - Add nullable prediction fields for scoring result, base points, and probability bonus.
+   - Add admin match create/edit support for those base point fields so important matches can be adjusted manually before scoring.
+   - Add nullable prediction fields for scoring result, base points, probability bonus, and total points if needed for a stable scoring breakdown.
    - Extract scoring into a dedicated service that returns a structured scoring result, not just an integer.
    - Implement match-base-score/probability-bonus scoring: stored match base scores, bonus cap by the match's exact-score value, wrong-outcome zero points, and wrong/outcome/exact classification.
    - Persist the scoring breakdown on predictions.
@@ -141,7 +144,7 @@ Use fewer, milestone-sized PRs for this feature:
 3. Add upcoming-match/probability import and fixture-added Telegram notification.
    - Add/update the cron/command to look ahead a configurable number of days, for example 7 or 14 days.
    - Add missing upcoming matches with default base scoring values.
-   - Set/update probabilities for upcoming matches before they start.
+   - Set/update probabilities for upcoming matches before they start, but never for started/locked/scored matches.
    - Add matches even when probabilities are unavailable.
    - Return added match details for notifications.
    - Send the Telegram fixture-added message with added matches and stored probabilities.
