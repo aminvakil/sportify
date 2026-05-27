@@ -26,4 +26,24 @@ class AdminScoringDefaultsTest extends FunctionalTestCase
         $this->assertSame(3, $defaults->getOutcomePoints());
         $this->assertSame(7, $defaults->getExactPoints());
     }
+
+    public function testAdminCannotSaveUnsupportedDefaultBaseScoring()
+    {
+        $this->createUser('admin_invalid_scoring_defaults', 'testpass', true, array('ROLE_ADMIN'));
+        $this->login('admin_invalid_scoring_defaults@example.com', 'testpass');
+
+        $this->client->request('POST', '/admin/scoring', array(
+            'scoring_defaults' => array(
+                'outcomePoints' => -1,
+                'exactPoints' => 0,
+                'button' => '',
+            ),
+        ));
+
+        $this->assertFalse($this->client->getResponse()->isRedirect());
+
+        $defaults = $this->client->getContainer()->get('app.scoring_defaults');
+        $this->assertSame(2, $defaults->getOutcomePoints());
+        $this->assertSame(5, $defaults->getExactPoints());
+    }
 }

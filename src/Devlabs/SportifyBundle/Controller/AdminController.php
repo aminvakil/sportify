@@ -3,8 +3,8 @@
 namespace Devlabs\SportifyBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
-use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Request;
 use Devlabs\SportifyBundle\Entity\ApiMapping;
@@ -54,8 +54,14 @@ class AdminController extends AbstractController
             'outcomePoints' => $scoringDefaults->getOutcomePoints(),
             'exactPoints' => $scoringDefaults->getExactPoints(),
         ))
-            ->add('outcomePoints', IntegerType::class, array('label' => 'Correct outcome'))
-            ->add('exactPoints', IntegerType::class, array('label' => 'Exact score'))
+            ->add('outcomePoints', ChoiceType::class, array(
+                'label' => 'Correct outcome',
+                'choices' => array('2' => 2, '3' => 3, '5' => 5),
+            ))
+            ->add('exactPoints', ChoiceType::class, array(
+                'label' => 'Exact score',
+                'choices' => array('5' => 5, '7' => 7, '10' => 10, '12' => 12),
+            ))
             ->add('button', SubmitType::class, array('label' => 'Save'))
             ->getForm();
         $form->handleRequest($request);
