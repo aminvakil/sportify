@@ -52,6 +52,7 @@ At minimum, set:
 - `secret` to a unique random value, for example from `openssl rand -hex 20`
 - `mailer_dsn` and `mailer_sender_address` for registration/password reset emails
 - `football_api.token` from football-data.org if API fixture/result imports are used
+- `odds_api.token` from The Odds API if upcoming fixture imports should add probability snapshots
 - `slack.url` and `slack.channel` if Slack notifications are used
 - `telegram.bot_token` and `telegram.chat_id` if Telegram notifications are used
 - `sportify_api.client_id` and `sportify_api.client_secret` only if the API token flow is used
@@ -98,7 +99,7 @@ In the admin UI:
 
 1. Create at least one tournament.
 2. Add teams and matches manually, or create API mappings and import them from football-data.org.
-3. If using API imports, confirm `football_api.token` is configured before running import commands.
+3. If using API imports, confirm `football_api.token` and `odds_api.token` are configured before running import commands.
 
 For API clients, create an OAuth client and store the printed public id/secret securely:
 

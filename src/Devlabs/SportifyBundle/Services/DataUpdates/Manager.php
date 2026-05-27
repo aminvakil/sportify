@@ -70,6 +70,7 @@ class Manager
         $status['total_fetched'] = 0;
         $status['total_added'] = 0;
         $status['total_updated'] = 0;
+        $status['added_fixtures'] = array();
 
         // get all tournaments
         $tournaments = $this->em->getRepository(Tournament::class)->findAll();
@@ -104,6 +105,7 @@ class Manager
             $status['total_fetched'] = $status['total_fetched'] + $status['tournaments'][$tournament->getId()]['status']['fixtures_fetched'];
             $status['total_added'] = $status['total_added'] + $status['tournaments'][$tournament->getId()]['status']['fixtures_added'];
             $status['total_updated'] = $status['total_updated'] + $status['tournaments'][$tournament->getId()]['status']['fixtures_updated'];
+            $status['added_fixtures'] = array_merge($status['added_fixtures'], $status['tournaments'][$tournament->getId()]['status']['added_fixtures']);
         }
 
         return $status;

@@ -11,6 +11,7 @@ parameters:
     secret: DockerOnlyDevelopmentSecret
 
     football_api.token: check_the_README_file
+    odds_api.token: check_the_README_file
     slack.url: check_the_README_file
     slack.channel: check_the_README_file
     telegram.bot_token: check_the_README_file

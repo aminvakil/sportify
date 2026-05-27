@@ -68,6 +68,13 @@ services:
     app.prediction_scorer:
         class: Devlabs\SportifyBundle\Services\PredictionScorer
 
+    app.odds_probability_normalizer:
+        class: Devlabs\SportifyBundle\Services\Odds\OddsProbabilityNormalizer
+
+    app.odds.the_odds_api:
+        class: Devlabs\SportifyBundle\Services\Odds\TheOddsApi
+        arguments: ['@service_container', '@app.odds_probability_normalizer']
+
     app.scoring_defaults:
         class: Devlabs\SportifyBundle\Services\ScoringDefaults
         arguments: ['@doctrine.orm.entity_manager', '%app.scoring.default_outcome_points%', '%app.scoring.default_exact_points%']
@@ -112,7 +119,7 @@ services:
 
     app.data_updates.importer:
         class: Devlabs\SportifyBundle\Services\DataUpdates\Importer
-        arguments: ['@service_container', '@doctrine.orm.entity_manager', '@app.scoring_defaults']
+        arguments: ['@service_container', '@doctrine.orm.entity_manager', '@app.scoring_defaults', '@app.odds.the_odds_api']
 
     app.data_updates.fetchers.football_data_org:
         class: Devlabs\SportifyBundle\Services\DataUpdates\Fetchers\FootballDataOrg

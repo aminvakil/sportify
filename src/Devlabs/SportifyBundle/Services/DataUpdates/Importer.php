@@ -21,12 +21,14 @@ class Importer
 
     private $em;
     private $scoringDefaults;
+    private $oddsProvider;
 
-    public function __construct(ContainerInterface $container, EntityManager $entityManager, ScoringDefaults $scoringDefaults)
+    public function __construct(ContainerInterface $container, EntityManager $entityManager, ScoringDefaults $scoringDefaults, $oddsProvider = null)
     {
         $this->container = $container;
         $this->em = $entityManager;
         $this->scoringDefaults = $scoringDefaults;
+        $this->oddsProvider = $oddsProvider;
     }
 
     /**
@@ -97,6 +99,7 @@ class Importer
         $status['fixtures_fetched'] = count($fixtures);
         $status['fixtures_added'] = 0;
         $status['fixtures_updated'] = 0;
+        $status['added_fixtures'] = array();
 
         foreach ($fixtures as $fixtureData) {
             $apiMatchId = $fixtureData['match_id'];
@@ -121,6 +124,10 @@ class Importer
                     ->findOneById($awayTeamId);
 
                 $datetime = \DateTime::createFromFormat('Y-m-d H:i:s', $fixtureData['match_local_time']);
+                $oddsSnapshot = $this->getOddsSnapshot($fixtureData, $tournament, $homeTeam, $awayTeam);
+                if ($this->needsOddsSnapshot($fixtureData) && $oddsSnapshot === null) {
+                    continue;
+                }
 
                 // create new match object by using the parsed data
                 $match = new MatchEntity();
@@ -129,17 +136,30 @@ class Importer
                 $match->setHomeTeamId($homeTeam);
                 $match->setAwayTeamId($awayTeam);
                 $this->scoringDefaults->applyToMatch($match);
+                if ($oddsSnapshot !== null) {
+                    $this->applyOddsSnapshot($match, $oddsSnapshot);
+                }
 
                 // prepare and execute queries
-                $this->em->persist($match);
-                $this->em->flush();
+                $connection = $this->em->getConnection();
+                $connection->beginTransaction();
+                try {
+                    $this->em->persist($match);
+                    $this->em->flush();
 
-                // create API mapping for this object
-                $apiMapping = $this->createApiMapping($match, 'Match', $footballApi, $apiMatchId);
-                $this->em->persist($apiMapping);
+                    // create API mapping for this object
+                    $apiMapping = $this->createApiMapping($match, 'Match', $footballApi, $apiMatchId);
+                    $this->em->persist($apiMapping);
+                    $this->em->flush();
+                    $connection->commit();
+                } catch (\Exception $e) {
+                    $connection->rollBack();
+                    throw $e;
+                }
 
                 // increment the number of added fixtures
                 $status['fixtures_added']++;
+                $status['added_fixtures'][] = $this->createAddedFixtureStatus($match);
 
             } else {
                 // get match from db
@@ -176,6 +196,40 @@ class Importer
         }
 
         return $status;
+    }
+
+    private function needsOddsSnapshot(array $fixtureData)
+    {
+        return $fixtureData['home_team_goals'] === null && $fixtureData['away_team_goals'] === null;
+    }
+
+    private function getOddsSnapshot(array $fixtureData, Tournament $tournament, Team $homeTeam, Team $awayTeam)
+    {
+        if ($this->oddsProvider === null) {
+            return null;
+        }
+
+        return $this->oddsProvider->findProbabilitiesForFixture($fixtureData, $tournament, $homeTeam, $awayTeam);
+    }
+
+    private function applyOddsSnapshot(MatchEntity $match, array $oddsSnapshot)
+    {
+        $match->setHomeWinProbabilityBps($oddsSnapshot['home_win_probability_bps']);
+        $match->setDrawProbabilityBps($oddsSnapshot['draw_probability_bps']);
+        $match->setAwayWinProbabilityBps($oddsSnapshot['away_win_probability_bps']);
+        $match->setProbabilitySource($oddsSnapshot['source']);
+    }
+
+    private function createAddedFixtureStatus(MatchEntity $match)
+    {
+        return array(
+            'home_team' => $match->getHomeTeamName(),
+            'away_team' => $match->getAwayTeamName(),
+            'home_win_probability_bps' => $match->getHomeWinProbabilityBps(),
+            'draw_probability_bps' => $match->getDrawProbabilityBps(),
+            'away_win_probability_bps' => $match->getAwayWinProbabilityBps(),
+            'source' => $match->getProbabilitySource(),
+        );
     }
 
     /**

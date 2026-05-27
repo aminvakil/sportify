@@ -61,6 +61,9 @@ class DataUpdateCommand extends Command
                 $dataUpdated = true;
                 $msgText = 'Match fixtures added for next '.$days.' days. '
                     .$status['total_added'].' fixture(s) added.';
+                if (isset($status['added_fixtures'])) {
+                    $msgText .= $this->formatAddedFixtures($status['added_fixtures']);
+                }
             }
         } elseif ($updateType === 'matches-results') {
             // set dateFrom and dateTo to respectively 'number of days' before and today
@@ -127,6 +130,28 @@ class DataUpdateCommand extends Command
         $output->writeln($logText);
 
         return 0;
+    }
+
+    private function formatAddedFixtures(array $addedFixtures)
+    {
+        if (!$addedFixtures) {
+            return '';
+        }
+
+        $text = "\nAdded matches:";
+        foreach ($addedFixtures as $fixture) {
+            $text .= "\n".$fixture['home_team'].' vs '.$fixture['away_team']
+                .': home '.$this->formatProbability($fixture['home_win_probability_bps'])
+                .', draw '.$this->formatProbability($fixture['draw_probability_bps'])
+                .', away '.$this->formatProbability($fixture['away_win_probability_bps']);
+        }
+
+        return $text;
+    }
+
+    private function formatProbability($basisPoints)
+    {
+        return number_format($basisPoints / 100, 2).'%';
     }
 
     private function shouldPinTelegramMessages()

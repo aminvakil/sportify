@@ -26,7 +26,8 @@ class DataUpdateCommandTest extends TestCase
         ));
 
         $this->assertSame(Command::SUCCESS, $tester->getStatusCode());
-        $this->assertSame('Match fixtures added for next 3 days. 2 fixture(s) added.', $slack->text);
+        $this->assertStringContainsString('Match fixtures added for next 3 days. 2 fixture(s) added.', $slack->text);
+        $this->assertStringContainsString('Home Nation vs Away Nation: home 45.00%, draw 30.00%, away 25.00%', $slack->text);
         $this->assertCount(1, $telegram->messages);
         $this->assertStringContainsString($slack->text, $telegram->messages[0]);
         $this->assertSame(array(321), $telegram->pinnedMessageIds);
@@ -67,6 +68,16 @@ class FakeDataUpdatesManager
         return array(
             'total_added' => 2,
             'total_updated' => 0,
+            'added_fixtures' => array(
+                array(
+                    'home_team' => 'Home Nation',
+                    'away_team' => 'Away Nation',
+                    'home_win_probability_bps' => 4500,
+                    'draw_probability_bps' => 3000,
+                    'away_win_probability_bps' => 2500,
+                    'source' => 'the_odds_api:soccer_test:event-1:pinnacle:h2h',
+                ),
+            ),
         );
     }
 }
