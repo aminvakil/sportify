@@ -13,6 +13,8 @@ parameters:
     football_api.base_uri: http://api.football-data.org/v2
     app.registration_confirmation_enabled: true
     app.oauth_access_token_lifetime: 7776000 # 90 days in seconds
+    app.scoring.default_outcome_points: 2
+    app.scoring.default_exact_points: 5
 
 framework:
     #esi:             ~

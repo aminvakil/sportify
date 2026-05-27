@@ -47,11 +47,11 @@
         {% if predictions[match.id] is defined %}
             {% set prediction = predictions[match.id] %}
 
-            {% if prediction.points == constant('POINTS_EXACT', prediction) %}
+            {% if prediction.scoringResult == constant('SCORING_RESULT_EXACT', prediction) %}
                 {% set points_class = 'text-green' %}
-            {% elseif prediction.points == constant('POINTS_OUTCOME', prediction) %}
+            {% elseif prediction.scoringResult == constant('SCORING_RESULT_OUTCOME', prediction) %}
                 {% set points_class = 'text-yellow' %}
-            {% elseif prediction.points == 0 %}
+            {% else %}
                 {% set points_class = 'text-red' %}
             {% endif %}
 

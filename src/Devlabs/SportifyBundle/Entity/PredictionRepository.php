@@ -174,11 +174,12 @@ class PredictionRepository extends \Doctrine\ORM\EntityRepository
             ->from(Prediction::class, 'p')
             ->join('p.matchId', 'm')
             ->where('p.userId = :user_id')
-            ->andWhere('p.scoreAdded = 1 AND p.points = :points_exact')
+            ->andWhere('p.scoreAdded = 1')
+            ->andWhere('p.scoringResult = :scoring_result_exact')
             ->andWhere('m.tournamentId = :tournament_id')
             ->setParameter('user_id', $user->getId())
             ->setParameter('tournament_id', $tournament->getId())
-            ->setParameter('points_exact', Prediction::POINTS_EXACT)
+            ->setParameter('scoring_result_exact', Prediction::SCORING_RESULT_EXACT)
             ->getQuery()
             ->getResult();
     }

@@ -6,6 +6,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Doctrine\Persistence\ObjectManager;
+use Devlabs\SportifyBundle\Entity\MatchEntity;
 
 /**
  * Class BaseApiController
@@ -103,7 +104,7 @@ abstract class BaseApiController extends AbstractController
 
         $em = $this->container->get('doctrine')->getManager();
 
-        $object = new $this->fqEntityClass();
+        $object = $this->initializeNewObject(new $this->fqEntityClass());
 
         return $this->processForm(
             $request,
@@ -140,7 +141,7 @@ abstract class BaseApiController extends AbstractController
         $statusCode = 204;
 
         if (!is_object($object)) {
-            $object = new $this->fqEntityClass();
+            $object = $this->initializeNewObject(new $this->fqEntityClass());
             $statusCode = 201;
         }
 
@@ -151,6 +152,15 @@ abstract class BaseApiController extends AbstractController
             'PUT',
             $statusCode
         );
+    }
+
+    protected function initializeNewObject($object)
+    {
+        if ($object instanceof MatchEntity) {
+            $this->container->get('app.scoring_defaults')->applyToMatch($object);
+        }
+
+        return $object;
     }
 
     /**

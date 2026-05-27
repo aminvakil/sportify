@@ -5,8 +5,11 @@ namespace Devlabs\SportifyBundle\Entity;
 
 class Prediction
 {
-    const POINTS_OUTCOME = 1;
-    const POINTS_EXACT = 3;
+    const POINTS_OUTCOME = 2;
+    const POINTS_EXACT = 5;
+    const SCORING_RESULT_WRONG = 'wrong';
+    const SCORING_RESULT_OUTCOME = 'outcome';
+    const SCORING_RESULT_EXACT = 'exact';
 
     private $id;
 
@@ -19,6 +22,14 @@ class Prediction
     private $awayGoals;
 
     private $points;
+
+    private $scoringResult;
+
+    private $basePoints;
+
+    private $probabilityBonus;
+
+    private $totalPoints;
 
     private $scoreAdded = 0;
 
@@ -118,6 +129,54 @@ class Prediction
         return $this->points;
     }
 
+    public function setScoringResult($scoringResult)
+    {
+        $this->scoringResult = $scoringResult;
+
+        return $this;
+    }
+
+    public function getScoringResult()
+    {
+        return $this->scoringResult;
+    }
+
+    public function setBasePoints($basePoints)
+    {
+        $this->basePoints = $basePoints;
+
+        return $this;
+    }
+
+    public function getBasePoints()
+    {
+        return $this->basePoints;
+    }
+
+    public function setProbabilityBonus($probabilityBonus)
+    {
+        $this->probabilityBonus = $probabilityBonus;
+
+        return $this;
+    }
+
+    public function getProbabilityBonus()
+    {
+        return $this->probabilityBonus;
+    }
+
+    public function setTotalPoints($totalPoints)
+    {
+        $this->totalPoints = $totalPoints;
+
+        return $this;
+    }
+
+    public function getTotalPoints()
+    {
+        return $this->totalPoints;
+    }
+
     /**
      * Set scoreAdded
      *
@@ -214,13 +273,7 @@ class Prediction
      */
     public function calculatePoints(MatchEntity $match)
     {
-        if (($this->homeGoals === $match->getHomeGoals()) && ($this->awayGoals === $match->getAwayGoals())) {
-            return self::POINTS_EXACT;
-        } else if ($this->getResultOutcome() === $match->getResultOutcome()) {
-            return self::POINTS_OUTCOME;
-        }
-
-        return 0;
+        return (new \Devlabs\SportifyBundle\Services\PredictionScorer())->score($this, $match)->getTotalPoints();
     }
 
     /**

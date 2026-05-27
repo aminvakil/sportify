@@ -18,6 +18,13 @@ class PredictionWorkflowTest extends DatabaseTestCase
         $homeTeam = $this->createTeam('Home FC', $tournament);
         $awayTeam = $this->createTeam('Away FC', $tournament);
         $finishedMatch = $this->createMatch($tournament, $homeTeam, $awayTeam, new \DateTime('-1 day'), 2, 1);
+        $finishedMatch->setBaseOutcomePoints(2);
+        $finishedMatch->setBaseExactPoints(10);
+        $finishedMatch->setHomeWinProbabilityBps(1000);
+        $finishedMatch->setDrawProbabilityBps(2500);
+        $finishedMatch->setAwayWinProbabilityBps(6500);
+        $finishedMatch->setProbabilitySource('test/bookmaker/h2h');
+        $this->em->flush();
         $upcomingMatch = $this->createMatch($tournament, $homeTeam, $awayTeam, new \DateTime('+1 day'));
 
         $exactUser = $this->createUser('exact_user');
@@ -49,8 +56,16 @@ class PredictionWorkflowTest extends DatabaseTestCase
         $exactPrediction = $predictionRepository->getOneByUserAndMatch($exactUser, $finishedMatch);
         $outcomePrediction = $predictionRepository->getOneByUserAndMatch($outcomeUser, $finishedMatch);
 
-        $this->assertSame(Prediction::POINTS_EXACT, $exactPrediction->getPoints());
-        $this->assertSame(Prediction::POINTS_OUTCOME, $outcomePrediction->getPoints());
+        $this->assertSame(18, $exactPrediction->getPoints());
+        $this->assertSame(Prediction::SCORING_RESULT_EXACT, $exactPrediction->getScoringResult());
+        $this->assertSame(10, $exactPrediction->getBasePoints());
+        $this->assertSame(8, $exactPrediction->getProbabilityBonus());
+        $this->assertSame(18, $exactPrediction->getTotalPoints());
+        $this->assertSame(10, $outcomePrediction->getPoints());
+        $this->assertSame(Prediction::SCORING_RESULT_OUTCOME, $outcomePrediction->getScoringResult());
+        $this->assertSame(2, $outcomePrediction->getBasePoints());
+        $this->assertSame(8, $outcomePrediction->getProbabilityBonus());
+        $this->assertSame(10, $outcomePrediction->getTotalPoints());
         $this->assertSame('Home FC', $exactPrediction->getHomeTeamName());
         $this->assertSame('Away FC', $exactPrediction->getAwayTeamName());
         $this->assertSame(2, $exactPrediction->getResultHomeGoals());
@@ -60,8 +75,8 @@ class PredictionWorkflowTest extends DatabaseTestCase
         $exactScore = $scoreRepository->getByUserAndTournament($exactUser, $tournament);
         $outcomeScore = $scoreRepository->getByUserAndTournament($outcomeUser, $tournament);
 
-        $this->assertSame(3, $exactScore->getPoints());
-        $this->assertSame(1, $outcomeScore->getPoints());
+        $this->assertSame(18, $exactScore->getPoints());
+        $this->assertSame(10, $outcomeScore->getPoints());
         $this->assertSame(100, $exactScore->getExactPredictionPercentage());
         $this->assertSame(0, $outcomeScore->getExactPredictionPercentage());
         $this->assertSame(1, $exactScore->getPosNew());

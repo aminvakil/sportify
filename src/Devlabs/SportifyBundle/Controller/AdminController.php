@@ -3,6 +3,10 @@
 namespace Devlabs\SportifyBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Devlabs\SportifyBundle\Entity\ApiMapping;
 use Devlabs\SportifyBundle\Entity\Tournament;
@@ -37,6 +41,50 @@ class AdminController extends AbstractController
 
         // rendering the view and returning the response
         return $this->render('Admin/data_updates_index.html.twig');
+    }
+
+    public function scoringAction(Request $request)
+    {
+        // if user is not logged in, redirect to login page
+        if (!is_object($user = $this->getUser())) {
+            return $this->redirectToRoute('fos_user_security_login');
+        }
+
+        $scoringDefaults = $this->container->get('app.scoring_defaults');
+        $form = $this->container->get('form.factory')->createNamedBuilder('scoring_defaults', FormType::class, array(
+            'outcomePoints' => $scoringDefaults->getOutcomePoints(),
+            'exactPoints' => $scoringDefaults->getExactPoints(),
+        ))
+            ->add('outcomePoints', IntegerType::class, array('label' => 'Correct outcome'))
+            ->add('exactPoints', IntegerType::class, array('label' => 'Exact score'))
+            ->add('button', SubmitType::class, array('label' => 'Save'))
+            ->getForm();
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $data = $form->getData();
+
+            if ($data['outcomePoints'] < 1) {
+                $form->get('outcomePoints')->addError(new FormError('Correct outcome points must be at least 1.'));
+            }
+
+            if ($data['exactPoints'] < $data['outcomePoints']) {
+                $form->get('exactPoints')->addError(new FormError('Exact score points must be greater than or equal to correct outcome points.'));
+            }
+
+            if ($form->isValid()) {
+                $scoringDefaults->updateDefaults($data['outcomePoints'], $data['exactPoints']);
+                $this->addFlash('message', 'Default base scoring updated.');
+
+                return $this->redirectToRoute('admin_scoring');
+            }
+        }
+
+        $this->container->get('app.twig.helper')->setUserScores($user);
+
+        return $this->render('Admin/scoring.html.twig', array(
+            'form' => $form->createView(),
+        ));
     }
 
     public function matchFixturesUpdateAction(Request $request)
@@ -486,6 +534,7 @@ class AdminController extends AbstractController
         } else {
             $match = new MatchEntity();
             $match->setTournamentId($tournament);
+            $this->container->get('app.scoring_defaults')->applyToMatch($match);
         }
 
         // prep data for use in Match object setter methods

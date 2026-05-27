@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+
+{% block nav_top %}
+    <h1 class="text-center">Admin panel</h1>
+{% endblock %}
+
+{% block body %}
+
+    <div class="container-fluid content admin-page">
+        <div class="row">
+            <h2 class="text-center">Default base scoring</h2>
+            <div class="col-lg-8 col-lg-offset-1 col-md-12">
+                {{ form_start(form) }}
+                    {{ form_row(form.outcomePoints) }}
+                    {{ form_row(form.exactPoints) }}
+                    {{ form_row(form.button) }}
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

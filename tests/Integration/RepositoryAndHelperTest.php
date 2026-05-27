@@ -109,7 +109,7 @@ class RepositoryAndHelperTest extends DatabaseTestCase
 
         $this->createPrediction($user, $upcomingPredicted, 1, 1);
         $this->createPrediction($user, $finishedUnscored, 2, 1);
-        $this->createPrediction($user, $finishedScored, 0, 0, 1, Prediction::POINTS_EXACT);
+        $this->createPrediction($user, $finishedScored, 0, 0, 1, Prediction::POINTS_EXACT, Prediction::SCORING_RESULT_EXACT);
         $this->createPrediction($otherUser, $upcomingUnpredicted, 0, 0);
 
         $matchRepository = $this->em->getRepository(MatchEntity::class);

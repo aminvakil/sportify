@@ -21,11 +21,13 @@ class ScoreUpdater
     use ContainerAwareTrait;
 
     private $em;
+    private $predictionScorer;
 
-    public function __construct(ContainerInterface $container, EntityManager $entityManager)
+    public function __construct(ContainerInterface $container, EntityManager $entityManager, PredictionScorer $predictionScorer)
     {
         $this->container = $container;
         $this->em = $entityManager;
+        $this->predictionScorer = $predictionScorer;
     }
 
 
@@ -180,12 +182,17 @@ class ScoreUpdater
                 $match = $matches[$matchId];
 
                 // get the points from the prediction
-                $predictionPoints = $prediction->calculatePoints($match);
+                $scoringResult = $this->predictionScorer->score($prediction, $match);
+                $predictionPoints = $scoringResult->getTotalPoints();
 
                 /**
                  * Update the prediction in the DB
                  * by setting the points gained and the score_added flag to 1
                  */
+                $prediction->setScoringResult($scoringResult->getResult());
+                $prediction->setBasePoints($scoringResult->getBasePoints());
+                $prediction->setProbabilityBonus($scoringResult->getProbabilityBonus());
+                $prediction->setTotalPoints($predictionPoints);
                 $prediction->setPoints($predictionPoints);
                 $prediction->setScoreAdded('1');
 
