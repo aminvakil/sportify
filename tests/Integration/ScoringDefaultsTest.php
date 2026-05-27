@@ -4,6 +4,8 @@ namespace Tests\Integration;
 
 require_once __DIR__.'/DatabaseTestCase.php';
 
+use Devlabs\SportifyBundle\Controller\Base\BaseApiController;
+use Devlabs\SportifyBundle\Entity\MatchEntity;
 use Devlabs\SportifyBundle\Entity\ScoringSettings;
 
 class ScoringDefaultsTest extends DatabaseTestCase
@@ -30,5 +32,25 @@ class ScoringDefaultsTest extends DatabaseTestCase
 
         $this->assertSame(5, $match->getBaseOutcomePoints());
         $this->assertSame(12, $match->getBaseExactPoints());
+    }
+
+    public function testApiCreatedMatchesUseCurrentDefaultBaseScoring()
+    {
+        self::$kernel->getContainer()->get('app.scoring_defaults')->updateDefaults(3, 7);
+
+        $controller = new ScoringDefaultsApiControllerTestDouble();
+        $controller->setContainer(self::$kernel->getContainer());
+        $match = $controller->initializeObject(new MatchEntity());
+
+        $this->assertSame(3, $match->getBaseOutcomePoints());
+        $this->assertSame(7, $match->getBaseExactPoints());
+    }
+}
+
+class ScoringDefaultsApiControllerTestDouble extends BaseApiController
+{
+    public function initializeObject($object)
+    {
+        return $this->initializeNewObject($object);
     }
 }
