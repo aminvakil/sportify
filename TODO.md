@@ -39,6 +39,11 @@
 
 No backend, frontend, or deployment infrastructure modernization is currently pending.
 
+Reported admin follow-ups:
+
+- `/admin/scoring` renders poorly; improve the page layout/visual styling.
+- `/admin/matches` currently fails; reproduce the failure, add a regression test, then fix it.
+
 Required product work:
 
 ### Probability-weighted scoring
