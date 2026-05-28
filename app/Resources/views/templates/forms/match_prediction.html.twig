@@ -57,6 +57,26 @@
 
                 <div class="row">
                     <div class="col-sm-12 text-center">
+                        <div class="match-scoring-info">
+                            {% if match.hasProbabilitySnapshot %}
+                                Betting probabilities: home win {{ match.homeWinProbabilityPercent }}%,
+                                draw {{ match.drawProbabilityPercent }}%,
+                                away win {{ match.awayWinProbabilityPercent }}%.
+                                Correct outcome points: home {{ match.getOutcomePointsForOutcome('1') }},
+                                draw {{ match.getOutcomePointsForOutcome('X') }},
+                                away {{ match.getOutcomePointsForOutcome('2') }}.
+                                Exact score points: home {{ match.getExactPointsForOutcome('1') }},
+                                draw {{ match.getExactPointsForOutcome('X') }},
+                                away {{ match.getExactPointsForOutcome('2') }}.
+                            {% else %}
+                                No probability bonus available. Correct outcome: {{ match.baseOutcomePoints }} pt. Exact score: {{ match.baseExactPoints }} pt.
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-sm-12 text-center">
                         {% if predictions[match.id] is defined %}
                             {{ form_row(form.button, {'attr': {'class': 'btn yellow-btn match-btn' }, 'disabled': match.disabledAttribute }) }}
                         {% else %}

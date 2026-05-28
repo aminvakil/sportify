@@ -19,6 +19,10 @@ class TelegramPredictionsCommandTest extends DatabaseTestCase
         $homeTeam = $this->createTeam('Home FC', $tournament);
         $awayTeam = $this->createTeam('Away FC', $tournament);
         $recentMatch = $this->createMatch($tournament, $homeTeam, $awayTeam, new \DateTime('-1 minute'));
+        $recentMatch->setHomeWinProbabilityPercent(45);
+        $recentMatch->setDrawProbabilityPercent(30);
+        $recentMatch->setAwayWinProbabilityPercent(25);
+        $this->em->flush();
         $oldMatch = $this->createMatch($tournament, $homeTeam, $awayTeam, new \DateTime('-6 minutes'));
 
         $alice = $this->createUser('alice');
@@ -35,8 +39,11 @@ class TelegramPredictionsCommandTest extends DatabaseTestCase
         $this->assertCount(1, $telegram->messages);
         $this->assertStringContainsString('alice', $telegram->messages[0]);
         $this->assertStringContainsString('2-1', $telegram->messages[0]);
+        $this->assertStringContainsString('home win', $telegram->messages[0]);
+        $this->assertStringContainsString('Probabilities: home 45%, draw 30%, away 25%', $telegram->messages[0]);
         $this->assertStringContainsString('bob', $telegram->messages[0]);
         $this->assertStringContainsString('1-1', $telegram->messages[0]);
+        $this->assertStringContainsString('draw', $telegram->messages[0]);
         $this->assertStringNotContainsString('0-0', $telegram->messages[0]);
 
         $this->em->clear();

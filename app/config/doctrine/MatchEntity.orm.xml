@@ -7,9 +7,9 @@
     <field name="datetime" type="datetime" column="datetime" length="100" nullable="false"/>
     <field name="homeGoals" type="integer" column="home_goals" nullable="true"/>
     <field name="awayGoals" type="integer" column="away_goals" nullable="true"/>
-    <field name="homeWinProbabilityBps" type="integer" column="home_win_probability_bps" nullable="true"/>
-    <field name="drawProbabilityBps" type="integer" column="draw_probability_bps" nullable="true"/>
-    <field name="awayWinProbabilityBps" type="integer" column="away_win_probability_bps" nullable="true"/>
+    <field name="homeWinProbabilityPercent" type="integer" column="home_win_probability_percent" nullable="true"/>
+    <field name="drawProbabilityPercent" type="integer" column="draw_probability_percent" nullable="true"/>
+    <field name="awayWinProbabilityPercent" type="integer" column="away_win_probability_percent" nullable="true"/>
     <field name="probabilitySource" type="string" column="probability_source" length="255" nullable="true"/>
     <field name="baseOutcomePoints" type="integer" column="base_outcome_points" nullable="false">
       <options>

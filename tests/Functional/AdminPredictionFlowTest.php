@@ -34,6 +34,9 @@ class AdminPredictionFlowTest extends FunctionalTestCase
 
         $crawler = $this->client->request('GET', '/matches');
         $this->assertTrue($this->client->getResponse()->isSuccessful());
+        $this->assertStringContainsString('Betting probabilities: home win 45%, draw 30%, away win 25%.', $crawler->text());
+        $this->assertStringContainsString('Correct outcome points: home 3, draw 4, away 5.', $crawler->text());
+        $this->assertStringContainsString('Exact score points: home 6, draw 7, away 8.', $crawler->text());
 
         $form = $crawler->filter('button.match-btn')->form(array(
             'prediction[homeGoals]' => 2,
@@ -87,6 +90,11 @@ class AdminPredictionFlowTest extends FunctionalTestCase
         $match->setHomeTeamId($homeTeam);
         $match->setAwayTeamId($awayTeam);
         $match->setDatetime(new \DateTime('+2 days'));
+        $match->setBaseOutcomePoints(2);
+        $match->setBaseExactPoints(5);
+        $match->setHomeWinProbabilityPercent(45);
+        $match->setDrawProbabilityPercent(30);
+        $match->setAwayWinProbabilityPercent(25);
 
         $this->em->persist($tournament);
         $this->em->persist($homeTeam);
