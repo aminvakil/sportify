@@ -50,6 +50,7 @@ After doing any changes on **app/config/parameters.yml** run `php bin/console ca
 Best practice is to use a transactional mail service, like Mailgun, Amazon SES, etc. We recommend Mailgun as registering an account takes a few minutes and the free tier should be enough. Another option is to use [Gmail SMTP settings](https://www.digitalocean.com/community/tutorials/how-to-use-google-s-smtp-server).  
 
  `football_api.token` - you can get one free from [football-data.org](http://www.football-data.org/register). If you use the service for a longer time, consider [donating](http://api.football-data.org/about) :)  
+`odds_api.token` - Configure this with a The Odds API token to import probability snapshots for new upcoming fixtures.
 ` slack.url, slack.channel` - Generate them in [Slack](https://slack.com/apps/A0F7XDUAZ-incoming-webhooks) in order to get notifications.  
 `telegram.bot_token, telegram.chat_id` - Configure these to send scheduled Telegram notifications.
 `telegram.pin_messages` - Set to `false` to disable pinning Telegram data update notifications. Defaults to `true`.
