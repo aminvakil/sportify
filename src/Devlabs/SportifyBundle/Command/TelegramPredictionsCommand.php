@@ -90,31 +90,34 @@ class TelegramPredictionsCommand extends Command
 
     private function formatMessage(\DateTime $dateFrom, \DateTime $dateTo, array $matches, array $predictions)
     {
-        $matchTexts = array();
-
-        foreach ($matches as $match) {
-            $matchTexts[$match->getId()] = $match->getHomeTeamName().' - '.$match->getAwayTeamName();
-        }
-
-        $lines = array(
-            'mid  match                         user                 pred',
-            '---  ----------------------------  -------------------  -----',
-        );
-
+        $predictionsByMatch = array();
         foreach ($predictions as $prediction) {
-            $match = $prediction->getMatchId();
-            $lines[] = sprintf(
-                '%-4s %-28s  %-19s  %s-%s',
-                $match->getId(),
-                $this->shorten($matchTexts[$match->getId()], 28),
-                $this->shorten($prediction->getUserId()->getUsername(), 19),
-                $prediction->getHomeGoals(),
-                $prediction->getAwayGoals()
-            );
+            $predictionsByMatch[$prediction->getMatchId()->getId()][] = $prediction;
         }
 
-        if (count($lines) === 2) {
-            $lines[] = 'No predictions.';
+        $lines = array();
+        foreach ($matches as $match) {
+            $lines[] = $match->getHomeTeamName().' - '.$match->getAwayTeamName();
+            $lines[] = 'Probabilities: '.$this->formatProbabilitySnapshot($match);
+            $lines[] = 'user                 pred   outcome';
+            $lines[] = '-------------------  -----  --------';
+
+            if (!isset($predictionsByMatch[$match->getId()])) {
+                $lines[] = 'No predictions.';
+                $lines[] = '';
+                continue;
+            }
+
+            foreach ($predictionsByMatch[$match->getId()] as $prediction) {
+                $lines[] = sprintf(
+                    '%-19s  %s-%s    %s',
+                    $this->shorten($prediction->getUserId()->getUsername(), 19),
+                    $prediction->getHomeGoals(),
+                    $prediction->getAwayGoals(),
+                    $this->formatOutcome($prediction->getResultOutcome())
+                );
+            }
+            $lines[] = '';
         }
 
         return 'Predictions for matches started between '
@@ -122,8 +125,36 @@ class TelegramPredictionsCommand extends Command
             .' and '
             .$dateTo->format('Y-m-d H:i')
             .":\n```\n"
-            .implode("\n", $lines)
+            .rtrim(implode("\n", $lines))
             ."\n```";
+    }
+
+    private function formatProbabilitySnapshot(MatchEntity $match)
+    {
+        if (!$match->hasProbabilitySnapshot()) {
+            return 'not available';
+        }
+
+        return 'home '.$this->formatProbability($match->getHomeWinProbabilityPercent())
+            .', draw '.$this->formatProbability($match->getDrawProbabilityPercent())
+            .', away '.$this->formatProbability($match->getAwayWinProbabilityPercent());
+    }
+
+    private function formatProbability($percent)
+    {
+        return $percent.'%';
+    }
+
+    private function formatOutcome($outcome)
+    {
+        if ($outcome === '1') {
+            return 'home win';
+        }
+        if ($outcome === '2') {
+            return 'away win';
+        }
+
+        return 'draw';
     }
 
     private function shorten($value, $length)

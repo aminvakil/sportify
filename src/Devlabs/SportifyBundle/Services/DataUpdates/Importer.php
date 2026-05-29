@@ -214,9 +214,9 @@ class Importer
 
     private function applyOddsSnapshot(MatchEntity $match, array $oddsSnapshot)
     {
-        $match->setHomeWinProbabilityBps($oddsSnapshot['home_win_probability_bps']);
-        $match->setDrawProbabilityBps($oddsSnapshot['draw_probability_bps']);
-        $match->setAwayWinProbabilityBps($oddsSnapshot['away_win_probability_bps']);
+        $match->setHomeWinProbabilityPercent($oddsSnapshot['home_win_probability_percent']);
+        $match->setDrawProbabilityPercent($oddsSnapshot['draw_probability_percent']);
+        $match->setAwayWinProbabilityPercent($oddsSnapshot['away_win_probability_percent']);
         $match->setProbabilitySource($oddsSnapshot['source']);
     }
 
@@ -225,9 +225,9 @@ class Importer
         return array(
             'home_team' => $match->getHomeTeamName(),
             'away_team' => $match->getAwayTeamName(),
-            'home_win_probability_bps' => $match->getHomeWinProbabilityBps(),
-            'draw_probability_bps' => $match->getDrawProbabilityBps(),
-            'away_win_probability_bps' => $match->getAwayWinProbabilityBps(),
+            'home_win_probability_percent' => $match->getHomeWinProbabilityPercent(),
+            'draw_probability_percent' => $match->getDrawProbabilityPercent(),
+            'away_win_probability_percent' => $match->getAwayWinProbabilityPercent(),
             'source' => $match->getProbabilitySource(),
         );
     }

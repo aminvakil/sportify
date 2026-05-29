@@ -2,6 +2,8 @@
 
 namespace Devlabs\SportifyBundle\Command;
 
+use Devlabs\SportifyBundle\Entity\MatchEntity;
+use Devlabs\SportifyBundle\Entity\Prediction;
 use Devlabs\SportifyBundle\Entity\Score;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -75,8 +77,11 @@ class DataUpdateCommand extends Command
                 $em = $this->container->get('doctrine.orm.entity_manager');
 
                 // Get the ScoreUpdater service and update all scores
-                $tournamentsModified = $this->container
-                    ->get('app.score_updater')->updateAll();
+                $scoreUpdater = $this->container->get('app.score_updater');
+                $tournamentsModified = $scoreUpdater->updateAll();
+                $scoredMatches = $this->getScoredMatches($em, $scoreUpdater->getLastScoredMatchIds());
+                $scoredPredictions = $em->getRepository(Prediction::class)
+                    ->getByMatches($scoredMatches);
 
                 $scores = $em->getRepository(Score::class)
                     ->getAllHashed();
@@ -86,7 +91,12 @@ class DataUpdateCommand extends Command
 
                 foreach ($tournamentsModified as $tournament) {
                     $msgText = $msgText."\n".$tournament->getName();
+                }
 
+                $msgText .= $this->formatScoredMatches($scoredMatches, $scoredPredictions);
+                $msgText .= "\nStandings changes:";
+
+                foreach ($tournamentsModified as $tournament) {
                     foreach ($scores[$tournament->getId()] as $score) {
                         if ($score->getPoints() == $score->getPointsOld()) {
                             continue;
@@ -132,6 +142,89 @@ class DataUpdateCommand extends Command
         return 0;
     }
 
+    private function getScoredMatches($em, array $matchIds)
+    {
+        if (!$matchIds) {
+            return array();
+        }
+
+        return $em->getRepository(MatchEntity::class)->findBy(array('id' => $matchIds));
+    }
+
+    private function formatScoredMatches(array $matches, array $predictions)
+    {
+        if (!$matches) {
+            return '';
+        }
+
+        $predictionsByMatch = array();
+        foreach ($predictions as $prediction) {
+            $predictionsByMatch[$prediction->getMatchId()->getId()][] = $prediction;
+        }
+
+        $text = "\nScored matches:";
+        foreach ($matches as $match) {
+            $text .= "\n".$match->getHomeTeamName().' '.$match->getHomeGoals().'-'.$match->getAwayGoals().' '.$match->getAwayTeamName();
+            $text .= "\n\tProbabilities: ".$this->formatProbabilitySnapshot($match);
+
+            if (!isset($predictionsByMatch[$match->getId()])) {
+                $text .= "\n\tNo predictions.";
+                continue;
+            }
+
+            foreach ($predictionsByMatch[$match->getId()] as $prediction) {
+                $text .= "\n\t"
+                    .$prediction->getUserId()->getUsername()
+                    .' predicted '
+                    .$prediction->getHomeGoals().'-'.$prediction->getAwayGoals()
+                    .' ('.$this->formatOutcome($prediction->getResultOutcome()).'): '
+                    .$this->formatScoringBreakdown($prediction);
+            }
+        }
+
+        return $text;
+    }
+
+    private function formatScoringBreakdown(Prediction $prediction)
+    {
+        if ($prediction->getScoringResult() === Prediction::SCORING_RESULT_EXACT) {
+            return 'exact score, base '.$prediction->getBasePoints()
+                .' + probability bonus '.$prediction->getProbabilityBonus()
+                .' = '.$prediction->getTotalPoints();
+        }
+
+        if ($prediction->getScoringResult() === Prediction::SCORING_RESULT_OUTCOME) {
+            return 'correct outcome, base '.$prediction->getBasePoints()
+                .' + probability bonus '.$prediction->getProbabilityBonus()
+                .' = '.$prediction->getTotalPoints();
+        }
+
+        return 'wrong outcome, 0 points';
+    }
+
+    private function formatProbabilitySnapshot(MatchEntity $match)
+    {
+        if (!$match->hasProbabilitySnapshot()) {
+            return 'not available';
+        }
+
+        return 'home '.$this->formatProbability($match->getHomeWinProbabilityPercent())
+            .', draw '.$this->formatProbability($match->getDrawProbabilityPercent())
+            .', away '.$this->formatProbability($match->getAwayWinProbabilityPercent());
+    }
+
+    private function formatOutcome($outcome)
+    {
+        if ($outcome === '1') {
+            return 'home win';
+        }
+        if ($outcome === '2') {
+            return 'away win';
+        }
+
+        return 'draw';
+    }
+
     private function formatAddedFixtures(array $addedFixtures)
     {
         if (!$addedFixtures) {
@@ -141,17 +234,17 @@ class DataUpdateCommand extends Command
         $text = "\nAdded matches:";
         foreach ($addedFixtures as $fixture) {
             $text .= "\n".$fixture['home_team'].' vs '.$fixture['away_team']
-                .': home '.$this->formatProbability($fixture['home_win_probability_bps'])
-                .', draw '.$this->formatProbability($fixture['draw_probability_bps'])
-                .', away '.$this->formatProbability($fixture['away_win_probability_bps']);
+                .': home '.$this->formatProbability($fixture['home_win_probability_percent'])
+                .', draw '.$this->formatProbability($fixture['draw_probability_percent'])
+                .', away '.$this->formatProbability($fixture['away_win_probability_percent']);
         }
 
         return $text;
     }
 
-    private function formatProbability($basisPoints)
+    private function formatProbability($percent)
     {
-        return number_format($basisPoints / 100, 2).'%';
+        return $percent.'%';
     }
 
     private function shouldPinTelegramMessages()

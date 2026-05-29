@@ -19,14 +19,14 @@ class OddsProbabilityNormalizer
             return null;
         }
 
-        $homeBps = (int) round($rawHome / $rawTotal * 10000);
-        $drawBps = (int) round($rawDraw / $rawTotal * 10000);
-        $awayBps = 10000 - $homeBps - $drawBps;
+        $homePercent = (int) round($rawHome / $rawTotal * 100);
+        $drawPercent = (int) round($rawDraw / $rawTotal * 100);
+        $awayPercent = 100 - $homePercent - $drawPercent;
 
         return array(
-            'home_win_probability_bps' => $homeBps,
-            'draw_probability_bps' => $drawBps,
-            'away_win_probability_bps' => $awayBps,
+            'home_win_probability_percent' => $homePercent,
+            'draw_probability_percent' => $drawPercent,
+            'away_win_probability_percent' => $awayPercent,
         );
     }
 

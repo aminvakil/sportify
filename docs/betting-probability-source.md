@@ -105,7 +105,7 @@ the_odds_api:{sport_key}:{event_id}:{bookmaker_key}:h2h
 
 ## Normalization rule
 
-Use decimal odds. Convert bookmaker odds to implied probabilities and remove the bookmaker overround before storing basis points.
+Use decimal odds. Convert bookmaker odds to implied probabilities and remove the bookmaker overround before storing whole-number percentages.
 
 For decimal prices `home`, `draw`, and `away`:
 
@@ -114,12 +114,12 @@ raw_home = 1 / home
 raw_draw = 1 / draw
 raw_away = 1 / away
 raw_total = raw_home + raw_draw + raw_away
-home_bps = round(raw_home / raw_total * 10000)
-draw_bps = round(raw_draw / raw_total * 10000)
-away_bps = 10000 - home_bps - draw_bps
+home_percent = round(raw_home / raw_total * 100)
+draw_percent = round(raw_draw / raw_total * 100)
+away_percent = 100 - home_percent - draw_percent
 ```
 
-Use the away value as the remainder so the stored values always total exactly `10000`. If any of the three h2h outcomes is missing, skip the event and do not create a local match.
+Use the away value as the remainder so the stored values always total exactly `100`. If any of the three h2h outcomes is missing, skip the event and do not create a local match.
 
 ## Matching strategy
 
@@ -136,7 +136,7 @@ Use the away value as the remainder so the stored values always total exactly `1
 - Keep the odds-provider setup simple: the only required secret/config value should be `odds_api.token`.
 - Retrieve fixtures from `football-data.org`, then retrieve odds only for each matched new fixture from The Odds API.
 - Store the match and its probabilities together when creating a match. Do not refresh probabilities for existing matches.
-- Store probabilities as integer basis points.
+- Store probabilities as whole-number integer percentages.
 - Do not add imported matches when odds are missing or The Odds API is unreachable; every newly imported match must have a stored probability snapshot.
 - Track response headers `x-requests-remaining`, `x-requests-used`, and `x-requests-last` in debug logs or command output summaries.
 - The Odds API terms mention responsible-gambling messaging when the service is used to promote bookmakers or gambling services. Sportify uses derived probabilities for a private prediction game, not bookmaker promotion, but the user-facing copy should avoid betting calls to action.

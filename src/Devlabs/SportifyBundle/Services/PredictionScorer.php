@@ -28,13 +28,13 @@ class PredictionScorer
 
     private function calculateProbabilityBonus(Prediction $prediction, MatchEntity $match)
     {
-        $probability = $match->getProbabilityBpsForOutcome($prediction->getResultOutcome());
-        if ($probability === null || $probability >= 5000) {
+        $probability = $match->getProbabilityPercentForOutcome($prediction->getResultOutcome());
+        if ($probability === null || $probability >= 50) {
             return 0;
         }
 
         $cap = $match->getBaseExactPoints();
-        $bonus = intdiv(((5000 - $probability) * $cap) + 4999, 5000);
+        $bonus = intdiv(((50 - $probability) * $cap) + 49, 50);
 
         return min($cap, $bonus);
     }

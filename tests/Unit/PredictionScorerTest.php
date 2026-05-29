@@ -12,14 +12,14 @@ class PredictionScorerTest extends TestCase
     /**
      * @dataProvider scoringExamples
      */
-    public function testCalculatesBasePointsAndProbabilityBonus($predictedHome, $predictedAway, $homeProbabilityBps, $expectedResult, $expectedBase, $expectedBonus, $expectedTotal)
+    public function testCalculatesBasePointsAndProbabilityBonus($predictedHome, $predictedAway, $homeProbabilityPercent, $expectedResult, $expectedBase, $expectedBonus, $expectedTotal)
     {
         $match = $this->createFinishedMatch(2, 1);
         $match->setBaseOutcomePoints(2);
         $match->setBaseExactPoints(10);
-        $match->setHomeWinProbabilityBps($homeProbabilityBps);
-        $match->setDrawProbabilityBps(2500);
-        $match->setAwayWinProbabilityBps(6500);
+        $match->setHomeWinProbabilityPercent($homeProbabilityPercent);
+        $match->setDrawProbabilityPercent(25);
+        $match->setAwayWinProbabilityPercent(65);
 
         $prediction = $this->createPrediction($predictedHome, $predictedAway);
 
@@ -34,11 +34,11 @@ class PredictionScorerTest extends TestCase
     public function scoringExamples()
     {
         return array(
-            'exact score plus low-probability bonus' => array(2, 1, 1000, PredictionScorer::RESULT_EXACT, 10, 8, 18),
-            'correct outcome plus low-probability bonus' => array(1, 0, 1000, PredictionScorer::RESULT_OUTCOME, 2, 8, 10),
-            'wrong outcome scores zero' => array(0, 1, 1000, PredictionScorer::RESULT_WRONG, 0, 0, 0),
-            'probability at fifty has no bonus' => array(1, 0, 5000, PredictionScorer::RESULT_OUTCOME, 2, 0, 2),
-            'probability just below fifty rounds up' => array(1, 0, 4999, PredictionScorer::RESULT_OUTCOME, 2, 1, 3),
+            'exact score plus low-probability bonus' => array(2, 1, 10, PredictionScorer::RESULT_EXACT, 10, 8, 18),
+            'correct outcome plus low-probability bonus' => array(1, 0, 10, PredictionScorer::RESULT_OUTCOME, 2, 8, 10),
+            'wrong outcome scores zero' => array(0, 1, 10, PredictionScorer::RESULT_WRONG, 0, 0, 0),
+            'probability at fifty has no bonus' => array(1, 0, 50, PredictionScorer::RESULT_OUTCOME, 2, 0, 2),
+            'probability just below fifty rounds up' => array(1, 0, 49, PredictionScorer::RESULT_OUTCOME, 2, 1, 3),
             'very low probability bonus is capped at exact points' => array(1, 0, 0, PredictionScorer::RESULT_OUTCOME, 2, 10, 12),
         );
     }

@@ -79,7 +79,7 @@ Probability bonus rules:
 - If The Odds API is unreachable, no matching event is found, or it does not return all three home/draw/away outcomes, do not add the match.
 - If the provider returns bookmaker odds, normalize implied probabilities before storing them so the three outcomes total about 100%.
 - Do not update probabilities after a match has been created. The initially stored probabilities are the scoring snapshot.
-- Store probabilities as exact integers, preferably basis points where `10000 = 100%`, to avoid floating-point scoring/rounding surprises.
+- Store probabilities as exact whole percentage integers where `100 = 100%`, to avoid display rounding surprises.
 - Keep the source simple but auditable, for example provider/bookmaker/market when available.
 - Apply the probability bonus only when the predicted outcome is correct.
 - Add the probability bonus on top of the normal score; do not replace the normal score.
@@ -88,7 +88,7 @@ Probability bonus rules:
 - Suggested formula, where `p` is the predicted outcome probability as a percentage and `cap` is the match's exact-score value:
   - If `p >= 50`, bonus is `0`.
   - If `p < 50`, bonus is `ceil((50 - p) * cap / 50)`, capped to `cap`.
-  - With basis-point storage, use the equivalent integer formula: if `p_bps < 5000`, bonus is `ceil((5000 - p_bps) * cap / 5000)`.
+  - With integer percentage storage, use the equivalent integer formula: if `p_percent < 50`, bonus is `ceil((50 - p_percent) * cap / 50)`.
 - Example with cap `10`: probabilities near 50% give +1, around 40% gives +2, around 25% gives +5, around 10% gives +8, and very low probabilities can reach +10.
 - If probabilities are missing on legacy/pre-feature matches, the probability bonus is `0`.
 
@@ -103,6 +103,8 @@ Example with outcome 2 and exact 5: if a user predicts the exact score for a 10%
 ### Prediction page changes
 
 - Show the betting-probability snapshot on each prediction card: home win, draw, and away win percentages.
+- Show probability bonus chips directly on the white match bar: home bonus near the home side, draw bonus centered between the score boxes, and away bonus near the away side, for example `+1` and `+2`.
+- Remove the explanatory sentence that starts with `Correct outcome points:` / `Exact score points:` from the prediction card UI.
 - Show the points available for each possible outcome on the match card, for example correct home win / draw / away win totals and exact-score totals after the probability bonus is applied.
 - If probabilities are missing on legacy/pre-feature matches, show that no probability bonus is available instead of hiding the scoring rule.
 

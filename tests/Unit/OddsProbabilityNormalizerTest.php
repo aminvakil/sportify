@@ -7,18 +7,18 @@ use PHPUnit\Framework\TestCase;
 
 class OddsProbabilityNormalizerTest extends TestCase
 {
-    public function testNormalizesDecimalOddsToBasisPoints()
+    public function testNormalizesDecimalOddsToPercent()
     {
         $normalizer = new OddsProbabilityNormalizer();
 
         $probabilities = $normalizer->normalizeDecimalOdds(2.0, 4.0, 4.0);
 
         $this->assertSame(array(
-            'home_win_probability_bps' => 5000,
-            'draw_probability_bps' => 2500,
-            'away_win_probability_bps' => 2500,
+            'home_win_probability_percent' => 50,
+            'draw_probability_percent' => 25,
+            'away_win_probability_percent' => 25,
         ), $probabilities);
-        $this->assertSame(10000, array_sum($probabilities));
+        $this->assertSame(100, array_sum($probabilities));
     }
 
     public function testReturnsNullForIncompleteOrInvalidOdds()

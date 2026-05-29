@@ -22,6 +22,7 @@ class ScoreUpdater
 
     private $em;
     private $predictionScorer;
+    private $lastScoredMatchIds = array();
 
     public function __construct(ContainerInterface $container, EntityManager $entityManager, PredictionScorer $predictionScorer)
     {
@@ -43,6 +44,7 @@ class ScoreUpdater
     public function updateAll()
     {
         $tournamentsModified = array();
+        $this->lastScoredMatchIds = array();
 
         // calculate points for users' match predictions
         $this->scoreMatchPredictions($tournamentsModified);
@@ -57,6 +59,11 @@ class ScoreUpdater
         $this->calculateUserPositions($tournamentsModified);
 
         return $tournamentsModified;
+    }
+
+    public function getLastScoredMatchIds()
+    {
+        return array_values(array_unique($this->lastScoredMatchIds));
     }
 
     /**
@@ -180,6 +187,7 @@ class ScoreUpdater
                  */
                 $matchId = $prediction->getMatchId()->getId();
                 $match = $matches[$matchId];
+                $this->lastScoredMatchIds[] = $matchId;
 
                 // get the points from the prediction
                 $scoringResult = $this->predictionScorer->score($prediction, $match);

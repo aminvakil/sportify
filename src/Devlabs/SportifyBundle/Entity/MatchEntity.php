@@ -17,11 +17,11 @@ class MatchEntity
 
     private $awayGoals;
 
-    private $homeWinProbabilityBps;
+    private $homeWinProbabilityPercent;
 
-    private $drawProbabilityBps;
+    private $drawProbabilityPercent;
 
-    private $awayWinProbabilityBps;
+    private $awayWinProbabilityPercent;
 
     private $probabilitySource;
 
@@ -148,40 +148,40 @@ class MatchEntity
         return $this->awayGoals;
     }
 
-    public function setHomeWinProbabilityBps($homeWinProbabilityBps)
+    public function setHomeWinProbabilityPercent($homeWinProbabilityPercent)
     {
-        $this->homeWinProbabilityBps = $homeWinProbabilityBps;
+        $this->homeWinProbabilityPercent = $homeWinProbabilityPercent;
 
         return $this;
     }
 
-    public function getHomeWinProbabilityBps()
+    public function getHomeWinProbabilityPercent()
     {
-        return $this->homeWinProbabilityBps;
+        return $this->homeWinProbabilityPercent;
     }
 
-    public function setDrawProbabilityBps($drawProbabilityBps)
+    public function setDrawProbabilityPercent($drawProbabilityPercent)
     {
-        $this->drawProbabilityBps = $drawProbabilityBps;
+        $this->drawProbabilityPercent = $drawProbabilityPercent;
 
         return $this;
     }
 
-    public function getDrawProbabilityBps()
+    public function getDrawProbabilityPercent()
     {
-        return $this->drawProbabilityBps;
+        return $this->drawProbabilityPercent;
     }
 
-    public function setAwayWinProbabilityBps($awayWinProbabilityBps)
+    public function setAwayWinProbabilityPercent($awayWinProbabilityPercent)
     {
-        $this->awayWinProbabilityBps = $awayWinProbabilityBps;
+        $this->awayWinProbabilityPercent = $awayWinProbabilityPercent;
 
         return $this;
     }
 
-    public function getAwayWinProbabilityBps()
+    public function getAwayWinProbabilityPercent()
     {
-        return $this->awayWinProbabilityBps;
+        return $this->awayWinProbabilityPercent;
     }
 
     public function setProbabilitySource($probabilitySource)
@@ -220,19 +220,46 @@ class MatchEntity
         return $this->baseExactPoints;
     }
 
-    public function getProbabilityBpsForOutcome($outcome)
+    public function getProbabilityPercentForOutcome($outcome)
     {
         if ($outcome === '1') {
-            return $this->homeWinProbabilityBps;
+            return $this->homeWinProbabilityPercent;
         }
         if ($outcome === 'X') {
-            return $this->drawProbabilityBps;
+            return $this->drawProbabilityPercent;
         }
         if ($outcome === '2') {
-            return $this->awayWinProbabilityBps;
+            return $this->awayWinProbabilityPercent;
         }
 
         return null;
+    }
+
+    public function hasProbabilitySnapshot()
+    {
+        return $this->homeWinProbabilityPercent !== null
+            && $this->drawProbabilityPercent !== null
+            && $this->awayWinProbabilityPercent !== null;
+    }
+
+    public function getProbabilityBonusForOutcome($outcome)
+    {
+        $probability = $this->getProbabilityPercentForOutcome($outcome);
+        if ($probability === null || $probability >= 50) {
+            return 0;
+        }
+
+        return min($this->baseExactPoints, intdiv(((50 - $probability) * $this->baseExactPoints) + 49, 50));
+    }
+
+    public function getOutcomePointsForOutcome($outcome)
+    {
+        return $this->baseOutcomePoints + $this->getProbabilityBonusForOutcome($outcome);
+    }
+
+    public function getExactPointsForOutcome($outcome)
+    {
+        return $this->baseExactPoints + $this->getProbabilityBonusForOutcome($outcome);
     }
 
     /**

@@ -20,9 +20,9 @@ class PredictionWorkflowTest extends DatabaseTestCase
         $finishedMatch = $this->createMatch($tournament, $homeTeam, $awayTeam, new \DateTime('-1 day'), 2, 1);
         $finishedMatch->setBaseOutcomePoints(2);
         $finishedMatch->setBaseExactPoints(10);
-        $finishedMatch->setHomeWinProbabilityBps(1000);
-        $finishedMatch->setDrawProbabilityBps(2500);
-        $finishedMatch->setAwayWinProbabilityBps(6500);
+        $finishedMatch->setHomeWinProbabilityPercent(10);
+        $finishedMatch->setDrawProbabilityPercent(25);
+        $finishedMatch->setAwayWinProbabilityPercent(65);
         $finishedMatch->setProbabilitySource('test/bookmaker/h2h');
         $this->em->flush();
         $upcomingMatch = $this->createMatch($tournament, $homeTeam, $awayTeam, new \DateTime('+1 day'));

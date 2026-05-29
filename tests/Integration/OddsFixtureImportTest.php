@@ -22,9 +22,9 @@ class OddsFixtureImportTest extends DatabaseTestCase
 
         $oddsProvider = new FakeFixtureOddsProvider(array(
             500 => array(
-                'home_win_probability_bps' => 4500,
-                'draw_probability_bps' => 3000,
-                'away_win_probability_bps' => 2500,
+                'home_win_probability_percent' => 45,
+                'draw_probability_percent' => 30,
+                'away_win_probability_percent' => 25,
                 'source' => 'the_odds_api:soccer_test:event-1:pinnacle:h2h',
             ),
         ));
@@ -36,9 +36,9 @@ class OddsFixtureImportTest extends DatabaseTestCase
         $this->assertSame(array(array(
             'home_team' => 'Home Nation',
             'away_team' => 'Away Nation',
-            'home_win_probability_bps' => 4500,
-            'draw_probability_bps' => 3000,
-            'away_win_probability_bps' => 2500,
+            'home_win_probability_percent' => 45,
+            'draw_probability_percent' => 30,
+            'away_win_probability_percent' => 25,
             'source' => 'the_odds_api:soccer_test:event-1:pinnacle:h2h',
         )), $status['added_fixtures']);
 
@@ -48,9 +48,9 @@ class OddsFixtureImportTest extends DatabaseTestCase
 
         $this->assertSame(3, $match->getBaseOutcomePoints());
         $this->assertSame(7, $match->getBaseExactPoints());
-        $this->assertSame(4500, $match->getHomeWinProbabilityBps());
-        $this->assertSame(3000, $match->getDrawProbabilityBps());
-        $this->assertSame(2500, $match->getAwayWinProbabilityBps());
+        $this->assertSame(45, $match->getHomeWinProbabilityPercent());
+        $this->assertSame(30, $match->getDrawProbabilityPercent());
+        $this->assertSame(25, $match->getAwayWinProbabilityPercent());
         $this->assertSame('the_odds_api:soccer_test:event-1:pinnacle:h2h', $match->getProbabilitySource());
     }
 
