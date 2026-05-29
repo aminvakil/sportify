@@ -12,6 +12,9 @@ class AdminScoringDefaultsTest extends FunctionalTestCase
         $crawler = $this->client->request('GET', '/admin/scoring');
         $this->assertTrue($this->client->getResponse()->isSuccessful());
         $this->assertStringContainsString('Default base scoring', $crawler->filter('body')->text());
+        $this->assertStringContainsString('These defaults are applied to newly added matches.', $crawler->filter('body')->text());
+        $this->assertSame(2, $crawler->filter('.panel .form-control')->count());
+        $this->assertSame(1, $crawler->filter('.panel .green-btn')->count());
 
         $form = $crawler->selectButton('Save')->form(array(
             'scoring_defaults[outcomePoints]' => 4,

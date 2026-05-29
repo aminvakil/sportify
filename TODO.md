@@ -33,6 +33,7 @@
 
 - Admin panel Data Updates shows the no-updates flash message without the removed `session` service.
 - Admin panel Matches loads when no tournaments exist and when a selected tournament has no teams.
+- Admin panel Scoring defaults has a cleaner centered form layout.
 - Submitted predictions can be sent to the configured Telegram chat shortly after kickoff with `sportify:telegram:send-predictions`.
 - Data update Telegram notifications use the app-owned Telegram service/config instead of legacy hardcoded send/pin URLs. Sent messages are pinned by default and can be disabled with `telegram.pin_messages: false`.
 
@@ -40,9 +41,7 @@
 
 No backend, frontend, or deployment infrastructure modernization is currently pending.
 
-Reported admin follow-ups:
-
-- `/admin/scoring` renders poorly; improve the page layout/visual styling.
+Reported admin follow-ups: none pending.
 
 Required product work:
 
