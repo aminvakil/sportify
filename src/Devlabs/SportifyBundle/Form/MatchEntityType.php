@@ -58,6 +58,7 @@ class MatchEntityType extends AbstractType
             ->add('datetime', DateTimeType::class, array(
                 'widget' => 'single_text',
                 'format' => 'yyyy-MM-dd HH:mm',
+                'html5' => false,
                 'error_bubbling' => true
             ))
             ->add('homeTeamId', TeamChoiceType::class, array(
