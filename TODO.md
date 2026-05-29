@@ -103,6 +103,8 @@ Example with outcome 2 and exact 5: if a user predicts the exact score for a 10%
 ### Prediction page changes
 
 - Show the betting-probability snapshot on each prediction card: home win, draw, and away win percentages.
+- Show probability bonus chips directly on the white match bar: home bonus near the home side, draw bonus centered between the score boxes, and away bonus near the away side, for example `+1` and `+2`.
+- Remove the explanatory sentence that starts with `Correct outcome points:` / `Exact score points:` from the prediction card UI.
 - Show the points available for each possible outcome on the match card, for example correct home win / draw / away win totals and exact-score totals after the probability bonus is applied.
 - If probabilities are missing on legacy/pre-feature matches, show that no probability bonus is available instead of hiding the scoring rule.
 
