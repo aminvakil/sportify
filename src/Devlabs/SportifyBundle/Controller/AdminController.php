@@ -440,7 +440,9 @@ class AdminController extends AbstractController
                     ->findOneById($request->cookies->get('tournament'))
                 : $em->getRepository(Tournament::class)
                     ->getFirst();
-            $urlParams['tournament_id'] = $formSourceData['tournament_selected']->getId();
+            if ($formSourceData['tournament_selected']) {
+                $urlParams['tournament_id'] = $formSourceData['tournament_selected']->getId();
+            }
         } else {
             $formSourceData['tournament_selected'] = $em->getRepository(Tournament::class)
                 ->findOneById($tournament_id);
@@ -477,13 +479,16 @@ class AdminController extends AbstractController
             return $this->redirectToRoute('admin_matches', $submittedParams);
         }
 
-        // get matches for selected tournament
-        $matches = $em->getRepository(MatchEntity::class)
-            ->getAllByTournamentAndTimeRange($formSourceData['tournament_selected'], $urlParams['date_from'], $modifiedDateTo);
+        $matches = array();
+        if ($formSourceData['tournament_selected']) {
+            // get matches for selected tournament
+            $matches = $em->getRepository(MatchEntity::class)
+                ->getAllByTournamentAndTimeRange($formSourceData['tournament_selected'], $urlParams['date_from'], $modifiedDateTo);
 
-        // add an 'empty' placeholder for a new match to be created
-        $matches['new'] = new MatchEntity();
-        $matches['new']->setTournamentId($formSourceData['tournament_selected']);
+            // add an 'empty' placeholder for a new match to be created
+            $matches['new'] = new MatchEntity();
+            $matches['new']->setTournamentId($formSourceData['tournament_selected']);
+        }
 
         // create Match forms
         $forms = $adminHelper->createMatchForms($urlParams, $matches);

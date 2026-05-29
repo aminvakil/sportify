@@ -15,20 +15,24 @@ class TeamRepository extends \Doctrine\ORM\EntityRepository
      *
      * @param Tournament $tournament
      * @return mixed
-     * @throws \Doctrine\ORM\NoResultException
      * @throws \Doctrine\ORM\NonUniqueResultException
      */
     public function getFirstByTournament(Tournament $tournament)
     {
-        return $this->getEntityManager()->createQueryBuilder()
+        $query = $this->getEntityManager()->createQueryBuilder()
             ->select('tm')
             ->from(Team::class, 'tm')
             ->join('tm.tournaments', 'tr')
             ->where('tr.id = :tournament_id')
             ->setParameter('tournament_id', $tournament->getId())
-            ->setMaxResults(1)
-            ->getQuery()
-            ->getSingleResult();
+            ->setMaxResults(1);
+
+        try {
+            return $query->getQuery()->getSingleResult();
+        }
+        catch(\Doctrine\ORM\NoResultException $e) {
+            return null;
+        }
     }
 
     /**
