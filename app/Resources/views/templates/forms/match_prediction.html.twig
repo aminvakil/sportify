@@ -75,12 +75,11 @@
                     <div class="col-sm-12 text-center">
                         <div class="match-scoring-info">
                             {% if match.hasProbabilitySnapshot %}
-                                Betting probabilities: home win {{ match.homeWinProbabilityPercent }}%,
-                                draw {{ match.drawProbabilityPercent }}%,
-                                away win {{ match.awayWinProbabilityPercent }}%.
-                                Points available: home win {{ match.getOutcomePointsForOutcome('1') }} / exact {{ match.getExactPointsForOutcome('1') }},
-                                draw {{ match.getOutcomePointsForOutcome('X') }} / exact {{ match.getExactPointsForOutcome('X') }},
-                                away win {{ match.getOutcomePointsForOutcome('2') }} / exact {{ match.getExactPointsForOutcome('2') }}.
+                                Home {{ match.homeWinProbabilityPercent }}% | Draw {{ match.drawProbabilityPercent }}% | Away {{ match.awayWinProbabilityPercent }}%
+                                <br>
+                                Points: Home {{ match.getOutcomePointsForOutcome('1') }}/{{ match.getExactPointsForOutcome('1') }} |
+                                Draw {{ match.getOutcomePointsForOutcome('X') }}/{{ match.getExactPointsForOutcome('X') }} |
+                                Away {{ match.getOutcomePointsForOutcome('2') }}/{{ match.getExactPointsForOutcome('2') }}
                             {% else %}
                                 No probability bonus available. Correct outcome: {{ match.baseOutcomePoints }} pt. Exact score: {{ match.baseExactPoints }} pt.
                             {% endif %}
