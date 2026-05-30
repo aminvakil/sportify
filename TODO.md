@@ -36,6 +36,10 @@
 - Admin panel Scoring defaults has a cleaner centered form layout.
 - Submitted predictions can be sent to the configured Telegram chat shortly after kickoff with `sportify:telegram:send-predictions`.
 - Data update Telegram notifications use the app-owned Telegram service/config instead of legacy hardcoded send/pin URLs. Sent messages are pinned by default and can be disabled with `telegram.pin_messages: false`.
+- Probability-weighted scoring v1 is implemented with match scoring snapshots, stored prediction scoring breakdowns, and exact-prediction percentages based on scored results.
+- Upcoming fixture import uses `football-data.org` plus The Odds API snapshots and skips fixtures when complete odds are unavailable.
+- The prediction page shows probability snapshots, probability bonus chips, and points available for each outcome.
+- Telegram fixture-added, prediction, and result/scoring messages include probability and scoring details.
 
 ## Next steps
 
@@ -43,7 +47,9 @@ No backend, frontend, or deployment infrastructure modernization is currently pe
 
 Reported admin follow-ups: none pending.
 
-Required product work:
+Required product work: none pending.
+
+Completed product work:
 
 ### Probability-weighted scoring
 
@@ -101,48 +107,48 @@ Example with outcome 2 and exact 5: if a user predicts the exact score for a 10%
 
 ### Prediction page changes
 
-- Show the betting-probability snapshot on each prediction card: home win, draw, and away win percentages.
-- Show probability bonus chips directly on the white match bar: home bonus near the home side, draw bonus centered between the score boxes, and away bonus near the away side, for example `+1` and `+2`.
-- Remove the explanatory sentence that starts with `Correct outcome points:` / `Exact score points:` from the prediction card UI.
-- Show the points available for each possible outcome on the match card, for example correct home win / draw / away win totals and exact-score totals after the probability bonus is applied.
-- If probabilities are missing on legacy/pre-feature matches, show that no probability bonus is available instead of hiding the scoring rule.
+- [x] Show the betting-probability snapshot on each prediction card: home win, draw, and away win percentages.
+- [x] Show probability bonus chips directly on the white match bar: home bonus near the home side, draw bonus centered between the score boxes, and away bonus near the away side, for example `+1` and `+2`.
+- [x] Remove the explanatory sentence that starts with `Correct outcome points:` / `Exact score points:` from the prediction card UI.
+- [x] Show the points available for each possible outcome on the match card, for example correct home win / draw / away win totals and exact-score totals after the probability bonus is applied.
+- [x] If probabilities are missing on legacy/pre-feature matches, show that no probability bonus is available instead of hiding the scoring rule.
 
 ### Telegram fixture-added message
 
-- When the upcoming-match cron/command adds new matches, include the added match list in the Telegram notification.
-- Print each added match with its stored betting probabilities.
+- [x] When the upcoming-match cron/command adds new matches, include the added match list in the Telegram notification.
+- [x] Print each added match with its stored betting probabilities.
 
 ### Telegram prediction message after kickoff
 
-- Keep sending submitted predictions shortly after the match starts.
-- Include the betting-probability snapshot in this pre-result message.
-- Include each user's predicted score and derived predicted outcome.
+- [x] Keep sending submitted predictions shortly after the match starts.
+- [x] Include the betting-probability snapshot in this pre-result message.
+- [x] Include each user's predicted score and derived predicted outcome.
 
 ### Telegram result/scoring message after full time
 
-- When match results are updated and scores are calculated, send a Telegram result/scoring message.
-- Include the final result, betting-probability snapshot, each user's prediction, whether it was wrong outcome/correct outcome/exact score, and how the final points were calculated.
-- Include standings changes as the existing data update message does today.
+- [x] When match results are updated and scores are calculated, send a Telegram result/scoring message.
+- [x] Include the final result, betting-probability snapshot, each user's prediction, whether it was wrong outcome/correct outcome/exact score, and how the final points were calculated.
+- [x] Include standings changes as the existing data update message does today.
 
 ### Implementation notes
 
-- Exact-prediction percentage should not depend on a fixed point value once probability bonus exists. Store a scoring result such as wrong/outcome/exact on each prediction when it is scored.
-- Store scoring breakdown fields on each scored prediction, such as base points, probability bonus, and total points, so Telegram/result history can explain historical calculations even if defaults or match base points change later.
-- Existing `api_mappings` can map matches/teams/tournaments to provider IDs; use it for the odds provider if the provider exposes stable IDs. If not, document and test the team/date matching strategy.
-- Keep odds-provider setup simple: only require one secret/config parameter, `odds_api.token`, like the existing `football_api.token`.
-- Do not add match stage fields for v1. Per-stage scoring is represented by admin-controlled default base points that are snapshotted onto newly added matches.
-- Add tests for probability bonus boundaries, base scores, exact score handling, wrong-outcome zero points, stored scoring breakdown, exact-prediction percentage, prediction-page display data, fixture-added notification content, and both Telegram match prediction/result message formats.
+- [x] Exact-prediction percentage should not depend on a fixed point value once probability bonus exists. Store a scoring result such as wrong/outcome/exact on each prediction when it is scored.
+- [x] Store scoring breakdown fields on each scored prediction, such as base points, probability bonus, and total points, so Telegram/result history can explain historical calculations even if defaults or match base points change later.
+- [x] Existing `api_mappings` can map matches/teams/tournaments to provider IDs; use it for the odds provider if the provider exposes stable IDs. If not, document and test the team/date matching strategy.
+- [x] Keep odds-provider setup simple: only require one secret/config parameter, `odds_api.token`, like the existing `football_api.token`.
+- [x] Do not add match stage fields for v1. Per-stage scoring is represented by admin-controlled default base points that are snapshotted onto newly added matches.
+- [x] Add tests for probability bonus boundaries, base scores, exact score handling, wrong-outcome zero points, stored scoring breakdown, exact-prediction percentage, prediction-page display data, fixture-added notification content, and both Telegram match prediction/result message formats.
 
 ### Suggested PR sequence
 
 Use fewer, milestone-sized PRs for this feature:
 
-1. Research and choose a betting-probability source. ✅
+1. [x] Research and choose a betting-probability source.
    - Selected provider: The Odds API v4.
    - Focus: national-team competitions; API-Football/API-Sports was checked in browser and not selected for v1 odds because its coverage table showed no odds coverage for the checked World Cup/Euro/AFCON/CONCACAF national rows.
    - Research deliverable: `docs/betting-probability-source.md`.
    - For future provider/documentation research, open blocked sites in a real browser and let the user solve CAPTCHAs instead of stopping at command-line Cloudflare/JavaScript challenges.
-2. Add probability/scoring persistence and scoring engine.
+2. [x] Add probability/scoring persistence and scoring engine.
    - Add nullable match fields for home/draw/away probabilities and source. Existing matches must remain valid.
    - Add match fields for base outcome points and base exact points, populated from the current defaults when each match is created.
    - Add admin support for changing the current default outcome/exact base points used for future imported matches; existing matches should not be changed by default changes.
@@ -152,7 +158,7 @@ Use fewer, milestone-sized PRs for this feature:
    - Persist the scoring breakdown on predictions.
    - Fix exact-prediction percentage so it uses scoring result, not a fixed exact-score point value.
    - Include scoring unit/integration tests in this PR.
-3. Add upcoming-match/probability import and fixture-added Telegram notification.
+3. [x] Add upcoming-match/probability import and fixture-added Telegram notification.
    - Keep `football-data.org` as the fixture source and reuse the existing data-update flow/window.
    - Import only configured national-team tournaments for v1.
    - For each missing football-data fixture, query The Odds API only for the matching event's odds.
@@ -163,7 +169,7 @@ Use fewer, milestone-sized PRs for this feature:
    - Return added match details for notifications.
    - Send the Telegram fixture-added message with added matches and stored probabilities.
    - Include tests for import matching, unavailable-odds skip behavior, and fixture-added notification content.
-4. Add probability/scoring visibility across user-facing surfaces.
+4. [x] Add probability/scoring visibility across user-facing surfaces.
    - Show probabilities and scoring information on the predictions page.
    - Include probabilities and derived outcomes in the after-kickoff Telegram prediction message.
    - Include final result, per-user scoring calculations, and standings changes in the after-full-time Telegram result/scoring message.
