@@ -18,6 +18,9 @@
                             </div>
                             <div class="match-item-mobile left-sided">
                                 {{ match.homeTeamId.name }}
+                                {% if match.hasProbabilitySnapshot %}
+                                    <span class="probability-bonus-chip">+{{ match.getProbabilityBonusForOutcome('1') }}</span>
+                                {% endif %}
                             </div>
                         </div>
                         <div class="bettings">
@@ -26,13 +29,23 @@
                                     {% if predictions[match.id] is defined %}
                                     <div class="bet-form">
                                         {{ form_row(form.homeGoals, {'attr': {'class': 'bet-field' }, 'disabled': match.disabledAttribute }) }}
-                                        <span>:</span>
+                                        <span class="score-separator">
+                                            {% if match.hasProbabilitySnapshot %}
+                                                <span class="probability-bonus-chip draw-bonus-chip">+{{ match.getProbabilityBonusForOutcome('X') }}</span>
+                                            {% endif %}
+                                            :
+                                        </span>
                                         {{ form_row(form.awayGoals, {'attr': {'class': 'bet-field' }, 'disabled': match.disabledAttribute }) }}
                                     </div>
                                 {% else %}
                                     <div class="bet-form not-filled">
                                         {{ form_row(form.homeGoals, {'attr': {'class': 'bet-field', 'placeholder': '?' }, 'disabled': match.disabledAttribute}) }}
-                                        <span>:</span>
+                                        <span class="score-separator">
+                                            {% if match.hasProbabilitySnapshot %}
+                                                <span class="probability-bonus-chip draw-bonus-chip">+{{ match.getProbabilityBonusForOutcome('X') }}</span>
+                                            {% endif %}
+                                            :
+                                        </span>
                                         {{ form_row(form.awayGoals, {'attr': {'class': 'bet-field', 'placeholder': '?' }, 'disabled': match.disabledAttribute }) }}
                                     </div>
                                 {% endif %}
@@ -43,6 +56,9 @@
                                 <img src="{{ asset(match.awayTeamId.teamLogo) }}" width="30" height="30" alt="{{ match.awayTeamId.name }}" />
                             </div>
                             <div class="match-item-mobile right-sided">
+                                {% if match.hasProbabilitySnapshot %}
+                                    <span class="probability-bonus-chip">+{{ match.getProbabilityBonusForOutcome('2') }}</span>
+                                {% endif %}
                                 {{ match.awayTeamId.name }}
                             </div>
                         </div>
@@ -62,12 +78,9 @@
                                 Betting probabilities: home win {{ match.homeWinProbabilityPercent }}%,
                                 draw {{ match.drawProbabilityPercent }}%,
                                 away win {{ match.awayWinProbabilityPercent }}%.
-                                Correct outcome points: home {{ match.getOutcomePointsForOutcome('1') }},
-                                draw {{ match.getOutcomePointsForOutcome('X') }},
-                                away {{ match.getOutcomePointsForOutcome('2') }}.
-                                Exact score points: home {{ match.getExactPointsForOutcome('1') }},
-                                draw {{ match.getExactPointsForOutcome('X') }},
-                                away {{ match.getExactPointsForOutcome('2') }}.
+                                Points available: home win {{ match.getOutcomePointsForOutcome('1') }} / exact {{ match.getExactPointsForOutcome('1') }},
+                                draw {{ match.getOutcomePointsForOutcome('X') }} / exact {{ match.getExactPointsForOutcome('X') }},
+                                away win {{ match.getOutcomePointsForOutcome('2') }} / exact {{ match.getExactPointsForOutcome('2') }}.
                             {% else %}
                                 No probability bonus available. Correct outcome: {{ match.baseOutcomePoints }} pt. Exact score: {{ match.baseExactPoints }} pt.
                             {% endif %}

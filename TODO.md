@@ -36,6 +36,10 @@
 - Admin panel Scoring defaults has a cleaner centered form layout.
 - Submitted predictions can be sent to the configured Telegram chat shortly after kickoff with `sportify:telegram:send-predictions`.
 - Data update Telegram notifications use the app-owned Telegram service/config instead of legacy hardcoded send/pin URLs. Sent messages are pinned by default and can be disabled with `telegram.pin_messages: false`.
+- Probability-weighted scoring v1 is implemented with match scoring snapshots, stored prediction scoring breakdowns, and exact-prediction percentages based on scored results.
+- Upcoming fixture import uses `football-data.org` plus The Odds API snapshots and skips fixtures when complete odds are unavailable.
+- The prediction page shows probability snapshots, probability bonus chips, and points available for each outcome.
+- Telegram fixture-added, prediction, and result/scoring messages include probability and scoring details.
 
 ## Next steps
 
@@ -43,9 +47,11 @@ No backend, frontend, or deployment infrastructure modernization is currently pe
 
 Reported admin follow-ups: none pending.
 
-Required product work:
+Required product work: none pending.
 
-### Probability-weighted scoring
+Completed product work:
+
+### Probability-weighted scoring ✅
 
 Keep the first version simple. Users still predict only scores. The predicted score determines the predicted outcome: home win, draw, or away win. Do not add a goal-difference or close-score bonus.
 
@@ -99,7 +105,7 @@ Total scoring:
 
 Example with outcome 2 and exact 5: if a user predicts the exact score for a 10% probable winner, the probability bonus is `ceil((50 - 10) * 5 / 50) = 4`, so they receive `5 + 4 = 9` points. If they predict only the correct outcome for the same match, they receive `2 + 4 = 6` points.
 
-### Prediction page changes
+### Prediction page changes ✅
 
 - Show the betting-probability snapshot on each prediction card: home win, draw, and away win percentages.
 - Show probability bonus chips directly on the white match bar: home bonus near the home side, draw bonus centered between the score boxes, and away bonus near the away side, for example `+1` and `+2`.
@@ -107,18 +113,18 @@ Example with outcome 2 and exact 5: if a user predicts the exact score for a 10%
 - Show the points available for each possible outcome on the match card, for example correct home win / draw / away win totals and exact-score totals after the probability bonus is applied.
 - If probabilities are missing on legacy/pre-feature matches, show that no probability bonus is available instead of hiding the scoring rule.
 
-### Telegram fixture-added message
+### Telegram fixture-added message ✅
 
 - When the upcoming-match cron/command adds new matches, include the added match list in the Telegram notification.
 - Print each added match with its stored betting probabilities.
 
-### Telegram prediction message after kickoff
+### Telegram prediction message after kickoff ✅
 
 - Keep sending submitted predictions shortly after the match starts.
 - Include the betting-probability snapshot in this pre-result message.
 - Include each user's predicted score and derived predicted outcome.
 
-### Telegram result/scoring message after full time
+### Telegram result/scoring message after full time ✅
 
 - When match results are updated and scores are calculated, send a Telegram result/scoring message.
 - Include the final result, betting-probability snapshot, each user's prediction, whether it was wrong outcome/correct outcome/exact score, and how the final points were calculated.
@@ -142,7 +148,7 @@ Use fewer, milestone-sized PRs for this feature:
    - Focus: national-team competitions; API-Football/API-Sports was checked in browser and not selected for v1 odds because its coverage table showed no odds coverage for the checked World Cup/Euro/AFCON/CONCACAF national rows.
    - Research deliverable: `docs/betting-probability-source.md`.
    - For future provider/documentation research, open blocked sites in a real browser and let the user solve CAPTCHAs instead of stopping at command-line Cloudflare/JavaScript challenges.
-2. Add probability/scoring persistence and scoring engine.
+2. Add probability/scoring persistence and scoring engine. ✅
    - Add nullable match fields for home/draw/away probabilities and source. Existing matches must remain valid.
    - Add match fields for base outcome points and base exact points, populated from the current defaults when each match is created.
    - Add admin support for changing the current default outcome/exact base points used for future imported matches; existing matches should not be changed by default changes.
@@ -152,7 +158,7 @@ Use fewer, milestone-sized PRs for this feature:
    - Persist the scoring breakdown on predictions.
    - Fix exact-prediction percentage so it uses scoring result, not a fixed exact-score point value.
    - Include scoring unit/integration tests in this PR.
-3. Add upcoming-match/probability import and fixture-added Telegram notification.
+3. Add upcoming-match/probability import and fixture-added Telegram notification. ✅
    - Keep `football-data.org` as the fixture source and reuse the existing data-update flow/window.
    - Import only configured national-team tournaments for v1.
    - For each missing football-data fixture, query The Odds API only for the matching event's odds.
@@ -163,7 +169,7 @@ Use fewer, milestone-sized PRs for this feature:
    - Return added match details for notifications.
    - Send the Telegram fixture-added message with added matches and stored probabilities.
    - Include tests for import matching, unavailable-odds skip behavior, and fixture-added notification content.
-4. Add probability/scoring visibility across user-facing surfaces.
+4. Add probability/scoring visibility across user-facing surfaces. ✅
    - Show probabilities and scoring information on the predictions page.
    - Include probabilities and derived outcomes in the after-kickoff Telegram prediction message.
    - Include final result, per-user scoring calculations, and standings changes in the after-full-time Telegram result/scoring message.

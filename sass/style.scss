@@ -933,6 +933,32 @@ h2 {
             padding: 6px 5px;
         }
 
+        .probability-bonus-chip {
+            display: inline-block;
+            margin: 0 6px;
+            padding: 2px 7px;
+            border-radius: 10px;
+            background: #ffc107;
+            color: #2c3e50;
+            font-size: 12px;
+            line-height: 16px;
+            white-space: nowrap;
+        }
+
+        .score-separator {
+            position: relative;
+            display: inline-block;
+            min-width: 8px;
+        }
+
+        .draw-bonus-chip {
+            position: absolute;
+            top: -22px;
+            left: 50%;
+            margin: 0;
+            transform: translateX(-50%);
+        }
+
         .bettings {
             z-index: 1;
             font-size: 16px;
