@@ -57,11 +57,12 @@ Goal: reduce legacy Symfony application structure only where it lowers future up
 
 Suggested sequence:
 
-1. Discovery/documentation PR
+1. [x] Discovery/documentation PR
    - Inventory legacy structure: `app/AppKernel.php`, `app/config`, `web/`, bundle-style app code/resources, and root namespace autoloading.
    - Identify which items block or complicate future Symfony, Doctrine DBAL, PHP, Docker, or deployment changes.
-   - Confirm the first coding milestone before implementation.
-2. Kernel/autoload modernization PR
+   - Discovery deliverable: `docs/structural-backend-modernization-discovery.md`.
+   - Recommended first coding milestone: kernel/autoload modernization.
+2. [ ] Kernel/autoload modernization PR
    - Move toward a conventional `src/Kernel.php` and explicit application namespace without changing runtime behavior.
    - Keep compatibility shims if needed for console, tests, cache, and deployment entrypoints.
 3. Config layout modernization PR
