@@ -26,4 +26,14 @@ class FootballDataOrgFetcherTest extends \PHPUnit\Framework\TestCase
             $request->getSession()->getFlashBag()->peek('message')
         );
     }
+
+    public function testProcessResponseThrowsForNonOkResponseWithoutRequestSession()
+    {
+        $fetcher = new FootballDataOrg(new RequestStack(), 'https://api.football-data.org/v4', 'test-token');
+
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Football-Data request failed (HTTP 429 Too Many Requests).');
+
+        $fetcher->processResponse(new Response(429), 'teams');
+    }
 }

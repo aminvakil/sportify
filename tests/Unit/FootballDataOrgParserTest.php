@@ -97,7 +97,20 @@ class FootballDataOrgParserTest extends \PHPUnit\Framework\TestCase
         $this->assertSame(3, $parsed[0]['away_team_goals']);
     }
 
-    private function createFixture($id, $status, $utcDate, $fullTimeHome = null, $fullTimeAway = null, $extraTimeHome = null, $extraTimeAway = null, $penaltiesHome = null, $penaltiesAway = null, $useV4ScoreProperties = false)
+    public function testParseFixturesSkipsUnresolvedTeams()
+    {
+        $valid = $this->createFixture(1, 'SCHEDULED', '2020-01-02T12:00:00Z');
+        $v4Unresolved = $this->createFixture(2, 'SCHEDULED', '2020-01-03T12:00:00Z', null, null, null, null, null, null, false, null, 20);
+        $v2Placeholder = $this->createFixture(3, 'SCHEDULED', '2020-01-04T12:00:00Z', null, null, null, null, null, null, false, 10, 757);
+
+        $parser = new FootballDataOrg();
+        $parsed = $parser->parseFixtures(array($valid, $v4Unresolved, $v2Placeholder));
+
+        $this->assertCount(1, $parsed);
+        $this->assertSame(1, $parsed[0]['match_id']);
+    }
+
+    private function createFixture($id, $status, $utcDate, $fullTimeHome = null, $fullTimeAway = null, $extraTimeHome = null, $extraTimeAway = null, $penaltiesHome = null, $penaltiesAway = null, $useV4ScoreProperties = false, $homeTeamId = 10, $awayTeamId = 20)
     {
         $fixture = new \stdClass();
         $fixture->id = $id;
@@ -108,10 +121,10 @@ class FootballDataOrgParserTest extends \PHPUnit\Framework\TestCase
         $fixture->season->id = 99;
 
         $fixture->homeTeam = new \stdClass();
-        $fixture->homeTeam->id = 10;
+        $fixture->homeTeam->id = $homeTeamId;
 
         $fixture->awayTeam = new \stdClass();
-        $fixture->awayTeam->id = 20;
+        $fixture->awayTeam->id = $awayTeamId;
 
         $fixture->score = new \stdClass();
         $fixture->score->fullTime = new \stdClass();

@@ -58,16 +58,20 @@ class FootballDataOrg
     public function processResponse(Response $response, $bodyProperty = null)
     {
         if ($response->getStatusCode() !== 200) {
+            $message = sprintf(
+                'Football-Data request failed (HTTP %d %s).',
+                $response->getStatusCode(),
+                $response->getReasonPhrase()
+            );
+
             $request = $this->requestStack->getCurrentRequest();
             if ($request && $request->hasSession()) {
-                $request->getSession()->getFlashBag()->add('message', sprintf(
-                    'Football-Data request failed (HTTP %d %s).',
-                    $response->getStatusCode(),
-                    $response->getReasonPhrase()
-                ));
+                $request->getSession()->getFlashBag()->add('message', $message);
+
+                return array();
             }
 
-            return array();
+            throw new \RuntimeException($message);
         }
 
         return ($bodyProperty)

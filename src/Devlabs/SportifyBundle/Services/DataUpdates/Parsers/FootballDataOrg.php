@@ -37,7 +37,9 @@ class FootballDataOrg
      */
     public function parseFixtures(array $fixtures)
     {
-        foreach ($fixtures as &$fixture) {
+        $parsedFixtures = array();
+
+        foreach ($fixtures as $fixture) {
             $parsedFixture = array();
 
             $parsedFixture['match_id'] = $fixture->id;
@@ -45,10 +47,10 @@ class FootballDataOrg
             $parsedFixture['home_team_id'] = $fixture->homeTeam->id;
             $parsedFixture['away_team_id'] = $fixture->awayTeam->id;
 
-            // NOTE: team id 757 is just a placeholder used in this API,
-            // when match is scheduled, but teams are still not clear.
-            // This occurs in scheduled knock-out round matches.
-            if ($parsedFixture['home_team_id'] == 757 || $parsedFixture['away_team_id'] == 757) {
+            // NOTE: v2 used team id 757 as a placeholder, while v4 uses null
+            // team ids for unresolved scheduled teams.
+            if ($parsedFixture['home_team_id'] === null || $parsedFixture['away_team_id'] === null ||
+                $parsedFixture['home_team_id'] == 757 || $parsedFixture['away_team_id'] == 757) {
                 continue;
             }
 
@@ -83,10 +85,10 @@ class FootballDataOrg
                 $parsedFixture['odds_away_win'] = null;
             }
 */
-            $fixture = $parsedFixture;
+            $parsedFixtures[] = $parsedFixture;
         }
 
-        return $fixtures;
+        return $parsedFixtures;
     }
 
     /**
