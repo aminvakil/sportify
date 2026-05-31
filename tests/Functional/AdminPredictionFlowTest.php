@@ -5,7 +5,7 @@ namespace Tests\Functional;
 require_once __DIR__.'/FunctionalTestCase.php';
 
 if (!defined('WEB_DIRECTORY')) {
-    define('WEB_DIRECTORY', __DIR__.'/../../web');
+    define('WEB_DIRECTORY', __DIR__.'/../../public');
 }
 
 use Devlabs\SportifyBundle\Entity\MatchEntity;

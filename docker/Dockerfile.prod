@@ -2,7 +2,7 @@
 #
 # Production multi-stage build. Two targets are exposed:
 #   * php   — php-fpm runtime with vendor and source baked in.
-#   * httpd — Apache runtime that serves web/ and proxies PHP to php-fpm.
+#   * httpd — Apache runtime that serves public/ and proxies PHP to php-fpm.
 #
 # app/config/parameters.yml must exist before building.
 
@@ -39,7 +39,7 @@ COPY composer.json composer.lock ./
 COPY app app
 COPY config config
 COPY src src
-COPY web web
+COPY public public
 COPY bin bin
 RUN composer install --no-dev --no-interaction --no-progress --optimize-autoloader --no-scripts
 
@@ -49,7 +49,7 @@ RUN npm install -g gulp-cli@2.3.0
 WORKDIR /app
 COPY package.json package-lock.json gulpfile.js ./
 COPY sass sass
-COPY web web
+COPY public public
 RUN npm install --no-audit --no-fund
 RUN gulp
 
@@ -71,13 +71,13 @@ RUN set -eux; \
     rm -rf /var/lib/apt/lists/*
 WORKDIR /app
 COPY --chown=www-data:www-data --from=composer-build /app /app
-COPY --chown=www-data:www-data --from=asset-build /app/web/css /app/web/css
-COPY --chown=www-data:www-data --from=asset-build /app/web/js /app/web/js
+COPY --chown=www-data:www-data --from=asset-build /app/public/css /app/public/css
+COPY --chown=www-data:www-data --from=asset-build /app/public/js /app/public/js
 COPY docker/prod/init.sh /usr/local/bin/sportify-prod-init
 RUN set -eux; \
     chmod +x /usr/local/bin/sportify-prod-init; \
-    mkdir -p var/cache var/logs var/sessions web/bundles; \
-    chown -R www-data:www-data var web/bundles
+    mkdir -p var/cache var/logs var/sessions public/bundles; \
+    chown -R www-data:www-data var public/bundles
 USER www-data
 EXPOSE 9000
 CMD ["php-fpm"]
@@ -85,5 +85,5 @@ CMD ["php-fpm"]
 # Stage 4: Apache httpd runtime.
 FROM httpd:2.4 AS httpd
 COPY docker/httpd/httpd.prod.conf /usr/local/apache2/conf/httpd.conf
-COPY --from=php /app/web /app/web
+COPY --from=php /app/public /app/public
 EXPOSE 80

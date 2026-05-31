@@ -7,7 +7,7 @@ This is a legacy Symfony application being upgraded incrementally.
 Current baseline:
 - Symfony 7.4 LTS
 - PHP 8.5 in Docker
-- Apache httpd 2.4 in Docker serving `web/` and proxying dynamic requests to PHP
+- Apache httpd 2.4 in Docker serving `public/` and proxying dynamic requests to PHP
 - MySQL 9.7 in Docker
 - Composer 2.2.x in Docker
 - Node 26 / npm 11 / Gulp 4 in Docker; frontend dependencies install through npm

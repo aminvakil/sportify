@@ -19,7 +19,7 @@ The major steps needed to set-up Symfony and all the tools (for both development
 `npm install` *(if running on a machine with 0.5/1GB RAM add swap)*  
 `gulp`
 
-We suggest that you setup your web server to use `web/` as root directory.
+We suggest that you setup your web server to use `public/` as root directory.
 The app has two main environments:
 * Development (**dev**):
     + Accessed by navigating to `app_dev.php` - can only be accessed locally (from 127.0.0.1, a.k.a. localhost)

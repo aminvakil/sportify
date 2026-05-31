@@ -68,7 +68,7 @@ docker compose -f docker-compose.prod.yml build
 docker compose -f docker-compose.prod.yml up -d
 ```
 
-The `init` service runs before `php` and `httpd`. It waits for MySQL, creates the configured database if needed, updates the schema, installs bundle assets into the shared `web/bundles` volume, and clears/warms the prod cache.
+The `init` service runs before `php` and `httpd`. It waits for MySQL, creates the configured database if needed, updates the schema, installs bundle assets into the shared `public/bundles` volume, and clears/warms the prod cache.
 
 Check the stack:
 

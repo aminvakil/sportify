@@ -2,7 +2,7 @@
 
 ## Current baseline
 
-- Docker development setup is verified. `httpd` serves `web/` static files and proxies dynamic requests to PHP.
+- Docker development setup is verified. `httpd` serves `public/` static files and proxies dynamic requests to PHP.
 - Runtime baseline: Symfony 7.4 LTS, PHP 8.5, Composer 2.2.x, MySQL 9.7, Apache httpd 2.4, Node 26/npm 11, and Gulp 4.
 - Composer dependencies are current within the existing constraints. Current abandoned packages in `composer.lock`: none known.
 - GitHub Actions CI is in place and green on `main`.
@@ -19,6 +19,7 @@
 - Symfony 7.4 deprecation re-check is clean for self and direct notices. The remaining indirect notices are from Doctrine DBAL schema events and require a future DBAL major upgrade.
 - Modernized frontend tooling from Node 6/npm 3/Bower/Gulp 3/Laravel Elixir/`node-sass` to Node 26/npm 11, npm-managed dependencies, Gulp 4, and Dart Sass.
 - Upgraded Docker MySQL from 5.7 to 9.7 with explicit utf8mb4 defaults. Schema validation, reserved-word checks, SQL mode, and charset/collation checks are clean.
+- Moved the public document root from `web/` to `public/` across Docker, httpd, frontend asset output, tests, and deployment docs.
 
 ## Deployment status
 
@@ -45,7 +46,7 @@
 
 ## Next steps
 
-Structural backend modernization is the next technical-debt planning item. Do not start coding it until the scope is confirmed.
+Bundle-structure cleanup is the next technical-debt planning item. Do not start coding it until the scope is confirmed.
 
 Reported admin follow-ups: none pending.
 
@@ -69,7 +70,7 @@ Suggested sequence:
    - Keep compatibility shims if needed for console, tests, cache, and deployment entrypoints.
 3. [x] Config layout modernization PR
    - Move legacy `app/config/*.yml` toward modern `config/packages`, `config/routes`, and environment-specific config only after the kernel/autoload step is stable.
-4. [ ] Public document-root modernization PR
+4. [x] Public document-root modernization PR
    - Move `web/` toward `public/` together with the required Docker, httpd, asset, and deployment updates.
 5. [ ] Bundle-structure cleanup PR
    - Only after the above steps, consider reducing app-owned bundle conventions if they still add maintenance cost.
