@@ -19,7 +19,6 @@ The project is intentionally old. Do not modernize broad areas unless the curren
 - Make minimal, focused changes per step.
 - Work on a branch other than `main`; never commit or push on `main` unless explicitly asked.
 - Commit and push changes to that branch, create a pull request, and check whether the PR tests pass.
-- After pushing and creating a pull request, use Pi's review extension against the `main` branch and summarize the review findings in session while GitHub Actions runs.
 - If PR tests fail, investigate, fix the failure on the same branch, push the fix, and re-check the PR tests.
 - Do not merge PRs; the user will handle merging.
 - Do not combine unrelated upgrades.
