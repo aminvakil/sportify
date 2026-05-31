@@ -37,6 +37,7 @@ ENV COMPOSER_ALLOW_SUPERUSER=1 \
     SYMFONY_ENV=prod
 COPY composer.json composer.lock ./
 COPY app app
+COPY config config
 COPY src src
 COPY web web
 COPY bin bin

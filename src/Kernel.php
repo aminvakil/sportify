@@ -55,6 +55,15 @@ class Kernel extends BaseKernel
 
     public function registerContainerConfiguration(LoaderInterface $loader): void
     {
-        $loader->load($this->getRootDir().'/config/config_'.$this->getEnvironment().'.yml');
+        $configDir = $this->getProjectDir().'/config';
+
+        $loader->load($configDir.'/packages/*.yml', 'glob');
+        $loader->load($configDir.'/packages/'.$this->getEnvironment().'/*.yml', 'glob');
+        $loader->load($configDir.'/services.yml');
+
+        $environmentServices = $configDir.'/services_'.$this->getEnvironment().'.yml';
+        if (is_file($environmentServices)) {
+            $loader->load($environmentServices);
+        }
     }
 }

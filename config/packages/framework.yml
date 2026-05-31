@@ -1,0 +1,27 @@
+framework:
+    #esi:             ~
+    translator: { fallbacks: [en] }
+    #translator:      { fallbacks: ["%locale%"] }
+    secret:          "%secret%"
+    router:
+        resource: "%kernel.project_dir%/config/routes.yml"
+        strict_requirements: ~
+    form:            ~
+    csrf_protection: ~
+    validation:      ~
+    property_info:
+        with_constructor_extractor: false
+    mailer:
+        dsn: "%mailer_dsn%"
+#    serializer:
+#        enabled: true
+#        enable_annotations: true
+    default_locale:  "%locale%"
+    trusted_hosts:   ~
+    session:
+        # http://symfony.com/doc/current/reference/configuration/framework.html#handler-id
+        handler_id:  session.handler.native_file
+        save_path:   "%kernel.project_dir%/var/sessions/%kernel.environment%"
+    fragments:       ~
+    http_method_override: true
+    assets: ~

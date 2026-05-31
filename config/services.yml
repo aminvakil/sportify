@@ -1,0 +1,21 @@
+imports:
+    - { resource: ../app/config/parameters.yml }
+    - { resource: "@DevlabsSportifyBundle/Resources/config/services.yml" }
+
+# Put parameters here that don't need to change on each machine where the app is deployed
+# http://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
+parameters:
+    locale: en
+    # application parameters
+    football_api.name: football_data_org
+    football_api.base_uri: http://api.football-data.org/v2
+    app.registration_confirmation_enabled: true
+    app.oauth_access_token_lifetime: 7776000 # 90 days in seconds
+    app.scoring.default_outcome_points: 2
+    app.scoring.default_exact_points: 5
+
+# Learn more about services, parameters and containers at
+# http://symfony.com/doc/current/book/service_container.html
+services:
+    annotation_reader:
+        class: Doctrine\Common\Annotations\AnnotationReader

@@ -1,0 +1,2 @@
+parameters:
+    app.registration_confirmation_enabled: false
