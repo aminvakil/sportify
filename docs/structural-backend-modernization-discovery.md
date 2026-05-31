@@ -65,7 +65,7 @@ Suggested acceptance checks for that PR, using Docker as the source of truth:
 
 ## Guardrails
 
-- Keep each PR behavior-preserving unless a milestone explicitly says otherwise.
+- Keep each PR focused on one coherent structural milestone. Broader internal changes are acceptable when the touched pieces are tightly coupled, but preserve observable runtime behavior unless the milestone explicitly says otherwise.
 - Do not combine structural cleanup with dependency upgrades or product changes.
 - Prefer temporary compatibility wrappers over broad rewrites.
 - Expand tests only for boot/config behavior touched by the specific milestone.
