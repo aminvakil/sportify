@@ -45,7 +45,9 @@
 
 Structural backend modernization is the next technical-debt planning item. Do not start coding it until the scope is confirmed.
 
-Reported admin follow-ups: none pending.
+Reported admin follow-ups:
+
+- Admin Data Updates should handle non-200 football-data.org responses without a Symfony 500. Reproduced locally when updating teams for a tournament mapped to Football-Data competition `2000` (`FIFA World Cup`): `/competitions/2000/teams` returned `500 Internal Server Error`, then `Devlabs\SportifyBundle\Services\DataUpdates\Fetchers\FootballDataOrg::processResponse()` tried to fetch the removed Symfony `session` service and raised `ServiceNotFoundException`. Expected behavior: show a flash/error message through a supported session/request-stack path or return a controlled status, not an exception page.
 
 Required product work: none pending.
 
