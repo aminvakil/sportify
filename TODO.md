@@ -46,7 +46,7 @@
 
 ## Next steps
 
-Bundle-structure cleanup is the next technical-debt planning item. Do not start coding it until the scope is confirmed.
+Bundle-structure cleanup is optional, low-urgency technical debt. It is not a current upgrade blocker and should not displace product work or bug fixes. Do not start coding it unless the user explicitly wants to continue structural cleanup and confirms a narrow scope.
 
 Reported admin follow-ups: none pending.
 
@@ -72,8 +72,11 @@ Suggested sequence:
    - Move legacy `app/config/*.yml` toward modern `config/packages`, `config/routes`, and environment-specific config only after the kernel/autoload step is stable.
 4. [x] Public document-root modernization PR
    - Move `web/` toward `public/` together with the required Docker, httpd, asset, and deployment updates.
-5. [ ] Bundle-structure cleanup PR
-   - Only after the above steps, consider reducing app-owned bundle conventions if they still add maintenance cost.
+5. [ ] Optional bundle-structure cleanup PR
+   - Low urgency: the remaining app-owned bundle shell is not a current upgrade blocker.
+   - If pursued, keep the first PR narrow: remove app-owned bundle registration while preserving the existing `Devlabs\SportifyBundle` namespace and runtime behavior.
+   - Move bundle-owned service/validation config to project-level config and register the existing compiler passes from `App\Kernel` before removing the empty bundle shell.
+   - Defer any full `Devlabs\SportifyBundle` to `App` namespace migration and broader container-aware/public-service cleanup unless there is a separate confirmed reason.
 
 Guardrails:
 
