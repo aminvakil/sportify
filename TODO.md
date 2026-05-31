@@ -53,29 +53,30 @@ Planned technical-debt work:
 
 ### Structural backend modernization
 
-Goal: reduce legacy Symfony application structure only where it lowers future upgrade/maintenance risk. Keep each PR behavior-preserving and independently verifiable.
+Goal: reduce legacy Symfony application structure only where it lowers future upgrade/maintenance risk.
 
 Suggested sequence:
 
-1. Discovery/documentation PR
+1. [x] Discovery/documentation PR
    - Inventory legacy structure: `app/AppKernel.php`, `app/config`, `web/`, bundle-style app code/resources, and root namespace autoloading.
    - Identify which items block or complicate future Symfony, Doctrine DBAL, PHP, Docker, or deployment changes.
-   - Confirm the first coding milestone before implementation.
-2. Kernel/autoload modernization PR
+   - Discovery deliverable: `docs/structural-backend-modernization-discovery.md`.
+   - Recommended first coding milestone: kernel/autoload modernization.
+2. [ ] Kernel/autoload modernization PR
    - Move toward a conventional `src/Kernel.php` and explicit application namespace without changing runtime behavior.
    - Keep compatibility shims if needed for console, tests, cache, and deployment entrypoints.
-3. Config layout modernization PR
+3. [ ] Config layout modernization PR
    - Move legacy `app/config/*.yml` toward modern `config/packages`, `config/routes`, and environment-specific config only after the kernel/autoload step is stable.
-4. Public document-root modernization PR
+4. [ ] Public document-root modernization PR
    - Move `web/` toward `public/` together with the required Docker, httpd, asset, and deployment updates.
-5. Bundle-structure cleanup PR
+5. [ ] Bundle-structure cleanup PR
    - Only after the above steps, consider reducing app-owned bundle conventions if they still add maintenance cost.
 
 Guardrails:
 
+- Keep each PR focused on one coherent structural milestone. Broader internal changes are acceptable when the touched pieces are tightly coupled, but preserve observable runtime behavior unless the milestone explicitly says otherwise.
 - Do not combine structural cleanup with product changes or dependency upgrades.
 - Prefer compatibility shims over broad rewrites.
-- Preserve existing routes, templates, assets, commands, APIs, and deployment behavior unless a specific milestone says otherwise.
 - Expand tests only around touched bootstrapping/config behavior.
 
 Completed product work:
@@ -203,11 +204,6 @@ Use fewer, milestone-sized PRs for this feature:
    - Include probabilities and derived outcomes in the after-kickoff Telegram prediction message.
    - Include final result, per-user scoring calculations, and standings changes in the after-full-time Telegram result/scoring message.
    - Include tests for prediction-page display data and both Telegram match prediction/result message formats.
-
-Deferred infrastructure work:
-
-- Defer structural backend modernization until a framework step requires it.
-- Prefer compatibility shims and focused route/config changes over broad rewrites unless a milestone explicitly calls for a replacement.
 
 ## PR sizing strategy
 

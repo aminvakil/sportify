@@ -17,7 +17,7 @@ The project is intentionally old. Do not modernize broad areas unless the curren
 ## Working rules
 
 - Make minimal, focused changes per step.
-- Always make changes on a branch other than `main`; never make changes directly on `main`.
+- Work on a branch other than `main`; never commit or push on `main` unless explicitly asked.
 - Commit and push changes to that branch, create a pull request, and check whether the PR tests pass.
 - If PR tests fail, investigate, fix the failure on the same branch, push the fix, and re-check the PR tests.
 - Do not merge PRs; the user will handle merging.
@@ -26,12 +26,11 @@ The project is intentionally old. Do not modernize broad areas unless the curren
 - Keep Docker as the source of truth for local verification.
 - Do not install host packages.
 - Do not commit secrets, API tokens, local `parameters.yml`, `vendor/`, `node_modules/`, `lib/`, generated assets, or cache/log files.
-- Do not push on `main` unless explicitly asked.
 - Keep PR descriptions concise; do not add a detailed summary unless asked.
 - For user-facing web changes, verify the affected flow in a real local browser in addition to command-line smoke checks.
 - If Chromium fails to start during browser verification, try launching it with `--no-sandbox`.
 - For internet research, open important provider/documentation pages in a real browser when command-line access hits a CAPTCHA, JavaScript challenge, or Cloudflare block; ask the user to solve the challenge instead of treating the site as unreachable.
-- For documentation-only changes, including `AGENTS.md`, `TODO.md`, and files under `docs/`, still commit and push on a non-`main` branch, but do not run local Docker verification or wait for CI unless explicitly asked.
+- For documentation-only changes (`AGENTS.md`, `TODO.md`, and `docs/`), still commit and push on a non-`main` branch, but skip local Docker verification and CI waits unless explicitly asked.
 
 ## Output and token discipline
 
