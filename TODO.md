@@ -37,18 +37,17 @@
 - Submitted predictions can be sent to the configured Telegram chat shortly after kickoff with `sportify:telegram:send-predictions`.
 - Data update Telegram notifications use the app-owned Telegram service/config instead of legacy hardcoded send/pin URLs. Sent messages are pinned by default and can be disabled with `telegram.pin_messages: false`.
 - Probability-weighted scoring v1 is implemented with match scoring snapshots, stored prediction scoring breakdowns, and exact-prediction percentages based on scored results.
+- Football-Data integration uses v4, including the v4 teams/fixtures parser fields.
 - Upcoming fixture import uses `football-data.org` plus The Odds API snapshots and skips fixtures when complete odds are unavailable.
 - The prediction page shows probability snapshots, probability bonus chips, and points available for each outcome.
 - Telegram fixture-added, prediction, and result/scoring messages include probability and scoring details.
+- Admin Data Updates handles non-200 Football-Data responses with a flash message instead of a Symfony 500.
 
 ## Next steps
 
 Structural backend modernization is the next technical-debt planning item. Do not start coding it until the scope is confirmed.
 
-Reported admin follow-ups:
-
-- Migrate the Football-Data integration from v2 to v4. The app currently configures `football_api.base_uri: http://api.football-data.org/v2`; during local testing, v2 `/competitions/2000/teams` returned `500 Internal Server Error`, while v4 with the same local token returned `200 OK` for `/competitions/2000`, `/competitions/2000/teams`, and `/competitions/2000/matches?dateFrom=2026-06-01&dateTo=2026-07-20`. `2000` is still the correct men's `FIFA World Cup` competition ID in v4. Verify parser compatibility and update tests when switching the base URI.
-- Admin Data Updates should handle non-200 football-data.org responses without a Symfony 500. Reproduced locally when updating teams for a tournament mapped to Football-Data competition `2000` (`FIFA World Cup`): v2 `/competitions/2000/teams` returned `500 Internal Server Error`, then `Devlabs\SportifyBundle\Services\DataUpdates\Fetchers\FootballDataOrg::processResponse()` tried to fetch the removed Symfony `session` service and raised `ServiceNotFoundException`. Expected behavior: show a flash/error message through a supported session/request-stack path or return a controlled status, not an exception page.
+Reported admin follow-ups: none pending.
 
 Required product work: none pending.
 

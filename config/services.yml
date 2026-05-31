@@ -8,7 +8,7 @@ parameters:
     locale: en
     # application parameters
     football_api.name: football_data_org
-    football_api.base_uri: http://api.football-data.org/v2
+    football_api.base_uri: https://api.football-data.org/v4
     app.registration_confirmation_enabled: true
     app.oauth_access_token_lifetime: 7776000 # 90 days in seconds
     app.scoring.default_outcome_points: 2

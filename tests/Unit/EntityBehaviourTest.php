@@ -2,6 +2,10 @@
 
 namespace Tests\Unit;
 
+if (!defined('WEB_DIRECTORY')) {
+    define('WEB_DIRECTORY', __DIR__.'/../../web');
+}
+
 use Devlabs\SportifyBundle\Entity\MatchEntity;
 use Devlabs\SportifyBundle\Entity\Prediction;
 use Devlabs\SportifyBundle\Entity\PredictionChampion;
@@ -95,6 +99,30 @@ class EntityBehaviourTest extends \PHPUnit\Framework\TestCase
         $this->assertSame('Away', $pastMatch->getAwayTeamName());
         $this->assertSame('World Cup', $pastMatch->getTournamentName());
         $this->assertSame('123', (string) $pastMatch);
+    }
+
+    public function testTeamLogoReplacementDeletesExistingWebLogoPath()
+    {
+        $team = new Team();
+        $team->setId(98765);
+        $logoPath = WEB_DIRECTORY.'/img/team_logos/team_logo_98765.svg';
+        $sourcePath = tempnam(sys_get_temp_dir(), 'sportify-team-logo-');
+
+        file_put_contents($logoPath, '<svg>old</svg>');
+        file_put_contents($sourcePath, '<svg>new</svg>');
+
+        try {
+            $team->setTeamLogo($sourcePath, 'svg');
+
+            $this->assertSame('<svg>new</svg>', file_get_contents($logoPath));
+        } finally {
+            if (is_file($logoPath)) {
+                unlink($logoPath);
+            }
+            if (is_file($sourcePath)) {
+                unlink($sourcePath);
+            }
+        }
     }
 
     public function testScoreUpdatesPointsAndDisplaysRelatedData()

@@ -2,8 +2,7 @@
 
 namespace Devlabs\SportifyBundle\Services\DataUpdates\Fetchers;
 
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Exception\RequestException;
@@ -14,15 +13,14 @@ use GuzzleHttp\Exception\RequestException;
  */
 class FootballDataOrg
 {
-    use ContainerAwareTrait;
-
     private $httpClient;
     private $options;
     private $baseUri;
+    private $requestStack;
 
-    public function __construct(ContainerInterface $container, $baseUri, $apiToken)
+    public function __construct(RequestStack $requestStack, $baseUri, $apiToken)
     {
-        $this->container = $container;
+        $this->requestStack = $requestStack;
         $this->httpClient = new Client();
         $this->options = array();
         $this->options['headers']['X-Auth-Token'] = $apiToken;
@@ -60,9 +58,14 @@ class FootballDataOrg
     public function processResponse(Response $response, $bodyProperty = null)
     {
         if ($response->getStatusCode() !== 200) {
-            $this->container->get('session')
-                ->getFlashBag()
-                ->add('message', $response->getReasonPhrase());
+            $request = $this->requestStack->getCurrentRequest();
+            if ($request && $request->hasSession()) {
+                $request->getSession()->getFlashBag()->add('message', sprintf(
+                    'Football-Data request failed (HTTP %d %s).',
+                    $response->getStatusCode(),
+                    $response->getReasonPhrase()
+                ));
+            }
 
             return array();
         }

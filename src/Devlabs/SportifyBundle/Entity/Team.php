@@ -320,8 +320,9 @@ class Team
         }
 
         // delete previous TeamLogo file if NOT the default one
-        if ($this->getTeamLogo() !== 'img/default_team_logo.png') {
-            unlink($this->getTeamLogo());
+        $currentTeamLogo = $this->getTeamLogo();
+        if ($currentTeamLogo !== 'img/default_team_logo.png' && is_file(WEB_DIRECTORY.'/'.$currentTeamLogo)) {
+            unlink(WEB_DIRECTORY.'/'.$currentTeamLogo);
         }
 
         if (strpos($file, 'svg') !== FALSE || in_array($fileExtension, ['svg', 'svg+xml'])) {

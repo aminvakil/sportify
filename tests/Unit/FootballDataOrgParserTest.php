@@ -25,6 +25,19 @@ class FootballDataOrgParserTest extends \PHPUnit\Framework\TestCase
         ), $parsed);
     }
 
+    public function testParseTeamsAcceptsV4CrestProperty()
+    {
+        $team = new \stdClass();
+        $team->id = 10;
+        $team->name = 'Team A';
+        $team->crest = 'https://example.com/team-a.svg';
+
+        $parser = new FootballDataOrg();
+        $parsed = $parser->parseTeams(array($team));
+
+        $this->assertSame('https://example.com/team-a.svg', $parsed[0]['team_logo']);
+    }
+
     public function testParseTournamentsMapsApiObjectsToImportRows()
     {
         $tournament = new \stdClass();
@@ -73,7 +86,18 @@ class FootballDataOrgParserTest extends \PHPUnit\Framework\TestCase
         ), $parsed[1]);
     }
 
-    private function createFixture($id, $status, $utcDate, $fullTimeHome = null, $fullTimeAway = null, $extraTimeHome = null, $extraTimeAway = null, $penaltiesHome = null, $penaltiesAway = null)
+    public function testParseFixturesAcceptsV4ScoreProperties()
+    {
+        $finished = $this->createFixture(2, 'FINISHED', '2020-01-03T12:00:00Z', 4, 3, null, null, null, null, true);
+
+        $parser = new FootballDataOrg();
+        $parsed = $parser->parseFixtures(array($finished));
+
+        $this->assertSame(4, $parsed[0]['home_team_goals']);
+        $this->assertSame(3, $parsed[0]['away_team_goals']);
+    }
+
+    private function createFixture($id, $status, $utcDate, $fullTimeHome = null, $fullTimeAway = null, $extraTimeHome = null, $extraTimeAway = null, $penaltiesHome = null, $penaltiesAway = null, $useV4ScoreProperties = false)
     {
         $fixture = new \stdClass();
         $fixture->id = $id;
@@ -91,14 +115,24 @@ class FootballDataOrgParserTest extends \PHPUnit\Framework\TestCase
 
         $fixture->score = new \stdClass();
         $fixture->score->fullTime = new \stdClass();
-        $fixture->score->fullTime->homeTeam = $fullTimeHome;
-        $fixture->score->fullTime->awayTeam = $fullTimeAway;
         $fixture->score->extraTime = new \stdClass();
-        $fixture->score->extraTime->homeTeam = $extraTimeHome;
-        $fixture->score->extraTime->awayTeam = $extraTimeAway;
         $fixture->score->penalties = new \stdClass();
-        $fixture->score->penalties->homeTeam = $penaltiesHome;
-        $fixture->score->penalties->awayTeam = $penaltiesAway;
+
+        if ($useV4ScoreProperties) {
+            $fixture->score->fullTime->home = $fullTimeHome;
+            $fixture->score->fullTime->away = $fullTimeAway;
+            $fixture->score->extraTime->home = $extraTimeHome;
+            $fixture->score->extraTime->away = $extraTimeAway;
+            $fixture->score->penalties->home = $penaltiesHome;
+            $fixture->score->penalties->away = $penaltiesAway;
+        } else {
+            $fixture->score->fullTime->homeTeam = $fullTimeHome;
+            $fixture->score->fullTime->awayTeam = $fullTimeAway;
+            $fixture->score->extraTime->homeTeam = $extraTimeHome;
+            $fixture->score->extraTime->awayTeam = $extraTimeAway;
+            $fixture->score->penalties->homeTeam = $penaltiesHome;
+            $fixture->score->penalties->awayTeam = $penaltiesAway;
+        }
 
         return $fixture;
     }
