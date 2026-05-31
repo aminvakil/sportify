@@ -11,7 +11,7 @@ use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
 
 if (!defined('WEB_DIRECTORY')) {
-    define('WEB_DIRECTORY', __DIR__.'/../../web');
+    define('WEB_DIRECTORY', __DIR__.'/../../public');
 }
 
 class MatchHistoryTemplateTest extends TestCase

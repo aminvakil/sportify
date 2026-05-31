@@ -19,20 +19,20 @@ var jsSources = [
     'node_modules/owl.carousel/dist/owl.carousel.min.js',
     'node_modules/chosen-js/chosen.jquery.js',
     'node_modules/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js',
-    'web/js/script.js'
+    'public/js/script.js'
 ];
 
 function styles() {
     return gulp.src(cssSources)
         .pipe(sass().on('error', sass.logError))
         .pipe(concat('style.css'))
-        .pipe(gulp.dest('web/css'));
+        .pipe(gulp.dest('public/css'));
 }
 
 function scripts() {
     return gulp.src(jsSources)
         .pipe(concat('all-scripts.js'))
-        .pipe(gulp.dest('web/js'));
+        .pipe(gulp.dest('public/js'));
 }
 
 exports.styles = styles;

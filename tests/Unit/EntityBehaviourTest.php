@@ -3,7 +3,7 @@
 namespace Tests\Unit;
 
 if (!defined('WEB_DIRECTORY')) {
-    define('WEB_DIRECTORY', __DIR__.'/../../web');
+    define('WEB_DIRECTORY', __DIR__.'/../../public');
 }
 
 use Devlabs\SportifyBundle\Entity\MatchEntity;

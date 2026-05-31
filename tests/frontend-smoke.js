@@ -16,8 +16,8 @@ function assertFileContains(filePath, expected) {
     );
 }
 
-assertFileContains('web/css/style.css', '.navbar');
-assertFileContains('web/js/all-scripts.js', 'jQuery');
+assertFileContains('public/css/style.css', '.navbar');
+assertFileContains('public/js/all-scripts.js', 'jQuery');
 
 var baseTemplate = readProjectFile('app/Resources/views/base.html.twig');
 

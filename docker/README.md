@@ -69,7 +69,7 @@ docker compose -f docker-compose.prod.yml up -d
 ```
 
 On startup, the `init` service waits for MySQL, creates the configured database if
-needed, updates the schema, installs bundle assets into a shared `web/bundles`
+needed, updates the schema, installs bundle assets into a shared `public/bundles`
 volume, and clears/warms the shared prod cache before `php` and `httpd` start.
 Because `app/config/parameters.yml` is baked into the image, rebuild and redeploy
 after parameter changes. To rerun the idempotent initialization after a deployment:
