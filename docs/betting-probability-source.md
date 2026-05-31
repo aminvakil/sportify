@@ -4,7 +4,7 @@
 
 Use **The Odds API v4** as the first betting-probability source.
 
-The first implementation should keep `football-data.org` as the fixture source, as it is today. For each upcoming `football-data.org` fixture that is not already in the database, query The Odds API for that specific match's pre-kickoff head-to-head odds. Add the match and its odds snapshot to the database together. If The Odds API cannot be reached, the match cannot be matched there, or all three home/draw/away outcomes are not returned, do not create the local match. Store enough audited source text on the match to explain which odds provider/bookmaker/market was used.
+Keep `football-data.org` as the fixture source. For each upcoming fixture that is not already in the database, query The Odds API for that specific match's pre-kickoff head-to-head odds. Add the match and its odds snapshot to the database together. If The Odds API cannot be reached, the match cannot be matched there, or all three home/draw/away outcomes are not returned, do not create the local match. Store enough source text on the match to explain which odds provider/bookmaker/market was used.
 
 ## Why this provider
 
@@ -133,11 +133,8 @@ Use the away value as the remainder so the stored values always total exactly `1
 ## Implementation notes for later PRs
 
 - Add `odds_api.token` to deployment documentation and local parameter setup; do not commit real keys.
-- Keep the odds-provider setup simple: the only required secret/config value should be `odds_api.token`.
-- Retrieve fixtures from `football-data.org`, then retrieve odds only for each matched new fixture from The Odds API.
-- Store the match and its probabilities together when creating a match. Do not refresh probabilities for existing matches.
+- Do not refresh probabilities for existing matches.
 - Store probabilities as whole-number integer percentages.
-- Do not add imported matches when odds are missing or The Odds API is unreachable; every newly imported match must have a stored probability snapshot.
 - Track response headers `x-requests-remaining`, `x-requests-used`, and `x-requests-last` in debug logs or command output summaries.
 - The Odds API terms mention responsible-gambling messaging when the service is used to promote bookmakers or gambling services. Sportify uses derived probabilities for a private prediction game, not bookmaker promotion, but the user-facing copy should avoid betting calls to action.
 

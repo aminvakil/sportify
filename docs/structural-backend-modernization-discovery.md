@@ -2,7 +2,7 @@
 
 ## Scope
 
-This discovery documents legacy Symfony application structure that remains after the Symfony 7.4 upgrade. It is intentionally planning-only: do not change code from this document without confirming a focused milestone first.
+This document inventories legacy Symfony structure that remains after the Symfony 7.4 upgrade. It is planning-only: do not change code from it without confirming a focused milestone first.
 
 ## Current structure inventory
 
@@ -44,10 +44,10 @@ Start with **kernel/autoload modernization**, not config or document-root moves.
 
 Proposed goal:
 
-- Add a conventional namespaced kernel while keeping current behavior and paths working.
+- Add a conventional namespaced kernel while keeping current paths working.
 - Keep `app/AppKernel.php` as a compatibility wrapper if needed by entrypoints, tests, or deployment during the transition.
 - Add explicit Composer autoloading for new application classes without breaking existing `Devlabs\SportifyBundle\...` classes or the current Symfony compatibility shims.
-- Do not move config files, templates, public assets, or the document root in this milestone.
+- Leave config files, templates, public assets, and the document root in place for this milestone.
 
 Suggested acceptance checks for that PR, using Docker as the source of truth:
 
