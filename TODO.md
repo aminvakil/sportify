@@ -48,7 +48,9 @@
 
 Bundle-structure cleanup is optional, low-urgency technical debt. It is not a current upgrade blocker and should not displace product work or bug fixes. Do not start coding it unless the user explicitly wants to continue structural cleanup and confirms a narrow scope.
 
-Reported admin follow-ups: none pending.
+Reported admin follow-ups:
+
+- [ ] Fix FIFA World Cup logo import/display on `/matches`. Verified locally after joining the seeded tournament: World Cup team logo images render broken on match cards (`naturalWidth`/`naturalHeight` are `0`), and the tournament uses the default logo. Check whether Football-Data crest URLs are being downloaded/stored correctly and whether generated local `/img/team_logos/...` paths are served correctly.
 
 Required product work: none pending.
 
