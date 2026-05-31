@@ -4,7 +4,9 @@
     "type": "project",
     "autoload": {
         "psr-4": {
-            "": "src/"
+            "App\\": "src/",
+            "Devlabs\\": "src/Devlabs/",
+            "Symfony\\Component\\DependencyInjection\\": "src/Symfony/Component/DependencyInjection/"
         },
         "classmap": [
             "app/AppKernel.php",

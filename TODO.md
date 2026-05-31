@@ -62,7 +62,7 @@ Suggested sequence:
    - Identify which items block or complicate future Symfony, Doctrine DBAL, PHP, Docker, or deployment changes.
    - Discovery deliverable: `docs/structural-backend-modernization-discovery.md`.
    - Recommended first coding milestone: kernel/autoload modernization.
-2. [ ] Kernel/autoload modernization PR
+2. [x] Kernel/autoload modernization PR
    - Move toward a conventional `src/Kernel.php` and explicit application namespace without changing runtime behavior.
    - Keep compatibility shims if needed for console, tests, cache, and deployment entrypoints.
 3. [ ] Config layout modernization PR
