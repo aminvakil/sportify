@@ -1,0 +1,6 @@
+jms_serializer:
+    metadata:
+        directories:
+            DevlabsSportifyBundle:
+                path: "%kernel.project_dir%/config/serializer/DevlabsSportify"
+                namespace_prefix: "Devlabs\\SportifyBundle"

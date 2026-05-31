@@ -9,7 +9,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class TheOddsApi
 {
-    const BASE_URI = 'https://api.the-odds-api.com';
     const REGION = 'eu';
     const MARKET = 'h2h';
     const ODDS_FORMAT = 'decimal';
@@ -17,6 +16,7 @@ class TheOddsApi
 
     private $container;
     private $httpClient;
+    private $baseUri;
     private $normalizer;
     private $activeSportKeys;
 
@@ -36,10 +36,11 @@ class TheOddsApi
 
     private $preferredBookmakers = array('pinnacle', 'betfair', 'williamhill', 'bet365');
 
-    public function __construct(ContainerInterface $container, OddsProbabilityNormalizer $normalizer)
+    public function __construct(ContainerInterface $container, OddsProbabilityNormalizer $normalizer, $baseUri)
     {
         $this->container = $container;
         $this->normalizer = $normalizer;
+        $this->baseUri = rtrim((string) $baseUri, '/');
         $this->httpClient = new Client();
     }
 
@@ -243,7 +244,7 @@ class TheOddsApi
     private function fetchJson($path, array $query)
     {
         try {
-            $response = $this->httpClient->get(self::BASE_URI.$path, array('query' => $query));
+            $response = $this->httpClient->get($this->baseUri.$path, array('query' => $query));
         } catch (\Exception $e) {
             return null;
         }

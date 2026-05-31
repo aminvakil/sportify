@@ -68,7 +68,7 @@ Suggested sequence:
 2. [x] Kernel/autoload modernization PR
    - Move toward a conventional `src/Kernel.php` and explicit application namespace without changing runtime behavior.
    - Keep compatibility shims if needed for console, tests, cache, and deployment entrypoints.
-3. [ ] Config layout modernization PR
+3. [x] Config layout modernization PR
    - Move legacy `app/config/*.yml` toward modern `config/packages`, `config/routes`, and environment-specific config only after the kernel/autoload step is stable.
 4. [ ] Public document-root modernization PR
    - Move `web/` toward `public/` together with the required Docker, httpd, asset, and deployment updates.

@@ -1,0 +1,9 @@
+devlabs_sportify:
+    resource: routes/web.yml
+
+devlabs_sportify_api:
+    resource: routes/api.yml
+    prefix:   /api
+
+security_routes:
+    resource: routes/security.yml

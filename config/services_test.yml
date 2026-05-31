@@ -1,0 +1,7 @@
+parameters:
+    app.registration_confirmation_enabled: false
+
+services:
+    test.doctrine.orm.entity_manager:
+        alias: doctrine.orm.entity_manager
+        public: true
