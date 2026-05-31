@@ -47,7 +47,8 @@ Structural backend modernization is the next technical-debt planning item. Do no
 
 Reported admin follow-ups:
 
-- Admin Data Updates should handle non-200 football-data.org responses without a Symfony 500. Reproduced locally when updating teams for a tournament mapped to Football-Data competition `2000` (`FIFA World Cup`): `/competitions/2000/teams` returned `500 Internal Server Error`, then `Devlabs\SportifyBundle\Services\DataUpdates\Fetchers\FootballDataOrg::processResponse()` tried to fetch the removed Symfony `session` service and raised `ServiceNotFoundException`. Expected behavior: show a flash/error message through a supported session/request-stack path or return a controlled status, not an exception page.
+- Migrate the Football-Data integration from v2 to v4. The app currently configures `football_api.base_uri: http://api.football-data.org/v2`; during local testing, v2 `/competitions/2000/teams` returned `500 Internal Server Error`, while v4 with the same local token returned `200 OK` for `/competitions/2000`, `/competitions/2000/teams`, and `/competitions/2000/matches?dateFrom=2026-06-01&dateTo=2026-07-20`. `2000` is still the correct men's `FIFA World Cup` competition ID in v4. Verify parser compatibility and update tests when switching the base URI.
+- Admin Data Updates should handle non-200 football-data.org responses without a Symfony 500. Reproduced locally when updating teams for a tournament mapped to Football-Data competition `2000` (`FIFA World Cup`): v2 `/competitions/2000/teams` returned `500 Internal Server Error`, then `Devlabs\SportifyBundle\Services\DataUpdates\Fetchers\FootballDataOrg::processResponse()` tried to fetch the removed Symfony `session` service and raised `ServiceNotFoundException`. Expected behavior: show a flash/error message through a supported session/request-stack path or return a controlled status, not an exception page.
 
 Required product work: none pending.
 
