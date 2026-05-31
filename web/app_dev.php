@@ -1,5 +1,6 @@
 <?php
 
+use App\Kernel;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\ErrorHandler\Debug;
 
@@ -27,7 +28,7 @@ Debug::enable();
 
 define('WEB_DIRECTORY', __DIR__);
 
-$kernel = new AppKernel('dev', true);
+$kernel = new Kernel('dev', true);
 $request = Request::createFromGlobals();
 $response = $kernel->handle($request);
 $response->send();
