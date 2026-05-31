@@ -21,7 +21,7 @@ class FootballDataOrg
 
             $parsedTeam['team_id'] = $team->id;
             $parsedTeam['name'] = $team->name;
-            $parsedTeam['team_logo'] = $team->crestUrl;
+            $parsedTeam['team_logo'] = property_exists($team, 'crest') ? $team->crest : $team->crestUrl;
 
             $team = $parsedTeam;
         }
@@ -37,7 +37,9 @@ class FootballDataOrg
      */
     public function parseFixtures(array $fixtures)
     {
-        foreach ($fixtures as &$fixture) {
+        $parsedFixtures = array();
+
+        foreach ($fixtures as $fixture) {
             $parsedFixture = array();
 
             $parsedFixture['match_id'] = $fixture->id;
@@ -45,10 +47,10 @@ class FootballDataOrg
             $parsedFixture['home_team_id'] = $fixture->homeTeam->id;
             $parsedFixture['away_team_id'] = $fixture->awayTeam->id;
 
-            // NOTE: team id 757 is just a placeholder used in this API,
-            // when match is scheduled, but teams are still not clear.
-            // This occurs in scheduled knock-out round matches.
-            if ($parsedFixture['home_team_id'] == 757 || $parsedFixture['away_team_id'] == 757) {
+            // NOTE: v2 used team id 757 as a placeholder, while v4 uses null
+            // team ids for unresolved scheduled teams.
+            if ($parsedFixture['home_team_id'] === null || $parsedFixture['away_team_id'] === null ||
+                $parsedFixture['home_team_id'] == 757 || $parsedFixture['away_team_id'] == 757) {
                 continue;
             }
 
@@ -56,15 +58,17 @@ class FootballDataOrg
             $parsedFixture['status'] = $fixture->status;
 
             if ($fixture->status === 'FINISHED') {
-                $parsedFixture['home_team_goals'] = $fixture->score->fullTime->homeTeam;
-                $parsedFixture['away_team_goals'] = $fixture->score->fullTime->awayTeam;
-                if ($fixture->score->extraTime->homeTeam != null) {
-                    $parsedFixture['home_team_goals'] = $parsedFixture['home_team_goals'] - $fixture->score->extraTime->homeTeam;
-                    $parsedFixture['away_team_goals'] = $parsedFixture['away_team_goals'] - $fixture->score->extraTime->awayTeam;
+                $parsedFixture['home_team_goals'] = $this->getTeamScore($fixture->score->fullTime, 'home');
+                $parsedFixture['away_team_goals'] = $this->getTeamScore($fixture->score->fullTime, 'away');
+                $extraTimeHomeGoals = property_exists($fixture->score, 'extraTime') ? $this->getTeamScore($fixture->score->extraTime, 'home') : null;
+                if ($extraTimeHomeGoals != null) {
+                    $parsedFixture['home_team_goals'] = $parsedFixture['home_team_goals'] - $extraTimeHomeGoals;
+                    $parsedFixture['away_team_goals'] = $parsedFixture['away_team_goals'] - $this->getTeamScore($fixture->score->extraTime, 'away');
                 }
-                if ($fixture->score->penalties->homeTeam != null) {
-                    $parsedFixture['home_team_goals'] = $parsedFixture['home_team_goals'] - $fixture->score->penalties->homeTeam;
-                    $parsedFixture['away_team_goals'] = $parsedFixture['away_team_goals'] - $fixture->score->penalties->awayTeam;
+                $penaltyHomeGoals = property_exists($fixture->score, 'penalties') ? $this->getTeamScore($fixture->score->penalties, 'home') : null;
+                if ($penaltyHomeGoals != null) {
+                    $parsedFixture['home_team_goals'] = $parsedFixture['home_team_goals'] - $penaltyHomeGoals;
+                    $parsedFixture['away_team_goals'] = $parsedFixture['away_team_goals'] - $this->getTeamScore($fixture->score->penalties, 'away');
                 }
             } else {
                 $parsedFixture['home_team_goals'] = null;
@@ -81,10 +85,10 @@ class FootballDataOrg
                 $parsedFixture['odds_away_win'] = null;
             }
 */
-            $fixture = $parsedFixture;
+            $parsedFixtures[] = $parsedFixture;
         }
 
-        return $fixtures;
+        return $parsedFixtures;
     }
 
     /**
@@ -106,16 +110,10 @@ class FootballDataOrg
         return $tournaments;
     }
 
-    /**
-     * Extract a number located at the end of a string
-     *
-     * @param $string
-     * @return mixed
-     */
-    private function getNumberAtEndOfString($string)
+    private function getTeamScore($score, $team)
     {
-        preg_match('/\d+$/', $string, $matches);
+        $property = property_exists($score, $team) ? $team : $team.'Team';
 
-        return $matches[0];
+        return $score->$property;
     }
 }

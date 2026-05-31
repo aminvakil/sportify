@@ -25,6 +25,19 @@ class FootballDataOrgParserTest extends \PHPUnit\Framework\TestCase
         ), $parsed);
     }
 
+    public function testParseTeamsAcceptsV4CrestProperty()
+    {
+        $team = new \stdClass();
+        $team->id = 10;
+        $team->name = 'Team A';
+        $team->crest = 'https://example.com/team-a.svg';
+
+        $parser = new FootballDataOrg();
+        $parsed = $parser->parseTeams(array($team));
+
+        $this->assertSame('https://example.com/team-a.svg', $parsed[0]['team_logo']);
+    }
+
     public function testParseTournamentsMapsApiObjectsToImportRows()
     {
         $tournament = new \stdClass();
@@ -73,7 +86,31 @@ class FootballDataOrgParserTest extends \PHPUnit\Framework\TestCase
         ), $parsed[1]);
     }
 
-    private function createFixture($id, $status, $utcDate, $fullTimeHome = null, $fullTimeAway = null, $extraTimeHome = null, $extraTimeAway = null, $penaltiesHome = null, $penaltiesAway = null)
+    public function testParseFixturesAcceptsV4ScoreProperties()
+    {
+        $finished = $this->createFixture(2, 'FINISHED', '2020-01-03T12:00:00Z', 4, 3, null, null, null, null, true);
+
+        $parser = new FootballDataOrg();
+        $parsed = $parser->parseFixtures(array($finished));
+
+        $this->assertSame(4, $parsed[0]['home_team_goals']);
+        $this->assertSame(3, $parsed[0]['away_team_goals']);
+    }
+
+    public function testParseFixturesSkipsUnresolvedTeams()
+    {
+        $valid = $this->createFixture(1, 'SCHEDULED', '2020-01-02T12:00:00Z');
+        $v4Unresolved = $this->createFixture(2, 'SCHEDULED', '2020-01-03T12:00:00Z', null, null, null, null, null, null, false, null, 20);
+        $v2Placeholder = $this->createFixture(3, 'SCHEDULED', '2020-01-04T12:00:00Z', null, null, null, null, null, null, false, 10, 757);
+
+        $parser = new FootballDataOrg();
+        $parsed = $parser->parseFixtures(array($valid, $v4Unresolved, $v2Placeholder));
+
+        $this->assertCount(1, $parsed);
+        $this->assertSame(1, $parsed[0]['match_id']);
+    }
+
+    private function createFixture($id, $status, $utcDate, $fullTimeHome = null, $fullTimeAway = null, $extraTimeHome = null, $extraTimeAway = null, $penaltiesHome = null, $penaltiesAway = null, $useV4ScoreProperties = false, $homeTeamId = 10, $awayTeamId = 20)
     {
         $fixture = new \stdClass();
         $fixture->id = $id;
@@ -84,21 +121,31 @@ class FootballDataOrgParserTest extends \PHPUnit\Framework\TestCase
         $fixture->season->id = 99;
 
         $fixture->homeTeam = new \stdClass();
-        $fixture->homeTeam->id = 10;
+        $fixture->homeTeam->id = $homeTeamId;
 
         $fixture->awayTeam = new \stdClass();
-        $fixture->awayTeam->id = 20;
+        $fixture->awayTeam->id = $awayTeamId;
 
         $fixture->score = new \stdClass();
         $fixture->score->fullTime = new \stdClass();
-        $fixture->score->fullTime->homeTeam = $fullTimeHome;
-        $fixture->score->fullTime->awayTeam = $fullTimeAway;
         $fixture->score->extraTime = new \stdClass();
-        $fixture->score->extraTime->homeTeam = $extraTimeHome;
-        $fixture->score->extraTime->awayTeam = $extraTimeAway;
         $fixture->score->penalties = new \stdClass();
-        $fixture->score->penalties->homeTeam = $penaltiesHome;
-        $fixture->score->penalties->awayTeam = $penaltiesAway;
+
+        if ($useV4ScoreProperties) {
+            $fixture->score->fullTime->home = $fullTimeHome;
+            $fixture->score->fullTime->away = $fullTimeAway;
+            $fixture->score->extraTime->home = $extraTimeHome;
+            $fixture->score->extraTime->away = $extraTimeAway;
+            $fixture->score->penalties->home = $penaltiesHome;
+            $fixture->score->penalties->away = $penaltiesAway;
+        } else {
+            $fixture->score->fullTime->homeTeam = $fullTimeHome;
+            $fixture->score->fullTime->awayTeam = $fullTimeAway;
+            $fixture->score->extraTime->homeTeam = $extraTimeHome;
+            $fixture->score->extraTime->awayTeam = $extraTimeAway;
+            $fixture->score->penalties->homeTeam = $penaltiesHome;
+            $fixture->score->penalties->awayTeam = $penaltiesAway;
+        }
 
         return $fixture;
     }
