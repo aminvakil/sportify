@@ -34,7 +34,7 @@ class PredictionScorer
         }
 
         $cap = $match->getBaseExactPoints();
-        $bonus = intdiv(((50 - $probability) * $cap) + 49, 50);
+        $bonus = intdiv((50 - $probability) * $cap, 49);
 
         return min($cap, $bonus);
     }

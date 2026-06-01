@@ -35,7 +35,7 @@ class AdminPredictionFlowTest extends FunctionalTestCase
         $crawler = $this->client->request('GET', '/matches');
         $this->assertTrue($this->client->getResponse()->isSuccessful());
         $this->assertStringContainsString('Home 45% | Draw 30% | Away 25%', $crawler->text());
-        $this->assertStringContainsString('Points: Home 3/6 | Draw 4/7 | Away 5/8', $crawler->text());
+        $this->assertStringContainsString('Points: Home 2/5 | Draw 4/7 | Away 4/7', $crawler->text());
         $this->assertSame(3, $crawler->filter('.probability-bonus-chip')->count());
 
         $form = $crawler->filter('button.match-btn')->form(array(

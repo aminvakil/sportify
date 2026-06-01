@@ -249,7 +249,7 @@ class MatchEntity
             return 0;
         }
 
-        return min($this->baseExactPoints, intdiv(((50 - $probability) * $this->baseExactPoints) + 49, 50));
+        return min($this->baseExactPoints, intdiv((50 - $probability) * $this->baseExactPoints, 49));
     }
 
     public function getOutcomePointsForOutcome($outcome)
