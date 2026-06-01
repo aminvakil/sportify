@@ -45,6 +45,22 @@ class ResetUserPasswordCommand extends Command
             return 1;
         }
 
+        $user = $this->em->getRepository(User::class)->findOneBy(array(
+            'emailCanonical' => $this->canonicalize($email),
+        ));
+
+        if (!$user) {
+            $output->writeln(sprintf('<error>User <comment>%s</comment> was not found.</error>', $email));
+
+            return 1;
+        }
+
+        if (!$user->isEnabled()) {
+            $output->writeln(sprintf('<error>User <comment>%s</comment> is disabled or unconfirmed. Enable or confirm the account before resetting its password.</error>', $user->getEmail()));
+
+            return 1;
+        }
+
         if ($password === null) {
             if (!$input->isInteractive()) {
                 $output->writeln('<error>Please provide --password when running non-interactively.</error>');
@@ -64,19 +80,11 @@ class ResetUserPasswordCommand extends Command
             return 1;
         }
 
-        $user = $this->em->getRepository(User::class)->findOneBy(array(
-            'emailCanonical' => $this->canonicalize($email),
-        ));
-
-        if (!$user) {
-            $output->writeln(sprintf('<error>User <comment>%s</comment> was not found.</error>', $email));
-
-            return 1;
-        }
-
         $user->setPassword($this->passwordHasher->hashPassword($user, $password));
-        $user->setConfirmationToken(null);
-        $user->setPasswordRequestedAt(null);
+        if ($user->getPasswordRequestedAt() !== null) {
+            $user->setConfirmationToken(null);
+            $user->setPasswordRequestedAt(null);
+        }
         $this->em->flush();
 
         $output->writeln(sprintf('<info>Password for user <comment>%s</comment> was reset.</info>', $user->getEmail()));
