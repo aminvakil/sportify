@@ -8,6 +8,11 @@
             {{ form_errors(form) }}
             <div class="match-date text-center">{{ match.datetime|date('Y-m-d H:i') }}</div>
             <div class="match-title text-center">{{ match.tournamentId.name }}</div>
+            {% if match.hasProbabilitySnapshot %}
+                {% set homeProbabilityBonus = match.getProbabilityBonusForOutcome('1') %}
+                {% set drawProbabilityBonus = match.getProbabilityBonusForOutcome('X') %}
+                {% set awayProbabilityBonus = match.getProbabilityBonusForOutcome('2') %}
+            {% endif %}
             
             <div class="col-lg-12 mobile-match-column">
                 <div class="match-item">
@@ -19,7 +24,7 @@
                             <div class="match-item-mobile left-sided">
                                 {{ match.homeTeamId.name }}
                                 {% if match.hasProbabilitySnapshot %}
-                                    <span class="probability-bonus-chip">+{{ match.getProbabilityBonusForOutcome('1') }}</span>
+                                    <span class="probability-bonus-chip{% if homeProbabilityBonus == 0 %} probability-bonus-chip-zero{% endif %}" title="Probability bonus">+{{ homeProbabilityBonus }}</span>
                                 {% endif %}
                             </div>
                         </div>
@@ -31,7 +36,7 @@
                                         {{ form_row(form.homeGoals, {'attr': {'class': 'bet-field' }, 'disabled': match.disabledAttribute }) }}
                                         <span class="score-separator">
                                             {% if match.hasProbabilitySnapshot %}
-                                                <span class="probability-bonus-chip draw-bonus-chip">+{{ match.getProbabilityBonusForOutcome('X') }}</span>
+                                                <span class="probability-bonus-chip draw-bonus-chip{% if drawProbabilityBonus == 0 %} probability-bonus-chip-zero{% endif %}" title="Draw probability bonus">+{{ drawProbabilityBonus }}</span>
                                             {% endif %}
                                             :
                                         </span>
@@ -42,7 +47,7 @@
                                         {{ form_row(form.homeGoals, {'attr': {'class': 'bet-field', 'placeholder': '?' }, 'disabled': match.disabledAttribute}) }}
                                         <span class="score-separator">
                                             {% if match.hasProbabilitySnapshot %}
-                                                <span class="probability-bonus-chip draw-bonus-chip">+{{ match.getProbabilityBonusForOutcome('X') }}</span>
+                                                <span class="probability-bonus-chip draw-bonus-chip{% if drawProbabilityBonus == 0 %} probability-bonus-chip-zero{% endif %}" title="Draw probability bonus">+{{ drawProbabilityBonus }}</span>
                                             {% endif %}
                                             :
                                         </span>
@@ -57,7 +62,7 @@
                             </div>
                             <div class="match-item-mobile right-sided">
                                 {% if match.hasProbabilitySnapshot %}
-                                    <span class="probability-bonus-chip">+{{ match.getProbabilityBonusForOutcome('2') }}</span>
+                                    <span class="probability-bonus-chip{% if awayProbabilityBonus == 0 %} probability-bonus-chip-zero{% endif %}" title="Probability bonus">+{{ awayProbabilityBonus }}</span>
                                 {% endif %}
                                 {{ match.awayTeamId.name }}
                             </div>
