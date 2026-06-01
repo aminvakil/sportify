@@ -21,7 +21,7 @@ class FootballDataOrg
 
             $parsedTeam['team_id'] = $team->id;
             $parsedTeam['name'] = $team->name;
-            $parsedTeam['team_logo'] = property_exists($team, 'crest') ? $team->crest : $team->crestUrl;
+            $parsedTeam['team_logo'] = $this->getImageUrl($team, array('crest', 'crestUrl'));
 
             $team = $parsedTeam;
         }
@@ -100,14 +100,19 @@ class FootballDataOrg
     public function parseTournaments(array $tournaments)
     {
         foreach ($tournaments as &$tournament) {
-            $parsedTournament = array();
-
-            $parsedTournament['id'] = $tournament->id;
-            $parsedTournament['name'] = $tournament->name;
-            $tournament = $parsedTournament;
+            $tournament = $this->parseTournament($tournament);
         }
 
         return $tournaments;
+    }
+
+    public function parseTournament($tournament)
+    {
+        return array(
+            'id' => $tournament->id,
+            'name' => $tournament->name,
+            'logo' => $this->getImageUrl($tournament, array('emblem', 'emblemUrl')),
+        );
     }
 
     private function getTeamScore($score, $team)
@@ -115,5 +120,16 @@ class FootballDataOrg
         $property = property_exists($score, $team) ? $team : $team.'Team';
 
         return $score->$property;
+    }
+
+    private function getImageUrl($object, array $properties)
+    {
+        foreach ($properties as $property) {
+            if (property_exists($object, $property) && $object->$property) {
+                return $object->$property;
+            }
+        }
+
+        return null;
     }
 }

@@ -122,6 +122,19 @@ class FootballDataOrg
     }
 
     /**
+     * Fetch one tournament/competition from the API
+     *
+     * @param $apiTournamentId
+     * @return mixed
+     */
+    public function fetchTournament($apiTournamentId)
+    {
+        $uri = $this->baseUri.'/competitions/'.$apiTournamentId;
+
+        return $this->processResponse($this->getResponse($uri));
+    }
+
+    /**
      * Fetch all tournaments/competitions from the API
      *
      * @return mixed

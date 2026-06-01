@@ -43,6 +43,7 @@ class FootballDataOrgParserTest extends \PHPUnit\Framework\TestCase
         $tournament = new \stdClass();
         $tournament->id = 2000;
         $tournament->name = 'Competition';
+        $tournament->emblem = 'https://example.com/competition.png';
 
         $parser = new FootballDataOrg();
         $parsed = $parser->parseTournaments(array($tournament));
@@ -51,6 +52,7 @@ class FootballDataOrgParserTest extends \PHPUnit\Framework\TestCase
             array(
                 'id' => 2000,
                 'name' => 'Competition',
+                'logo' => 'https://example.com/competition.png',
             ),
         ), $parsed);
     }

@@ -269,11 +269,14 @@ class Team
      */
     public function hasTeamLogo()
     {
-        $jpgFile = WEB_DIRECTORY . '/img/team_logos/team_logo_'.$this->id.'.jpg';
-        $svgFile = WEB_DIRECTORY . '/img/team_logos/team_logo_'.$this->id.'.svg';
+        foreach (array('png', 'jpg', 'svg') as $extension) {
+            $file = WEB_DIRECTORY . '/img/team_logos/team_logo_'.$this->id.'.'.$extension;
+            if (is_file($file) && $this->isValidLogoFile($file, $extension)) {
+                return true;
+            }
+        }
 
-        return ( (file_exists($jpgFile) && is_file($jpgFile)) ||
-                 (file_exists($svgFile) && is_file($svgFile)) );
+        return false;
     }
 
     /**
@@ -283,17 +286,12 @@ class Team
      */
     public function getTeamLogo()
     {
-        $file = WEB_DIRECTORY . '/img/team_logos/team_logo_'.$this->id.'.png';
-
-        // check if png file exists
-        if (file_exists($file) && is_file($file))
-            return 'img/team_logos/team_logo_'.$this->id.'.png';
-
-        // check if svg file exists
-        $file = WEB_DIRECTORY . '/img/team_logos/team_logo_'.$this->id.'.svg';
-
-        if (file_exists($file) && is_file($file))
-            return 'img/team_logos/team_logo_'.$this->id.'.svg';
+        foreach (array('png', 'svg', 'jpg') as $extension) {
+            $file = WEB_DIRECTORY . '/img/team_logos/team_logo_'.$this->id.'.'.$extension;
+            if (is_file($file) && $this->isValidLogoFile($file, $extension)) {
+                return 'img/team_logos/team_logo_'.$this->id.'.'.$extension;
+            }
+        }
 
         return 'img/default_team_logo.png';
     }
@@ -319,18 +317,27 @@ class Team
             return $this;
         }
 
+        $isSvg = $this->isSvgLogoContents($file, $fileExtension);
+        if (!$isSvg) {
+            try {
+                // create an image manager instance with favored driver
+                $manager = new ImageManager();
+                $image = $manager->make($file);
+            }
+            catch(\Exception $e) {
+                return $this;
+            }
+        }
+
         // delete previous TeamLogo file if NOT the default one
         $currentTeamLogo = $this->getTeamLogo();
         if ($currentTeamLogo !== 'img/default_team_logo.png' && is_file(WEB_DIRECTORY.'/'.$currentTeamLogo)) {
             unlink(WEB_DIRECTORY.'/'.$currentTeamLogo);
         }
 
-        if (strpos($file, 'svg') !== FALSE || in_array($fileExtension, ['svg', 'svg+xml'])) {
+        if ($isSvg) {
             file_put_contents(WEB_DIRECTORY . '/img/team_logos/team_logo_' . $this->id . '.svg', $file);
         } else {
-            // create an image manager instance with favored driver
-            $manager = new ImageManager();
-            $image = $manager->make($file);
             $width = $image->width();
             $height = $image->height();
 
@@ -348,6 +355,24 @@ class Team
         }
 
         return $this;
+    }
+
+    private function isValidLogoFile($file, $extension)
+    {
+        if ($extension === 'svg') {
+            return $this->isSvgLogoContents(file_get_contents($file), $extension);
+        }
+
+        return @getimagesize($file) !== false;
+    }
+
+    private function isSvgLogoContents($file, $fileExtension = null)
+    {
+        if (!in_array($fileExtension, array('svg', 'svg+xml')) && stripos($file, '<svg') === false) {
+            return false;
+        }
+
+        return stripos($file, '<svg') !== false && stripos($file, '</svg>') !== false;
     }
 
     public function getUploadFile()

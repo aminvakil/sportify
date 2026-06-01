@@ -125,6 +125,42 @@ class EntityBehaviourTest extends \PHPUnit\Framework\TestCase
         }
     }
 
+    public function testInvalidTeamLogoFileFallsBackToDefault()
+    {
+        $team = new Team();
+        $team->setId(98766);
+        $logoPath = WEB_DIRECTORY.'/img/team_logos/team_logo_98766.svg';
+
+        file_put_contents($logoPath, '<html>not an image</html>');
+
+        try {
+            $this->assertFalse($team->hasTeamLogo());
+            $this->assertSame('img/default_team_logo.png', $team->getTeamLogo());
+        } finally {
+            if (is_file($logoPath)) {
+                unlink($logoPath);
+            }
+        }
+    }
+
+    public function testInvalidTournamentLogoFileFallsBackToDefault()
+    {
+        $tournament = new Tournament();
+        $tournament->setId(98767);
+        $logoPath = WEB_DIRECTORY.'/img/tournament_logos/tournament_logo_98767.svg';
+
+        file_put_contents($logoPath, '<html>not an image</html>');
+
+        try {
+            $this->assertFalse($tournament->hasLogo());
+            $this->assertSame('img/default_tournament_logo.png', $tournament->getLogo());
+        } finally {
+            if (is_file($logoPath)) {
+                unlink($logoPath);
+            }
+        }
+    }
+
     public function testScoreUpdatesPointsAndDisplaysRelatedData()
     {
         $user = new User();
