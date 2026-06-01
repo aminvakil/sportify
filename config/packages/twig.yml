@@ -4,3 +4,5 @@ twig:
     strict_variables: "%kernel.debug%"
     paths:
         "%kernel.project_dir%/app/Resources/views": ~
+    globals:
+        public_registration_enabled: '%app.public_registration_enabled%'

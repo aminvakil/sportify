@@ -2,11 +2,11 @@
 
 ## Current status
 
-One product hardening task is pending.
+No product hardening tasks are pending.
 
 ## Pending
 
-- Disable public registration from the web UI while keeping CLI/admin-created users available.
+- None.
 
 ## Baseline
 
@@ -53,6 +53,7 @@ One product hardening task is pending.
 - Telegram fixture-added, prediction, and result/scoring messages include probability and scoring details.
 - Admin Data Updates handles non-200 Football-Data responses with a flash message instead of a Symfony 500.
 - FIFA World Cup logo import/display on `/matches` is fixed.
+- Public web registration is configurable with `APP_PUBLIC_REGISTRATION_ENABLED` and defaults to enabled.
 
 ## Notes
 

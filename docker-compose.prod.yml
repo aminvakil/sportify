@@ -7,6 +7,7 @@ services:
     command: ["sportify-prod-init"]
     environment:
       SYMFONY_ENV: prod
+      APP_PUBLIC_REGISTRATION_ENABLED: ${APP_PUBLIC_REGISTRATION_ENABLED:-true}
     depends_on:
       db:
         condition: service_healthy
@@ -21,6 +22,7 @@ services:
       target: php
     environment:
       SYMFONY_ENV: prod
+      APP_PUBLIC_REGISTRATION_ENABLED: ${APP_PUBLIC_REGISTRATION_ENABLED:-true}
     depends_on:
       init:
         condition: service_completed_successfully

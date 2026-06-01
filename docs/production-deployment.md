@@ -34,11 +34,14 @@ Set the exposed HTTP port and MySQL bootstrap credentials:
 
 ```dotenv
 HTTP_PORT=8080
+APP_PUBLIC_REGISTRATION_ENABLED=true
 MYSQL_DATABASE=sportify
 MYSQL_USER=sportify
 MYSQL_PASSWORD=replace-with-a-secret
 MYSQL_ROOT_PASSWORD=replace-with-a-secret
 ```
+
+Set `APP_PUBLIC_REGISTRATION_ENABLED=false` to disable public web registration while keeping command-line user creation available.
 
 Keep `MYSQL_DATABASE`, `MYSQL_USER`, and `MYSQL_PASSWORD` in sync with the matching database values in `app/config/parameters.yml`.
 

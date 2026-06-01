@@ -97,9 +97,11 @@
                             <li {% if app.request.attributes.get('_route') == 'fos_user_security_login'%}class="active"{% endif %}>
                                 <a class="login" href="{{ path('fos_user_security_login') }}">Log in</a>
                             </li>
-                            <li {% if app.request.attributes.get('_route') == 'fos_user_registration_register'%}class="active"{% endif %}>
-                                <a class="signup" href="{{ path('fos_user_registration_register') }}">Sign up</a>
-                            </li>
+                            {% if public_registration_enabled %}
+                                <li {% if app.request.attributes.get('_route') == 'fos_user_registration_register'%}class="active"{% endif %}>
+                                    <a class="signup" href="{{ path('fos_user_registration_register') }}">Sign up</a>
+                                </li>
+                            {% endif %}
                         {% endif %}
                     </ul>
                 </nav>
@@ -171,9 +173,11 @@
                                         <li {% if app.request.attributes.get('_route') == 'fos_user_security_login'%}class="active"{% endif %}>
                                             <a class="login" href="{{ path('fos_user_security_login') }}">Log in</a>
                                         </li>
-                                        <li {% if app.request.attributes.get('_route') == 'fos_user_registration_register'%}class="active"{% endif %}>
-                                            <a class="signup" href="{{ path('fos_user_registration_register') }}">Sign up</a>
-                                        </li>
+                                        {% if public_registration_enabled %}
+                                            <li {% if app.request.attributes.get('_route') == 'fos_user_registration_register'%}class="active"{% endif %}>
+                                                <a class="signup" href="{{ path('fos_user_registration_register') }}">Sign up</a>
+                                            </li>
+                                        {% endif %}
                                     {% endif %}
                                 </ul>
                             </div><!-- /.navbar-collapse -->

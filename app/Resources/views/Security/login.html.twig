@@ -33,9 +33,11 @@
                             <label for="remember_me">Remember me</label>
                         </div>
                     </form>
-                    <h2>Don't have an account?<br/>
-                        <a href="{{ path('fos_user_registration_register') }}">Sign up here</a>
-                    </h2>
+                    {% if public_registration_enabled %}
+                        <h2>Don't have an account?<br/>
+                            <a href="{{ path('fos_user_registration_register') }}">Sign up here</a>
+                        </h2>
+                    {% endif %}
                 </div>
             </div>
         </div>
