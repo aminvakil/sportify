@@ -10,6 +10,7 @@ services:
       COMPOSER_MEMORY_LIMIT: -1
       COMPOSER_FUND: 0
       SYMFONY_ENV: dev
+      APP_PUBLIC_REGISTRATION_ENABLED: ${APP_PUBLIC_REGISTRATION_ENABLED:-true}
     volumes:
       - .:/app
     depends_on:

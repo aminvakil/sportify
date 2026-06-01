@@ -9,6 +9,8 @@ parameters:
     # application parameters
     football_api.name: football_data_org
     football_api.base_uri: https://api.football-data.org/v4
+    env(APP_PUBLIC_REGISTRATION_ENABLED): 'true'
+    app.public_registration_enabled: '%env(bool:APP_PUBLIC_REGISTRATION_ENABLED)%'
     app.registration_confirmation_enabled: true
     app.oauth_access_token_lifetime: 7776000 # 90 days in seconds
     app.scoring.default_outcome_points: 2

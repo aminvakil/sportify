@@ -16,6 +16,8 @@ class RegistrationController extends AbstractController
 {
     public function registerAction(Request $request)
     {
+        $this->denyDisabledPublicRegistration();
+
         $user = new User();
         $form = $this->createForm(RegistrationFormType::class, $user);
         $form->handleRequest($request);
@@ -56,11 +58,15 @@ class RegistrationController extends AbstractController
 
     public function checkEmailAction()
     {
+        $this->denyDisabledPublicRegistration();
+
         return $this->render('Registration/checkEmail.html.twig');
     }
 
     public function confirmAction($token)
     {
+        $this->denyDisabledPublicRegistration();
+
         $user = $this->container->get('doctrine')->getRepository(User::class)->findOneBy(array('confirmationToken' => $token));
 
         if (!$user) {
@@ -76,7 +82,16 @@ class RegistrationController extends AbstractController
 
     public function confirmedAction()
     {
+        $this->denyDisabledPublicRegistration();
+
         return $this->render('Registration/confirmed.html.twig', array('targetUrl' => null));
+    }
+
+    private function denyDisabledPublicRegistration()
+    {
+        if (!$this->getParameter('app.public_registration_enabled')) {
+            throw new NotFoundHttpException('Registration is disabled.');
+        }
     }
 
     private function updateCanonicalFields(User $user)
