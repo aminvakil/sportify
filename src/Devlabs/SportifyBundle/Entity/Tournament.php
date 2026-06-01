@@ -345,15 +345,9 @@ class Tournament
         if (!$filePath)
             return $this;
 
-        /**
-         * Skip setting of logo if image/path is NOT valid,
-         * and PHP would throw an exception
-         */
-        try {
-            $file = file_get_contents($filePath);
-        }
-        catch(\Exception $e) {
-            return $this;
+        $file = @file_get_contents($filePath);
+        if ($file === false) {
+            throw new \RuntimeException(sprintf('Could not read tournament logo from "%s".', $filePath));
         }
 
         $isSvg = $this->isSvgLogoContents($file, $fileExtension);
@@ -364,7 +358,7 @@ class Tournament
                 $image = $manager->make($file);
             }
             catch(\Exception $e) {
-                return $this;
+                throw new \RuntimeException(sprintf('Could not decode tournament logo image from "%s".', $filePath), 0, $e);
             }
         }
 

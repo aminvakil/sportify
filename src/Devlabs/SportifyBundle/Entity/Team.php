@@ -306,15 +306,9 @@ class Team
         if (!$filePath)
             return $this;
 
-        /**
-         * Skip setting of TeamLogo if image/path is NOT valid,
-         * and PHP would throw an exception
-         */
-        try {
-            $file = file_get_contents($filePath);
-        }
-        catch(\Exception $e) {
-            return $this;
+        $file = @file_get_contents($filePath);
+        if ($file === false) {
+            throw new \RuntimeException(sprintf('Could not read team logo from "%s".', $filePath));
         }
 
         $isSvg = $this->isSvgLogoContents($file, $fileExtension);
@@ -325,7 +319,7 @@ class Team
                 $image = $manager->make($file);
             }
             catch(\Exception $e) {
-                return $this;
+                throw new \RuntimeException(sprintf('Could not decode team logo image from "%s".', $filePath), 0, $e);
             }
         }
 
