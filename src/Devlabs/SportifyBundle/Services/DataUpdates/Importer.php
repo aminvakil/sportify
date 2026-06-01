@@ -84,6 +84,15 @@ class Importer
         }
     }
 
+    public function importTournamentLogo(array $tournamentData, Tournament $tournament)
+    {
+        if (!$tournament->hasLogo() && !empty($tournamentData['logo'])) {
+            $tournament->setLogo($tournamentData['logo']);
+            $this->em->persist($tournament);
+            $this->em->flush();
+        }
+    }
+
     /**
      * Import fixtures for a tournament by using parsed data
      *

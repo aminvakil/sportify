@@ -148,7 +148,11 @@ class AdminController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $adminHelper->actionOnDataUpdatesFormSubmit($form);
+            try {
+                $adminHelper->actionOnDataUpdatesFormSubmit($form);
+            } catch (\RuntimeException $e) {
+                $this->addFlash('message', $e->getMessage());
+            }
 
             return $this->redirectToRoute('admin_data_updates');
         }

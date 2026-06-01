@@ -308,11 +308,14 @@ class Tournament
      */
     public function hasLogo()
     {
-        $jpgFile = WEB_DIRECTORY . '/img/tournament_logos/tournament_logo_'.$this->id.'.jpg';
-        $svgFile = WEB_DIRECTORY . '/img/tournament_logos/tournament_logo_'.$this->id.'.svg';
+        foreach (array('png', 'jpg', 'svg') as $extension) {
+            $file = WEB_DIRECTORY . '/img/tournament_logos/tournament_logo_'.$this->id.'.'.$extension;
+            if (is_file($file) && $this->isValidLogoFile($file, $extension)) {
+                return true;
+            }
+        }
 
-        return ( (file_exists($jpgFile) && is_file($jpgFile)) ||
-            (file_exists($svgFile) && is_file($svgFile)) );
+        return false;
     }
 
     /**
@@ -322,17 +325,12 @@ class Tournament
      */
     public function getLogo()
     {
-        $file = WEB_DIRECTORY . '/img/tournament_logos/tournament_logo_'.$this->id.'.png';
-
-        // check if png file exists
-        if (file_exists($file) && is_file($file))
-            return 'img/tournament_logos/tournament_logo_'.$this->id.'.png';
-
-        // check if svg file exists
-        $file = WEB_DIRECTORY . '/img/tournament_logos/tournament_logo_'.$this->id.'.svg';
-
-        if (file_exists($file) && is_file($file))
-            return 'img/tournament_logos/tournament_logo_'.$this->id.'.svg';
+        foreach (array('png', 'svg', 'jpg') as $extension) {
+            $file = WEB_DIRECTORY . '/img/tournament_logos/tournament_logo_'.$this->id.'.'.$extension;
+            if (is_file($file) && $this->isValidLogoFile($file, $extension)) {
+                return 'img/tournament_logos/tournament_logo_'.$this->id.'.'.$extension;
+            }
+        }
 
         return 'img/default_tournament_logo.png';
     }
@@ -347,28 +345,32 @@ class Tournament
         if (!$filePath)
             return $this;
 
-        /**
-         * Skip setting of logo if image/path is NOT valid,
-         * and PHP would throw an exception
-         */
-        try {
-            $file = file_get_contents($filePath);
+        $file = @file_get_contents($filePath);
+        if ($file === false) {
+            throw new \RuntimeException(sprintf('Could not read tournament logo from "%s".', $filePath));
         }
-        catch(\Exception $e) {
-            return $this;
+
+        $isSvg = $this->isSvgLogoContents($file, $fileExtension);
+        if (!$isSvg) {
+            try {
+                // create an image manager instance with favored driver
+                $manager = new ImageManager();
+                $image = $manager->make($file);
+            }
+            catch(\Exception $e) {
+                throw new \RuntimeException(sprintf('Could not decode tournament logo image from "%s".', $filePath), 0, $e);
+            }
         }
 
         // delete previous logo file if NOT the default one
-        if ($this->getLogo() !== 'img/default_tournament_logo.png') {
-            unlink($this->getLogo());
+        $currentLogo = $this->getLogo();
+        if ($currentLogo !== 'img/default_tournament_logo.png' && is_file(WEB_DIRECTORY.'/'.$currentLogo)) {
+            unlink(WEB_DIRECTORY.'/'.$currentLogo);
         }
 
-        if (strpos($file, 'svg') !== FALSE || in_array($fileExtension, ['svg', 'svg+xml'])) {
+        if ($isSvg) {
             file_put_contents(WEB_DIRECTORY . '/img/tournament_logos/tournament_logo_' . $this->id . '.svg', $file);
         } else {
-            // create an image manager instance with favored driver
-            $manager = new ImageManager();
-            $image = $manager->make($file);
             $width = $image->width();
             $height = $image->height();
 
@@ -386,6 +388,24 @@ class Tournament
         }
 
         return $this;
+    }
+
+    private function isValidLogoFile($file, $extension)
+    {
+        if ($extension === 'svg') {
+            return $this->isSvgLogoContents(file_get_contents($file), $extension);
+        }
+
+        return @getimagesize($file) !== false;
+    }
+
+    private function isSvgLogoContents($file, $fileExtension = null)
+    {
+        if (!in_array($fileExtension, array('svg', 'svg+xml')) && stripos($file, '<svg') === false) {
+            return false;
+        }
+
+        return stripos($file, '<svg') !== false && stripos($file, '</svg>') !== false;
     }
 
     public function getUploadFile()

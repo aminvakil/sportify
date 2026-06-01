@@ -50,6 +50,15 @@ class Manager
 
         $apiTournamentId = $apiMapping->getApiObjectId();
 
+        // fetch tournament from API and import its logo if available
+        $fetchedTournament = $this->dataFetcher->fetchTournament($apiTournamentId);
+        if ($fetchedTournament) {
+            $this->dataImporter->importTournamentLogo(
+                $this->dataParser->parseTournament($fetchedTournament),
+                $tournament
+            );
+        }
+
         // fetch teams from API for given tournament
         $fetchedTeams = $this->dataFetcher->fetchTeamsByTournament($apiTournamentId);
 
