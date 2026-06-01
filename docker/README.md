@@ -86,10 +86,11 @@ docker compose -f docker-compose.prod.yml run --rm php php bin/console --env=pro
 
 Omit `--password` to enter it interactively. The command refuses to run after an admin user already exists.
 
-Create regular user accounts without SMTP by running:
+Create regular user accounts or reset passwords without SMTP by running:
 
 ```sh
 docker compose -f docker-compose.prod.yml run --rm php php bin/console --env=prod --no-debug sportify:user:create user@example.com username --password='change-me'
+docker compose -f docker-compose.prod.yml run --rm php php bin/console --env=prod --no-debug sportify:user:reset-password user@example.com --password='new-password'
 ```
 
-Omit `--password` to enter it interactively. The command creates an enabled non-admin user and refuses duplicate usernames or email addresses.
+Omit `--password` to enter it interactively. The create command creates an enabled non-admin user and refuses duplicate usernames or email addresses.

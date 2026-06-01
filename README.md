@@ -36,7 +36,7 @@ The app has two main environments:
     + `php bin/console sportify:user:create-admin admin@example.com admin --password='change-me'`
     + Omit `--password` to enter it interactively.
 * You can now access the web interface :)
-* If the emails are not configured (SMTP credentials not set), users will not abe able to make a registration by themselves because sending confirmation emails will not be possible. Configure SMTP before opening registration to users.
+* If the emails are not configured (SMTP credentials not set), create users with `php bin/console sportify:user:create user@example.com username --password='change-me'` and reset passwords with `php bin/console sportify:user:reset-password user@example.com --password='new-password'`.
 
 **N.B.**
 After doing any changes on **app/config/parameters.yml** run `php bin/console cache:clear --env=prod` for them to take effect.

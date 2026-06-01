@@ -90,10 +90,11 @@ docker compose -f docker-compose.prod.yml run --rm php php bin/console --env=pro
 
 Omit `--password` to enter it interactively. The command refuses to run if an admin already exists.
 
-If SMTP is not ready yet, create enabled regular users from the command line:
+If SMTP is not ready yet, create enabled regular users or reset passwords from the command line:
 
 ```sh
 docker compose -f docker-compose.prod.yml run --rm php php bin/console --env=prod --no-debug sportify:user:create user@example.com username --password='change-me'
+docker compose -f docker-compose.prod.yml run --rm php php bin/console --env=prod --no-debug sportify:user:reset-password user@example.com --password='new-password'
 ```
 
 ## Initial application setup
