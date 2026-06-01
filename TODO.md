@@ -2,7 +2,11 @@
 
 ## Current status
 
-No required product work is pending.
+One product hardening task is pending.
+
+## Pending
+
+- Disable public registration from the web UI while keeping CLI/admin-created users available.
 
 ## Baseline
 
