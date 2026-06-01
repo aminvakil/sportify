@@ -45,57 +45,6 @@ class TheOddsApi
         $this->httpClient = $httpClient ?: new Client();
     }
 
-    public function hasConfiguredApiToken()
-    {
-        return $this->getApiToken() !== '';
-    }
-
-    public function fetchEventProbabilitySnapshots($sportKey, \DateTimeInterface $commenceTimeFrom, \DateTimeInterface $commenceTimeTo)
-    {
-        $apiToken = $this->getApiToken();
-        if ($apiToken === '') {
-            return null;
-        }
-
-        $events = $this->fetchJson('/v4/sports/'.$sportKey.'/events', array(
-            'apiKey' => $apiToken,
-            'commenceTimeFrom' => $this->formatUtcDateTime($commenceTimeFrom),
-            'commenceTimeTo' => $this->formatUtcDateTime($commenceTimeTo),
-        ));
-        if (!is_array($events)) {
-            return null;
-        }
-
-        $snapshots = array();
-        foreach ($events as $event) {
-            if (!isset($event->id, $event->home_team, $event->away_team, $event->commence_time)) {
-                continue;
-            }
-
-            $oddsEvent = $this->fetchJson('/v4/sports/'.$sportKey.'/events/'.$event->id.'/odds', array(
-                'apiKey' => $apiToken,
-                'regions' => self::REGION,
-                'markets' => self::MARKET,
-                'oddsFormat' => self::ODDS_FORMAT,
-            ));
-
-            $snapshot = null;
-            if ($oddsEvent !== null) {
-                $snapshot = $this->extractSnapshotForTeamNames($oddsEvent, $sportKey, $event->id, $event->home_team, $event->away_team);
-            }
-
-            $snapshots[] = array(
-                'event_id' => $event->id,
-                'commence_time' => $event->commence_time,
-                'home_team' => $event->home_team,
-                'away_team' => $event->away_team,
-                'snapshot' => $snapshot,
-            );
-        }
-
-        return $snapshots;
-    }
-
     public function findProbabilitiesForFixture(array $fixtureData, Tournament $tournament, Team $homeTeam, Team $awayTeam)
     {
         $apiToken = $this->getApiToken();
@@ -214,18 +163,13 @@ class TheOddsApi
 
     private function extractSnapshot($event, $sportKey, $eventId, Team $homeTeam, Team $awayTeam)
     {
-        return $this->extractSnapshotForTeamNames($event, $sportKey, $eventId, $homeTeam->getName(), $awayTeam->getName());
-    }
-
-    private function extractSnapshotForTeamNames($event, $sportKey, $eventId, $homeTeamName, $awayTeamName)
-    {
         if (!isset($event->bookmakers) || !is_array($event->bookmakers)) {
             return null;
         }
 
         $bookmakers = $this->sortBookmakers($event->bookmakers);
         foreach ($bookmakers as $bookmaker) {
-            $prices = $this->extractPrices($bookmaker, $homeTeamName, $awayTeamName);
+            $prices = $this->extractPrices($bookmaker, $homeTeam, $awayTeam);
             if ($prices === null) {
                 continue;
             }
@@ -261,7 +205,7 @@ class TheOddsApi
         return $rank === false ? 100 : $rank;
     }
 
-    private function extractPrices($bookmaker, $homeTeamName, $awayTeamName)
+    private function extractPrices($bookmaker, Team $homeTeam, Team $awayTeam)
     {
         if (!isset($bookmaker->markets) || !is_array($bookmaker->markets)) {
             return null;
@@ -273,8 +217,8 @@ class TheOddsApi
             }
 
             $prices = array('home' => null, 'draw' => null, 'away' => null);
-            $homeName = $this->normalizeName($homeTeamName);
-            $awayName = $this->normalizeName($awayTeamName);
+            $homeName = $this->normalizeName($homeTeam->getName());
+            $awayName = $this->normalizeName($awayTeam->getName());
             foreach ($market->outcomes as $outcome) {
                 if (!isset($outcome->name, $outcome->price)) {
                     continue;
@@ -302,22 +246,36 @@ class TheOddsApi
     {
         try {
             $response = $this->httpClient->get($this->baseUri.$path, array('query' => $query));
+        } catch (\GuzzleHttp\Exception\RequestException $e) {
+            if ($e->getResponse() !== null) {
+                throw new \RuntimeException(sprintf(
+                    'The Odds API request failed for "%s" (HTTP %d %s).',
+                    $path,
+                    $e->getResponse()->getStatusCode(),
+                    $e->getResponse()->getReasonPhrase()
+                ), 0, $e);
+            }
+
+            throw new \RuntimeException(sprintf('The Odds API request failed for "%s".', $path), 0, $e);
         } catch (\Exception $e) {
-            return null;
+            throw new \RuntimeException(sprintf('The Odds API request failed for "%s".', $path), 0, $e);
         }
 
         if ($response->getStatusCode() !== 200) {
-            return null;
+            throw new \RuntimeException(sprintf(
+                'The Odds API request failed for "%s" (HTTP %d %s).',
+                $path,
+                $response->getStatusCode(),
+                $response->getReasonPhrase()
+            ));
         }
 
-        return json_decode((string) $response->getBody());
-    }
+        $data = json_decode((string) $response->getBody());
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            throw new \RuntimeException(sprintf('The Odds API returned invalid JSON for "%s".', $path));
+        }
 
-    private function formatUtcDateTime(\DateTimeInterface $dateTime)
-    {
-        return \DateTimeImmutable::createFromInterface($dateTime)
-            ->setTimezone(new \DateTimeZone('UTC'))
-            ->format('Y-m-d\TH:i:s\Z');
+        return $data;
     }
 
     private function normalizeName($name)

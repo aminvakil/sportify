@@ -8,6 +8,7 @@ use Devlabs\SportifyBundle\Entity\Score;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -40,6 +41,18 @@ class DataUpdateCommand extends Command
                 InputArgument::REQUIRED,
                 'What period do you want to fetch data for? (days)'
             )
+            ->addOption(
+                'date-from',
+                null,
+                InputOption::VALUE_REQUIRED,
+                'Optional start date (Y-m-d) for a generic date-range update.'
+            )
+            ->addOption(
+                'date-to',
+                null,
+                InputOption::VALUE_REQUIRED,
+                'Optional end date (Y-m-d) for a generic date-range update.'
+            )
         ;
     }
 
@@ -53,69 +66,71 @@ class DataUpdateCommand extends Command
         $msgText = '';
         $logText = 'Command for updating '.$updateType.' executed at: '.date("Y-m-d H:i:s");
 
-        if ($updateType === 'matches-fixtures') {
-            // set dateFrom and dateTo to respectively today and 'number of days' on
-            $dateFrom = date("Y-m-d");
-            $dateTo = date("Y-m-d", time() + (3600 * 24 * $days));
-            $status = $dataUpdatesManager->updateFixtures($dateFrom, $dateTo);
+        try {
+            if ($updateType === 'matches-fixtures') {
+                list($dateFrom, $dateTo, $periodDescription) = $this->getForwardDateRange($input, $days);
+                $status = $dataUpdatesManager->updateFixtures($dateFrom, $dateTo);
 
-            if ($status['total_added'] > 0) {
-                $dataUpdated = true;
-                $msgText = 'Match fixtures added for next '.$days.' days. '
-                    .$status['total_added'].' fixture(s) added.';
-                if (isset($status['added_fixtures'])) {
-                    $msgText .= $this->formatAddedFixtures($status['added_fixtures']);
+                if ($status['total_added'] > 0) {
+                    $dataUpdated = true;
+                    $msgText = 'Match fixtures added for '.$periodDescription.'. '
+                        .$status['total_added'].' fixture(s) added.';
+                    if (isset($status['added_fixtures'])) {
+                        $msgText .= $this->formatAddedFixtures($status['added_fixtures']);
+                    }
                 }
-            }
-        } elseif ($updateType === 'matches-results') {
-            // set dateFrom and dateTo to respectively 'number of days' before and today
-            $dateFrom = date("Y-m-d", time() - (3600 * 24 * $days));
-            $dateTo = date("Y-m-d");
-            $status = $dataUpdatesManager->updateFixtures($dateFrom, $dateTo);
+            } elseif ($updateType === 'matches-results') {
+                list($dateFrom, $dateTo) = $this->getBackwardDateRange($input, $days);
+                $status = $dataUpdatesManager->updateFixtures($dateFrom, $dateTo);
 
-            if ($status['total_updated'] > 0) {
-                $em = $this->container->get('doctrine.orm.entity_manager');
+                if ($status['total_updated'] > 0) {
+                    $em = $this->container->get('doctrine.orm.entity_manager');
 
-                // Get the ScoreUpdater service and update all scores
-                $scoreUpdater = $this->container->get('app.score_updater');
-                $tournamentsModified = $scoreUpdater->updateAll();
-                $scoredMatches = $this->getScoredMatches($em, $scoreUpdater->getLastScoredMatchIds());
-                $scoredPredictions = $em->getRepository(Prediction::class)
-                    ->getByMatches($scoredMatches);
+                    // Get the ScoreUpdater service and update all scores
+                    $scoreUpdater = $this->container->get('app.score_updater');
+                    $tournamentsModified = $scoreUpdater->updateAll();
+                    $scoredMatches = $this->getScoredMatches($em, $scoreUpdater->getLastScoredMatchIds());
+                    $scoredPredictions = $em->getRepository(Prediction::class)
+                        ->getByMatches($scoredMatches);
 
-                $scores = $em->getRepository(Score::class)
-                    ->getAllHashed();
+                    $scores = $em->getRepository(Score::class)
+                        ->getAllHashed();
 
-                $dataUpdated = true;
-                $msgText = 'Match results and standings updated for tournament(s):';
+                    $dataUpdated = true;
+                    $msgText = 'Match results and standings updated for tournament(s):';
 
-                foreach ($tournamentsModified as $tournament) {
-                    $msgText = $msgText."\n".$tournament->getName();
-                }
+                    foreach ($tournamentsModified as $tournament) {
+                        $msgText = $msgText."\n".$tournament->getName();
+                    }
 
-                $msgText .= $this->formatScoredMatches($scoredMatches, $scoredPredictions);
-                $msgText .= "\nStandings changes:";
+                    $msgText .= $this->formatScoredMatches($scoredMatches, $scoredPredictions);
+                    $msgText .= "\nStandings changes:";
 
-                foreach ($tournamentsModified as $tournament) {
-                    foreach ($scores[$tournament->getId()] as $score) {
-                        if ($score->getPoints() == $score->getPointsOld()) {
-                            continue;
+                    foreach ($tournamentsModified as $tournament) {
+                        foreach ($scores[$tournament->getId()] as $score) {
+                            if ($score->getPoints() == $score->getPointsOld()) {
+                                continue;
+                            }
+
+                            $msgText = $msgText."\n\t"
+                                .$score->getUserId()->getUsername()
+                                .": Position: "
+                                .$score->getPosNew()
+                                ." (previous: "
+                                .$score->getPosOld()
+                                ."), Points: "
+                                .$score->getPoints()
+                                ." (gained: "
+                                .($score->getPoints() - $score->getPointsOld())
+                                .")";
                         }
-
-                        $msgText = $msgText."\n\t"
-                            .$score->getUserId()->getUsername()
-                            .": Position: "
-                            .$score->getPosNew()
-                            ." (previous: "
-                            .$score->getPosOld()
-                            ."), Points: "
-                            .$score->getPoints()
-                            ." (gained: "
-                            .($score->getPoints() - $score->getPointsOld())
-                            .")";
                     }
                 }
             }
+        } catch (\InvalidArgumentException $e) {
+            $output->writeln('<error>'.$e->getMessage().'</error>');
+
+            return 1;
         }
 
         if ($dataUpdated) {
@@ -140,6 +155,62 @@ class DataUpdateCommand extends Command
         $output->writeln($logText);
 
         return 0;
+    }
+
+    private function getForwardDateRange(InputInterface $input, $days)
+    {
+        $dateFromOption = $input->getOption('date-from');
+        $dateToOption = $input->getOption('date-to');
+
+        if ($dateFromOption !== null || $dateToOption !== null) {
+            $dateFrom = $this->normalizeDateOption($dateFromOption ?: date('Y-m-d'), 'date-from');
+            $dateTo = $dateToOption !== null
+                ? $this->normalizeDateOption($dateToOption, 'date-to')
+                : $this->addDays($dateFrom, $days);
+
+            return array($dateFrom, $dateTo, $dateFrom.' to '.$dateTo);
+        }
+
+        return array(
+            date('Y-m-d'),
+            date('Y-m-d', time() + (3600 * 24 * $days)),
+            'next '.$days.' days',
+        );
+    }
+
+    private function getBackwardDateRange(InputInterface $input, $days)
+    {
+        $dateFromOption = $input->getOption('date-from');
+        $dateToOption = $input->getOption('date-to');
+
+        if ($dateFromOption !== null || $dateToOption !== null) {
+            $dateTo = $this->normalizeDateOption($dateToOption ?: date('Y-m-d'), 'date-to');
+            $dateFrom = $dateFromOption !== null
+                ? $this->normalizeDateOption($dateFromOption, 'date-from')
+                : $this->addDays($dateTo, -$days);
+
+            return array($dateFrom, $dateTo);
+        }
+
+        return array(
+            date('Y-m-d', time() - (3600 * 24 * $days)),
+            date('Y-m-d'),
+        );
+    }
+
+    private function normalizeDateOption($date, $optionName)
+    {
+        $dateTime = \DateTimeImmutable::createFromFormat('!Y-m-d', $date);
+        if (!$dateTime || $dateTime->format('Y-m-d') !== $date) {
+            throw new \InvalidArgumentException('The --'.$optionName.' option must use the Y-m-d format.');
+        }
+
+        return $dateTime->format('Y-m-d');
+    }
+
+    private function addDays($date, $days)
+    {
+        return (new \DateTimeImmutable($date))->modify(($days >= 0 ? '+' : '').$days.' days')->format('Y-m-d');
     }
 
     private function getScoredMatches($em, array $matchIds)

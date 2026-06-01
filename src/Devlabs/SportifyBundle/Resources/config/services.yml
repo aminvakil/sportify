@@ -156,12 +156,6 @@ services:
         tags:
             - { name: console.command }
 
-    app.command.check_world_cup_odds:
-        class: Devlabs\SportifyBundle\Command\CheckWorldCupOddsCommand
-        arguments: ['@app.odds.the_odds_api']
-        tags:
-            - { name: console.command }
-
     app.command.notify:
         class: Devlabs\SportifyBundle\Command\NotifyCommand
         tags:

@@ -39,6 +39,29 @@ class DataUpdateCommandTest extends TestCase
         $this->assertSame(array(321), $telegram->pinnedMessageIds);
     }
 
+    public function testCanUseGenericFixtureDateRange()
+    {
+        $container = new Container();
+        $slack = new FakeDataUpdateSlack();
+        $telegram = new FakeDataUpdateTelegram();
+        $manager = new FakeDataUpdatesManager();
+
+        $this->configureContainer($container, $slack, $telegram, $manager);
+
+        $tester = new CommandTester(new DataUpdateCommand($container));
+        $tester->execute(array(
+            'type' => 'matches-fixtures',
+            'days' => 2,
+            '--date-from' => '2026-06-11',
+            '--date-to' => '2026-06-12',
+        ));
+
+        $this->assertSame(Command::SUCCESS, $tester->getStatusCode());
+        $this->assertSame('2026-06-11', $manager->dateFrom);
+        $this->assertSame('2026-06-12', $manager->dateTo);
+        $this->assertStringContainsString('Match fixtures added for 2026-06-11 to 2026-06-12. 2 fixture(s) added.', $slack->text);
+    }
+
     public function testCanDisableTelegramMessagePinning()
     {
         $container = new Container();
@@ -171,9 +194,9 @@ class DataUpdateCommandTest extends TestCase
         );
     }
 
-    private function configureContainer(Container $container, FakeDataUpdateSlack $slack, FakeDataUpdateTelegram $telegram)
+    private function configureContainer(Container $container, FakeDataUpdateSlack $slack, FakeDataUpdateTelegram $telegram, ?FakeDataUpdatesManager $manager = null)
     {
-        $container->set('app.data_updates.manager', new FakeDataUpdatesManager());
+        $container->set('app.data_updates.manager', $manager ?: new FakeDataUpdatesManager());
         $container->set('app.slack', $slack);
         $container->set('app.telegram', $telegram);
     }
@@ -181,8 +204,14 @@ class DataUpdateCommandTest extends TestCase
 
 class FakeDataUpdatesManager
 {
+    public $dateFrom;
+    public $dateTo;
+
     public function updateFixtures($dateFrom, $dateTo)
     {
+        $this->dateFrom = $dateFrom;
+        $this->dateTo = $dateTo;
+
         return array(
             'total_added' => 2,
             'total_updated' => 0,

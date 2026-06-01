@@ -48,11 +48,12 @@
 
 Current product task:
 
-- [ ] Locally validate The Odds API data retrieval for FIFA World Cup 2026 first-two-day fixtures.
-  - [x] Add a token-safe local console check: `sportify:odds:check-world-cup-2026 --from=2026-06-11 --days=2`.
-  - [ ] Run the live check after setting a real local `odds_api.token`; the current local `app/config/parameters.yml` value is still the placeholder.
-  - Check the `soccer_fifa_world_cup` events/odds window for 2026-06-11 through 2026-06-12.
-  - Confirm whether complete home/draw/away odds snapshots are available for those matches and whether Sportify can normalize them.
+- [ ] Locally validate The Odds API data retrieval/import path for FIFA World Cup 2026 first-two-day fixtures.
+  - [x] Use generic fixture import/data-update behavior only; do not keep World Cup-specific app commands.
+  - [x] Add generic date-range options to `sportify:data:update` for local DB-backed checks.
+  - [ ] Set a real local `odds_api.token` in `app/config/parameters.yml`; the current local value is still the placeholder.
+  - [ ] Run `sportify:data:update matches-fixtures 2 --date-from=2026-06-11 --date-to=2026-06-12` locally.
+  - Confirm whether complete home/draw/away odds snapshots are available for those matches and whether Sportify can normalize/store them.
 
 Bundle-structure cleanup is optional, low-urgency technical debt. It is not a current upgrade blocker and should not displace product work or bug fixes. Do not start coding it unless the user explicitly wants to continue structural cleanup and confirms a narrow scope.
 
