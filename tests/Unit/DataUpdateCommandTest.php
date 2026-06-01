@@ -81,12 +81,12 @@ class DataUpdateCommandTest extends TestCase
         $this->assertSame(Command::SUCCESS, $tester->getStatusCode());
         $this->assertStringContainsString('Result Cup', $telegram->messages[0]);
         $this->assertStringContainsString('Home FC 2-1 Away FC', $telegram->messages[0]);
-        $this->assertStringContainsString('Probabilities: home 10%, draw 25%, away 65%', $telegram->messages[0]);
-        $this->assertStringContainsString('alice predicted 2-1 (home win): exact score, base 5 + probability bonus 4 = 9', $telegram->messages[0]);
-        $this->assertStringContainsString('bob predicted 1-0 (home win): correct outcome, base 2 + probability bonus 4 = 6', $telegram->messages[0]);
+        $this->assertStringContainsString('Probabilities: home 45%, draw 25%, away 65%', $telegram->messages[0]);
+        $this->assertStringContainsString('alice predicted 2-1 (home win): exact score, base 5 + probability bonus 0 = 5', $telegram->messages[0]);
+        $this->assertStringContainsString('bob predicted 1-0 (home win): correct outcome, base 2 + probability bonus 0 = 2', $telegram->messages[0]);
         $this->assertStringContainsString('charlie predicted 0-1 (away win): wrong outcome, 0 points', $telegram->messages[0]);
         $this->assertStringContainsString('Standings changes:', $telegram->messages[0]);
-        $this->assertStringContainsString('alice: Position: 1 (previous: 2), Points: 16 (gained: 9)', $telegram->messages[0]);
+        $this->assertStringContainsString('alice: Position: 1 (previous: 2), Points: 12 (gained: 5)', $telegram->messages[0]);
     }
 
     private function createScoredFixture()
@@ -108,7 +108,7 @@ class DataUpdateCommandTest extends TestCase
         $match->setAwayTeamId($awayTeam);
         $match->setHomeGoals(2);
         $match->setAwayGoals(1);
-        $match->setHomeWinProbabilityPercent(10);
+        $match->setHomeWinProbabilityPercent(45);
         $match->setDrawProbabilityPercent(25);
         $match->setAwayWinProbabilityPercent(65);
 
@@ -129,9 +129,9 @@ class DataUpdateCommandTest extends TestCase
         $prediction->setAwayGoals(1);
         $prediction->setScoringResult(Prediction::SCORING_RESULT_EXACT);
         $prediction->setBasePoints(5);
-        $prediction->setProbabilityBonus(4);
-        $prediction->setTotalPoints(9);
-        $prediction->setPoints(9);
+        $prediction->setProbabilityBonus(0);
+        $prediction->setTotalPoints(5);
+        $prediction->setPoints(5);
 
         $outcomePrediction = new Prediction();
         $outcomePrediction->setUserId($outcomeUser);
@@ -140,9 +140,9 @@ class DataUpdateCommandTest extends TestCase
         $outcomePrediction->setAwayGoals(0);
         $outcomePrediction->setScoringResult(Prediction::SCORING_RESULT_OUTCOME);
         $outcomePrediction->setBasePoints(2);
-        $outcomePrediction->setProbabilityBonus(4);
-        $outcomePrediction->setTotalPoints(6);
-        $outcomePrediction->setPoints(6);
+        $outcomePrediction->setProbabilityBonus(0);
+        $outcomePrediction->setTotalPoints(2);
+        $outcomePrediction->setPoints(2);
 
         $wrongPrediction = new Prediction();
         $wrongPrediction->setUserId($wrongUser);
@@ -161,7 +161,7 @@ class DataUpdateCommandTest extends TestCase
         $score->setPosOld(2);
         $score->setPosNew(1);
         $score->setPointsOld(7);
-        $score->setPoints(16);
+        $score->setPoints(12);
 
         return array(
             'tournament' => $tournament,

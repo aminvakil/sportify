@@ -38,8 +38,8 @@ class PredictionScorerTest extends TestCase
             'correct outcome plus low-probability bonus' => array(1, 0, 10, PredictionScorer::RESULT_OUTCOME, 2, 8, 10),
             'wrong outcome scores zero' => array(0, 1, 10, PredictionScorer::RESULT_WRONG, 0, 0, 0),
             'probability at fifty has no bonus' => array(1, 0, 50, PredictionScorer::RESULT_OUTCOME, 2, 0, 2),
-            'probability just below fifty rounds up' => array(1, 0, 49, PredictionScorer::RESULT_OUTCOME, 2, 1, 3),
-            'very low probability bonus is capped at exact points' => array(1, 0, 0, PredictionScorer::RESULT_OUTCOME, 2, 10, 12),
+            'probability just below fifty has no bonus' => array(1, 0, 49, PredictionScorer::RESULT_OUTCOME, 2, 0, 2),
+            'very low probability bonus is capped at exact points' => array(1, 0, 1, PredictionScorer::RESULT_OUTCOME, 2, 10, 12),
         );
     }
 
