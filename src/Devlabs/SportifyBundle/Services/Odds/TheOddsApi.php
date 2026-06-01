@@ -245,7 +245,7 @@ class TheOddsApi
     private function fetchJson($path, array $query)
     {
         try {
-            $response = $this->httpClient->get($this->baseUri.$path, array('query' => $query));
+            $response = $this->httpClient->request('GET', $this->baseUri.$path, array('query' => $query));
         } catch (\GuzzleHttp\Exception\RequestException $e) {
             if ($e->getResponse() !== null) {
                 throw new \RuntimeException(sprintf(
