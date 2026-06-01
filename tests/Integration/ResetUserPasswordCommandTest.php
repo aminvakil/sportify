@@ -66,6 +66,27 @@ class ResetUserPasswordCommandTest extends DatabaseTestCase
         $this->assertFalse($passwordHasher->isPasswordValid($user, 'new-password'));
     }
 
+    public function testCommandRefusesBlankInteractivePassword()
+    {
+        $user = $this->createUser('blank_password_user');
+        $passwordHasher = self::$kernel->getContainer()->get('security.user_password_hasher');
+        $user->setPassword($passwordHasher->hashPassword($user, 'old-password'));
+        $this->em->flush();
+
+        $tester = $this->executeCommand(array(
+            'email' => 'blank_password_user@example.com',
+        ), array(''));
+
+        $this->assertSame(Command::FAILURE, $tester->getStatusCode());
+        $this->assertStringContainsString('Please provide a password.', $tester->getDisplay());
+
+        $this->em->clear();
+        $user = $this->em->getRepository(User::class)->findOneBy(array('emailCanonical' => 'blank_password_user@example.com'));
+
+        $this->assertNotNull($user);
+        $this->assertTrue($passwordHasher->isPasswordValid($user, 'old-password'));
+    }
+
     public function testCommandRefusesUnknownUser()
     {
         $tester = $this->executeCommand(array(
@@ -77,11 +98,12 @@ class ResetUserPasswordCommandTest extends DatabaseTestCase
         $this->assertStringContainsString('User missing@example.com was not found.', $tester->getDisplay());
     }
 
-    private function executeCommand(array $arguments)
+    private function executeCommand(array $arguments, array $inputs = array())
     {
         $application = new Application(self::$kernel);
         $command = $application->find('sportify:user:reset-password');
         $tester = new CommandTester($command);
+        $tester->setInputs($inputs);
         $tester->execute($arguments);
 
         return $tester;

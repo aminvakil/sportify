@@ -74,7 +74,7 @@ class ResetUserPasswordCommand extends Command
             $password = $this->getHelper('question')->ask($input, $output, $question);
         }
 
-        if ($password === '') {
+        if ($password === null || $password === '') {
             $output->writeln('<error>Please provide a password.</error>');
 
             return 1;
