@@ -32,6 +32,20 @@ The project is intentionally old. Do not modernize broad areas unless the curren
 - For internet research, open important provider/documentation pages in a real browser when command-line access hits a CAPTCHA, JavaScript challenge, or Cloudflare block; ask the user to solve the challenge instead of treating the site as unreachable.
 - For documentation-only changes (`AGENTS.md`, `TODO.md`, and `docs/`), still commit and push on a non-`main` branch, but skip local Docker verification and CI waits unless explicitly asked.
 
+## Deployment approval rule
+
+For deployment work on a server, ask the user before making every non-read-only host-level change.
+
+This includes, but is not limited to:
+- creating, editing, copying, or deleting files on the server host
+- installing tools or dependencies on the server host
+- changing systemd, cron, web server, firewall, DNS, or host environment configuration
+- creating databases, changing schemas, importing data, or running migrations against production data
+
+Routine container lifecycle actions for an approved deployment do not require separate approval. This includes pulling images, building images, starting, stopping, restarting, recreating, or redeploying containers.
+
+Read-only inspection commands are allowed, but summarize findings before proposing the next change.
+
 ## Output and token discipline
 
 - Avoid pasting huge command outputs into chat. Redirect noisy test/build output to a temp file, then inspect only the relevant summary or error lines.
