@@ -5,6 +5,7 @@ namespace Devlabs\SportifyBundle\Services\Odds;
 use Devlabs\SportifyBundle\Entity\Team;
 use Devlabs\SportifyBundle\Entity\Tournament;
 use GuzzleHttp\Client;
+use GuzzleHttp\ClientInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class TheOddsApi
@@ -36,12 +37,63 @@ class TheOddsApi
 
     private $preferredBookmakers = array('pinnacle', 'betfair', 'williamhill', 'bet365');
 
-    public function __construct(ContainerInterface $container, OddsProbabilityNormalizer $normalizer, $baseUri)
+    public function __construct(ContainerInterface $container, OddsProbabilityNormalizer $normalizer, $baseUri, ?ClientInterface $httpClient = null)
     {
         $this->container = $container;
         $this->normalizer = $normalizer;
         $this->baseUri = rtrim((string) $baseUri, '/');
-        $this->httpClient = new Client();
+        $this->httpClient = $httpClient ?: new Client();
+    }
+
+    public function hasConfiguredApiToken()
+    {
+        return $this->getApiToken() !== '';
+    }
+
+    public function fetchEventProbabilitySnapshots($sportKey, \DateTimeInterface $commenceTimeFrom, \DateTimeInterface $commenceTimeTo)
+    {
+        $apiToken = $this->getApiToken();
+        if ($apiToken === '') {
+            return null;
+        }
+
+        $events = $this->fetchJson('/v4/sports/'.$sportKey.'/events', array(
+            'apiKey' => $apiToken,
+            'commenceTimeFrom' => $this->formatUtcDateTime($commenceTimeFrom),
+            'commenceTimeTo' => $this->formatUtcDateTime($commenceTimeTo),
+        ));
+        if (!is_array($events)) {
+            return null;
+        }
+
+        $snapshots = array();
+        foreach ($events as $event) {
+            if (!isset($event->id, $event->home_team, $event->away_team, $event->commence_time)) {
+                continue;
+            }
+
+            $oddsEvent = $this->fetchJson('/v4/sports/'.$sportKey.'/events/'.$event->id.'/odds', array(
+                'apiKey' => $apiToken,
+                'regions' => self::REGION,
+                'markets' => self::MARKET,
+                'oddsFormat' => self::ODDS_FORMAT,
+            ));
+
+            $snapshot = null;
+            if ($oddsEvent !== null) {
+                $snapshot = $this->extractSnapshotForTeamNames($oddsEvent, $sportKey, $event->id, $event->home_team, $event->away_team);
+            }
+
+            $snapshots[] = array(
+                'event_id' => $event->id,
+                'commence_time' => $event->commence_time,
+                'home_team' => $event->home_team,
+                'away_team' => $event->away_team,
+                'snapshot' => $snapshot,
+            );
+        }
+
+        return $snapshots;
     }
 
     public function findProbabilitiesForFixture(array $fixtureData, Tournament $tournament, Team $homeTeam, Team $awayTeam)
@@ -162,13 +214,18 @@ class TheOddsApi
 
     private function extractSnapshot($event, $sportKey, $eventId, Team $homeTeam, Team $awayTeam)
     {
+        return $this->extractSnapshotForTeamNames($event, $sportKey, $eventId, $homeTeam->getName(), $awayTeam->getName());
+    }
+
+    private function extractSnapshotForTeamNames($event, $sportKey, $eventId, $homeTeamName, $awayTeamName)
+    {
         if (!isset($event->bookmakers) || !is_array($event->bookmakers)) {
             return null;
         }
 
         $bookmakers = $this->sortBookmakers($event->bookmakers);
         foreach ($bookmakers as $bookmaker) {
-            $prices = $this->extractPrices($bookmaker, $homeTeam, $awayTeam);
+            $prices = $this->extractPrices($bookmaker, $homeTeamName, $awayTeamName);
             if ($prices === null) {
                 continue;
             }
@@ -204,7 +261,7 @@ class TheOddsApi
         return $rank === false ? 100 : $rank;
     }
 
-    private function extractPrices($bookmaker, Team $homeTeam, Team $awayTeam)
+    private function extractPrices($bookmaker, $homeTeamName, $awayTeamName)
     {
         if (!isset($bookmaker->markets) || !is_array($bookmaker->markets)) {
             return null;
@@ -216,8 +273,8 @@ class TheOddsApi
             }
 
             $prices = array('home' => null, 'draw' => null, 'away' => null);
-            $homeName = $this->normalizeName($homeTeam->getName());
-            $awayName = $this->normalizeName($awayTeam->getName());
+            $homeName = $this->normalizeName($homeTeamName);
+            $awayName = $this->normalizeName($awayTeamName);
             foreach ($market->outcomes as $outcome) {
                 if (!isset($outcome->name, $outcome->price)) {
                     continue;
@@ -254,6 +311,13 @@ class TheOddsApi
         }
 
         return json_decode((string) $response->getBody());
+    }
+
+    private function formatUtcDateTime(\DateTimeInterface $dateTime)
+    {
+        return \DateTimeImmutable::createFromInterface($dateTime)
+            ->setTimezone(new \DateTimeZone('UTC'))
+            ->format('Y-m-d\TH:i:s\Z');
     }
 
     private function normalizeName($name)
