@@ -37,7 +37,7 @@
 - Admin panel Scoring defaults has a cleaner centered form layout.
 - Submitted predictions can be sent to the configured Telegram chat shortly after kickoff with `sportify:telegram:send-predictions`.
 - Data update Telegram notifications use the app-owned Telegram service/config instead of legacy hardcoded send/pin URLs. Sent messages are pinned by default and can be disabled with `telegram.pin_messages: false`.
-- Probability-weighted scoring v1 is implemented with match scoring snapshots, stored prediction scoring breakdowns, and exact-prediction percentages based on scored results.
+- Probability-weighted scoring v1 is implemented with match scoring snapshots, stored prediction scoring breakdowns, exact-prediction percentages based on scored results, and floor-based underdog bonus rounding.
 - Football-Data integration uses v4, including the v4 teams/fixtures parser fields.
 - Upcoming fixture import uses `football-data.org` plus The Odds API snapshots and skips fixtures when complete odds are unavailable.
 - The prediction page shows probability snapshots, probability bonus chips, and points available for each outcome.
@@ -54,15 +54,6 @@ Current product task:
   - [x] Run the existing days-based `sportify:data:update matches-fixtures` command locally once the token is configured.
   - [x] Confirm whether complete home/draw/away odds snapshots are available for those matches and whether Sportify can normalize/store them.
   - Local result: first fixture dates imported with complete normalized home/draw/away snapshots totaling 100%; the 12-day command window also imported the next available June 13 fixtures.
-
-Planned product follow-up:
-
-- [ ] Revisit probability bonus rounding in a separate PR.
-  - Current `ceil((50 - p) * cap / 50)` gives a bonus for near-coin-flip underdogs such as 49%, which may be too generous.
-  - Consider switching to floor-based rounding so small underdogs do not receive bonus points.
-  - Preferred candidate formula: if `p_percent < 50`, `floor((50 - p_percent) * cap / 49)`, capped to `cap`; otherwise `0`.
-  - This keeps 49% at `+0`, still rewards real underdogs, and allows extreme long shots near 1% to reach the full cap.
-  - Update scoring tests, prediction-page display tests, and Telegram scoring/message expectations in the same PR.
 
 Bundle-structure cleanup is optional, low-urgency technical debt. It is not a current upgrade blocker and should not displace product work or bug fixes. Do not start coding it unless the user explicitly wants to continue structural cleanup and confirms a narrow scope.
 
