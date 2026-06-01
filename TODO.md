@@ -2,11 +2,11 @@
 
 ## Current status
 
-No product hardening tasks are pending.
+One product hardening task is pending.
 
 ## Pending
 
-- None.
+- Add a console command to reset a user's password without requiring SMTP/email delivery.
 
 ## Baseline
 
