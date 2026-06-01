@@ -5,6 +5,7 @@ namespace Devlabs\SportifyBundle\Services\Odds;
 use Devlabs\SportifyBundle\Entity\Team;
 use Devlabs\SportifyBundle\Entity\Tournament;
 use GuzzleHttp\Client;
+use GuzzleHttp\ClientInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class TheOddsApi
@@ -36,12 +37,12 @@ class TheOddsApi
 
     private $preferredBookmakers = array('pinnacle', 'betfair', 'williamhill', 'bet365');
 
-    public function __construct(ContainerInterface $container, OddsProbabilityNormalizer $normalizer, $baseUri)
+    public function __construct(ContainerInterface $container, OddsProbabilityNormalizer $normalizer, $baseUri, ?ClientInterface $httpClient = null)
     {
         $this->container = $container;
         $this->normalizer = $normalizer;
         $this->baseUri = rtrim((string) $baseUri, '/');
-        $this->httpClient = new Client();
+        $this->httpClient = $httpClient ?: new Client();
     }
 
     public function findProbabilitiesForFixture(array $fixtureData, Tournament $tournament, Team $homeTeam, Team $awayTeam)
@@ -244,16 +245,37 @@ class TheOddsApi
     private function fetchJson($path, array $query)
     {
         try {
-            $response = $this->httpClient->get($this->baseUri.$path, array('query' => $query));
+            $response = $this->httpClient->request('GET', $this->baseUri.$path, array('query' => $query));
+        } catch (\GuzzleHttp\Exception\RequestException $e) {
+            if ($e->getResponse() !== null) {
+                throw new \RuntimeException(sprintf(
+                    'The Odds API request failed for "%s" (HTTP %d %s).',
+                    $path,
+                    $e->getResponse()->getStatusCode(),
+                    $e->getResponse()->getReasonPhrase()
+                ), 0, $e);
+            }
+
+            throw new \RuntimeException(sprintf('The Odds API request failed for "%s".', $path), 0, $e);
         } catch (\Exception $e) {
-            return null;
+            throw new \RuntimeException(sprintf('The Odds API request failed for "%s".', $path), 0, $e);
         }
 
         if ($response->getStatusCode() !== 200) {
-            return null;
+            throw new \RuntimeException(sprintf(
+                'The Odds API request failed for "%s" (HTTP %d %s).',
+                $path,
+                $response->getStatusCode(),
+                $response->getReasonPhrase()
+            ));
         }
 
-        return json_decode((string) $response->getBody());
+        $data = json_decode((string) $response->getBody());
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            throw new \RuntimeException(sprintf('The Odds API returned invalid JSON for "%s".', $path));
+        }
+
+        return $data;
     }
 
     private function normalizeName($name)
