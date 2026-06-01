@@ -55,6 +55,15 @@ Current product task:
   - [x] Confirm whether complete home/draw/away odds snapshots are available for those matches and whether Sportify can normalize/store them.
   - Local result: first fixture dates imported with complete normalized home/draw/away snapshots totaling 100%; the 12-day command window also imported the next available June 13 fixtures.
 
+Planned product follow-up:
+
+- [ ] Revisit probability bonus rounding in a separate PR.
+  - Current `ceil((50 - p) * cap / 50)` gives a bonus for near-coin-flip underdogs such as 49%, which may be too generous.
+  - Consider switching to floor-based rounding so small underdogs do not receive bonus points.
+  - Preferred candidate formula: if `p_percent < 50`, `floor((50 - p_percent) * cap / 49)`, capped to `cap`; otherwise `0`.
+  - This keeps 49% at `+0`, still rewards real underdogs, and allows extreme long shots near 1% to reach the full cap.
+  - Update scoring tests, prediction-page display tests, and Telegram scoring/message expectations in the same PR.
+
 Bundle-structure cleanup is optional, low-urgency technical debt. It is not a current upgrade blocker and should not displace product work or bug fixes. Do not start coding it unless the user explicitly wants to continue structural cleanup and confirms a narrow scope.
 
 Reported admin follow-ups:
