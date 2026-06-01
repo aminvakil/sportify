@@ -934,15 +934,30 @@ h2 {
         }
 
         .probability-bonus-chip {
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 28px;
             margin: 0 6px;
-            padding: 2px 7px;
-            border-radius: 10px;
-            background: #ffc107;
+            padding: 3px 8px;
+            border: 1px solid rgba(255, 255, 255, .85);
+            border-radius: 999px;
+            background: linear-gradient(135deg, #ffe082 0%, #ffc107 55%, #f5a400 100%);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, .24), inset 0 1px 0 rgba(255, 255, 255, .65);
             color: #2c3e50;
             font-size: 12px;
+            font-weight: 900;
             line-height: 16px;
+            letter-spacing: .3px;
+            text-shadow: 0 1px 0 rgba(255, 255, 255, .45);
             white-space: nowrap;
+        }
+
+        .probability-bonus-chip-zero {
+            background: linear-gradient(135deg, #f6f8fb 0%, #dfe6ee 100%);
+            color: #7b8794;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, .9), 0 1px 3px rgba(0, 0, 0, .12);
+            text-shadow: none;
         }
 
         .score-separator {
