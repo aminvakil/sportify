@@ -2,11 +2,11 @@
 
 ## Current status
 
-One console-command hardening task is pending.
+No pending upgrade tasks are currently listed.
 
 ## Pending
 
-- Fix `sportify:user:create-admin` when the password prompt is submitted blank. It currently passes `null` into `UserPasswordHasher::hashPassword()` and crashes with a Symfony `TypeError`; it should show a clear app-level validation error such as `Password cannot be blank.` instead.
+- None.
 
 ## Baseline
 
@@ -55,6 +55,7 @@ One console-command hardening task is pending.
 - Admin Data Updates handles non-200 Football-Data responses with a flash message instead of a Symfony 500.
 - FIFA World Cup logo import/display on `/matches` is fixed.
 - Public web registration is configurable with `APP_PUBLIC_REGISTRATION_ENABLED` and defaults to enabled.
+- `sportify:user:create-admin` reports `Password cannot be blank.` instead of crashing when its interactive password prompt is submitted blank.
 
 ## Notes
 
