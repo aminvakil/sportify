@@ -632,6 +632,9 @@ h2 {
 .page-content-wrapper h2 {
     margin: 50px 0 ;
 }
+.rules-scoring-table.table-striped > tbody > tr:nth-of-type(odd) {
+    color: #333;
+}
 .signup-screen {
     &.content{
         padding-bottom: 10px;
