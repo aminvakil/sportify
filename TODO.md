@@ -2,11 +2,11 @@
 
 ## Current status
 
-One deployment hardening task is pending.
+No deployment hardening tasks are pending.
 
 ## Pending
 
-- Make all production persistent Docker volumes external so `docker compose down -v` does not remove data that must survive restarts/redeploys. This includes the database volume and app-managed uploaded assets such as tournament/team logos; mount uploaded assets writable in PHP and read-only in httpd, and document that admins must create required external volumes before initial deployment.
+- None.
 
 ## Baseline
 
@@ -32,6 +32,7 @@ One deployment hardening task is pending.
 
 ## Deployment status
 
+- Production persistent data uses external Docker volumes for MySQL data and uploaded team/tournament logos, with logo volumes writable in PHP and read-only in httpd.
 - Production Compose is separate from the dev stack via `docker-compose.prod.yml` and `docker/Dockerfile.prod`.
 - Production runtime uses php-fpm + httpd. Node/npm are used only in the asset build stage and are not included in final runtime images.
 - Production app configuration remains host-provided through `app/config/parameters.yml`; infrastructure settings are documented in `.env.example`.
