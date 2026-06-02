@@ -99,6 +99,17 @@ class FootballDataOrgParserTest extends \PHPUnit\Framework\TestCase
         $this->assertSame(3, $parsed[0]['away_team_goals']);
     }
 
+    public function testParseFixturesStoresNinetyMinuteScoreWhenExtraTimeOrPenaltiesContainZeroes()
+    {
+        $finished = $this->createFixture(3, 'FINISHED', '2020-01-03T12:00:00Z', 3, 3, 0, 1, 1, 0);
+
+        $parser = new FootballDataOrg();
+        $parsed = $parser->parseFixtures(array($finished));
+
+        $this->assertSame(2, $parsed[0]['home_team_goals']);
+        $this->assertSame(2, $parsed[0]['away_team_goals']);
+    }
+
     public function testParseFixturesSkipsUnresolvedTeams()
     {
         $valid = $this->createFixture(1, 'SCHEDULED', '2020-01-02T12:00:00Z');

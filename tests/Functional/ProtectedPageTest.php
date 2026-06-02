@@ -41,6 +41,8 @@ class ProtectedPageTest extends FunctionalTestCase
 
         $this->assertTrue($this->client->getResponse()->isSuccessful());
         $this->assertStringContainsString('Final champion predicted - 15 points', $crawler->text());
+        $this->assertStringContainsString('The final result for Sportify is the score after 90 minutes plus stoppage time.', $crawler->text());
+        $this->assertStringContainsString('Extra time, 120-minute results, penalty shootouts, and who eventually qualifies or lifts the trophy do not change match prediction scoring.', $crawler->text());
         $this->assertStringContainsString('Round of 32', $crawler->text());
         $this->assertStringContainsString('Semi-final', $crawler->text());
         $this->assertStringContainsString('Final', $crawler->text());

@@ -4,7 +4,7 @@
 
 Use **The Odds API v4** as the first betting-probability source.
 
-Keep `football-data.org` as the fixture source. For each upcoming fixture that is not already in the database, query The Odds API for that specific match's pre-kickoff head-to-head odds. Add the match and its odds snapshot to the database together. If The Odds API cannot be reached, the match cannot be matched there, or all three home/draw/away outcomes are not returned, do not create the local match. Store enough source text on the match to explain which odds provider/bookmaker/market was used.
+Keep `football-data.org` as the fixture source. For each upcoming fixture that is not already in the database, query The Odds API for that specific match's pre-kickoff head-to-head odds. For soccer, this must be the three-way 90-minute market: home win, draw, or away win after regular time plus stoppage time. Do not use two-way qualification/winner markets, 120-minute outcomes, penalty-shootout outcomes, or tournament outrights. Add the match and its odds snapshot to the database together. If The Odds API cannot be reached, the match cannot be matched there, or all three home/draw/away outcomes are not returned, do not create the local match. Store enough source text on the match to explain which odds provider/bookmaker/market was used.
 
 ## Why this provider
 
@@ -97,7 +97,7 @@ The `/odds` response contains one object per event:
 }
 ```
 
-For soccer, the `h2h` market has three outcomes: home win, draw, and away win. Pick one bookmaker deterministically from an app-owned preference list in code; if none are present, use the first bookmaker returned that has all three `h2h` outcomes. Do not make this another deployment parameter. Store the source as:
+For soccer, the `h2h` market has three outcomes: home win, draw, and away win. This is the market Sportify uses because the presence of a draw represents the 90-minute match result, not a two-way “to qualify” or “winner after extra time/penalties” outcome. Pick one bookmaker deterministically from an app-owned preference list in code; if none are present, use the first bookmaker returned that has all three `h2h` outcomes. Do not make this another deployment parameter. Store the source as:
 
 ```text
 the_odds_api:{sport_key}:{event_id}:{bookmaker_key}:h2h
