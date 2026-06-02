@@ -183,6 +183,13 @@ class Importer
 //                    $matchUpdated = true;
                 }
 
+                $previousBaseOutcomePoints = $match->getBaseOutcomePoints();
+                $previousBaseExactPoints = $match->getBaseExactPoints();
+                $this->scoringDefaults->applyTournamentScoringRules($match);
+                if ($match->getBaseOutcomePoints() !== $previousBaseOutcomePoints || $match->getBaseExactPoints() !== $previousBaseExactPoints) {
+                    $matchUpdated = true;
+                }
+
                 // updating Match's home and away goals if they are not already set
                 if (($fixtureData['home_team_goals'] !== null) && ($fixtureData['away_team_goals'] !== null) &&
                     ($match->getHomeGoals() === null) && ($match->getAwayGoals() === null)) {
