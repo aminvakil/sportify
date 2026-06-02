@@ -88,12 +88,6 @@
                                 <a class="logout" href="{{ path('fos_user_security_logout') }}">Logout</a>
                             </li>
                         {% else %}
-                            <li {% if app.request.attributes.get('_route') == 'standings_index'%}class="active"{% endif %}>
-                                <a class="standings" href="{{ path('standings_index') }}">Standings</a>
-                            </li>
-                            <li {% if app.request.attributes.get('_route') == 'rules_index'%}class="active"{% endif %}>
-                                <a class="rules" href="{{ path('rules_index') }}">Rules</a>
-                            </li>
                             <li {% if app.request.attributes.get('_route') == 'fos_user_security_login'%}class="active"{% endif %}>
                                 <a class="login" href="{{ path('fos_user_security_login') }}">Log in</a>
                             </li>
@@ -164,12 +158,6 @@
                                             <a class="logout" href="{{ path('fos_user_security_logout') }}">Logout</a>
                                         </li>
                                     {% else %}
-                                        <li {% if app.request.attributes.get('_route') == 'standings_index'%}class="active"{% endif %}>
-                                            <a class="standings" href="{{ path('standings_index') }}">Standings</a>
-                                        </li>
-                                        <li {% if app.request.attributes.get('_route') == 'rules_index'%}class="active"{% endif %}>
-                                            <a class="rules" href="{{ path('rules_index') }}">Rules</a>
-                                        </li>
                                         <li {% if app.request.attributes.get('_route') == 'fos_user_security_login'%}class="active"{% endif %}>
                                             <a class="login" href="{{ path('fos_user_security_login') }}">Log in</a>
                                         </li>

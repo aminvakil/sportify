@@ -12,8 +12,10 @@ class ProtectedPageTest extends FunctionalTestCase
     public function testAnonymousUsersAreRedirectedToLogin($path)
     {
         $this->client->request('GET', $path);
+        $response = $this->client->getResponse();
 
-        $this->assertTrue($this->client->getResponse()->isRedirect('/login'));
+        $this->assertTrue($response->isRedirect());
+        $this->assertMatchesRegularExpression('#/login$#', $response->headers->get('Location'));
     }
 
     /**
@@ -38,6 +40,9 @@ class ProtectedPageTest extends FunctionalTestCase
             array('/champion'),
             array('/matches'),
             array('/history'),
+            array('/standings'),
+            array('/standing'),
+            array('/rules'),
         );
     }
 }
