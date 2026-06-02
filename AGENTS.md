@@ -23,6 +23,7 @@ The project is intentionally old. Do not modernize broad areas unless the curren
 - Do not merge PRs; the user will handle merging.
 - Do not combine unrelated upgrades.
 - Do not refactor opportunistically.
+- If an approved plan hits a blocker or an expected tool is unavailable, stop and ask the user how to proceed instead of silently changing to a different implementation path.
 - Keep Docker as the source of truth for local verification.
 - Do not install host packages.
 - Do not commit secrets, API tokens, local `parameters.yml`, `vendor/`, `node_modules/`, `lib/`, generated assets, or cache/log files.
