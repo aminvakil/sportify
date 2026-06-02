@@ -76,6 +76,7 @@ COPY --chown=www-data:www-data --from=asset-build /app/public/js /app/public/js
 COPY docker/prod/init.sh /usr/local/bin/sportify-prod-init
 RUN set -eux; \
     chmod +x /usr/local/bin/sportify-prod-init; \
+    printf '%s\n' 'date.timezone=${TZ}' > "$PHP_INI_DIR/conf.d/timezone.ini"; \
     mkdir -p var/cache var/logs var/sessions public/bundles public/img/team_logos public/img/tournament_logos; \
     chown -R www-data:www-data var public/bundles public/img/team_logos public/img/tournament_logos
 USER www-data

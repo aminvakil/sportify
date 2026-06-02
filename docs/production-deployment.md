@@ -30,16 +30,19 @@ cp app/config/parameters.yml.dist app/config/parameters.yml
 
 ### `.env`
 
-Set the exposed HTTP port and MySQL bootstrap credentials:
+Set the exposed HTTP port, timezone, registration flag, and MySQL bootstrap credentials:
 
 ```dotenv
 HTTP_PORT=8080
+APP_TIMEZONE=UTC
 APP_PUBLIC_REGISTRATION_ENABLED=true
 MYSQL_DATABASE=sportify
 MYSQL_USER=sportify
 MYSQL_PASSWORD=replace-with-a-secret
 MYSQL_ROOT_PASSWORD=replace-with-a-secret
 ```
+
+Set `APP_TIMEZONE` to the deployment's IANA timezone, for example `Europe/Amsterdam`. Docker Compose passes it to production containers as `TZ`, and PHP uses the same value for `date.timezone`.
 
 Set `APP_PUBLIC_REGISTRATION_ENABLED=false` to disable public web registration while keeping command-line user creation available.
 
@@ -151,7 +154,7 @@ Adjust `/srv/sportify`, schedule frequency, and log paths for your host.
 
 ## Upgrades and redeploys
 
-For a new application revision:
+For a new application revision, first make sure `.env` contains `APP_TIMEZONE` set to the intended application timezone, especially when upgrading from older deployments that followed the host `/etc/localtime` mount.
 
 ```sh
 git fetch --all --prune
