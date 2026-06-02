@@ -52,11 +52,23 @@ class CreateAdminUserCommandTest extends DatabaseTestCase
         $this->assertNull($this->em->getRepository(User::class)->findOneBy(array('emailCanonical' => 'second-admin@example.com')));
     }
 
-    private function executeCommand(array $arguments)
+    public function testCommandRefusesBlankInteractivePassword()
+    {
+        $tester = $this->executeCommand(array(
+            'email' => 'admin@example.com',
+        ), array(''));
+
+        $this->assertSame(Command::FAILURE, $tester->getStatusCode());
+        $this->assertStringContainsString('Password cannot be blank.', $tester->getDisplay());
+        $this->assertNull($this->em->getRepository(User::class)->findOneBy(array('emailCanonical' => 'admin@example.com')));
+    }
+
+    private function executeCommand(array $arguments, array $inputs = array())
     {
         $application = new Application(self::$kernel);
         $command = $application->find('sportify:user:create-admin');
         $tester = new CommandTester($command);
+        $tester->setInputs($inputs);
         $tester->execute($arguments);
 
         return $tester;

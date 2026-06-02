@@ -73,8 +73,8 @@ class CreateAdminUserCommand extends Command
             $password = $this->getHelper('question')->ask($input, $output, $question);
         }
 
-        if ($password === '') {
-            $output->writeln('<error>Please provide a password.</error>');
+        if ($password === null || $password === '') {
+            $output->writeln('<error>Password cannot be blank.</error>');
 
             return 1;
         }
