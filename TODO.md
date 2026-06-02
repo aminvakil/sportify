@@ -2,11 +2,11 @@
 
 ## Current status
 
-No pending modernization tasks are currently listed.
+One production timezone configuration task is pending.
 
 ## Pending
 
-- None.
+- Make the production container timezone configurable through an environment variable or documented deployment variable, and use it consistently for container `TZ` and PHP `date.timezone` instead of hardcoding a timezone in Docker files.
 
 ## Baseline
 
