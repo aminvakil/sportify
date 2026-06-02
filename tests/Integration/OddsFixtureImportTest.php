@@ -72,6 +72,24 @@ class OddsFixtureImportTest extends DatabaseTestCase
             ->getByEntityTypeAndApiObjectId('Match', 'football_data_org', 501));
     }
 
+    public function testExistingWorldCup2026KnockoutFixtureGetsRulesBaseScoringOnReimport()
+    {
+        $tournament = $this->createTournament('FIFA World Cup');
+        $homeTeam = $this->createTeam('Home Nation', $tournament);
+        $awayTeam = $this->createTeam('Away Nation', $tournament);
+        $match = $this->createMatch($tournament, $homeTeam, $awayTeam, new \DateTime('2026-06-28 12:00:00'));
+        $this->createApiMapping($match, 'Match', 'football_data_org', 502);
+
+        $importer = $this->createImporter(new FakeFixtureOddsProvider(array()));
+
+        $status = $importer->importFixtures(array($this->scheduledFixture(502, '2026-06-28 12:00:00')), $tournament, 'football_data_org');
+
+        $this->assertSame(0, $status['fixtures_added']);
+        $this->assertSame(1, $status['fixtures_updated']);
+        $this->assertSame(3, $match->getBaseOutcomePoints());
+        $this->assertSame(6, $match->getBaseExactPoints());
+    }
+
     private function createImporter($oddsProvider)
     {
         return new Importer(
@@ -82,14 +100,14 @@ class OddsFixtureImportTest extends DatabaseTestCase
         );
     }
 
-    private function scheduledFixture($matchId)
+    private function scheduledFixture($matchId, $datetime = '2030-06-01 12:00:00')
     {
         return array(
             'match_id' => $matchId,
             'tournament_id' => 99,
             'home_team_id' => 10,
             'away_team_id' => 20,
-            'match_local_time' => '2030-06-01 12:00:00',
+            'match_local_time' => $datetime,
             'status' => 'SCHEDULED',
             'home_team_goals' => null,
             'away_team_goals' => null,

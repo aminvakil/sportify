@@ -45,6 +45,32 @@ class ScoringDefaultsTest extends DatabaseTestCase
         $this->assertSame(3, $match->getBaseOutcomePoints());
         $this->assertSame(7, $match->getBaseExactPoints());
     }
+
+    public function testWorldCup2026KnockoutMatchesUseRulesBaseScoring()
+    {
+        $defaults = self::$kernel->getContainer()->get('app.scoring_defaults');
+        $tournament = $this->createTournament('FIFA World Cup');
+
+        $cases = array(
+            array('2026-06-27 12:00:00', 2, 5),
+            array('2026-06-28 12:00:00', 3, 6),
+            array('2026-07-04 12:00:00', 4, 8),
+            array('2026-07-09 12:00:00', 4, 8),
+            array('2026-07-14 12:00:00', 5, 10),
+            array('2026-07-19 12:00:00', 5, 10),
+        );
+
+        foreach ($cases as $case) {
+            $match = new MatchEntity();
+            $match->setTournamentId($tournament);
+            $match->setDatetime(new \DateTime($case[0]));
+
+            $defaults->applyToMatch($match);
+
+            $this->assertSame($case[1], $match->getBaseOutcomePoints(), $case[0]);
+            $this->assertSame($case[2], $match->getBaseExactPoints(), $case[0]);
+        }
+    }
 }
 
 class ScoringDefaultsApiControllerTestDouble extends BaseApiController
