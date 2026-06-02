@@ -64,7 +64,9 @@ security:
         - { path: ^/login$, role: PUBLIC_ACCESS }
         - { path: ^/register, role: PUBLIC_ACCESS }
         - { path: ^/resetting, role: PUBLIC_ACCESS }
-        - { path: ^/standings, role: PUBLIC_ACCESS }
+        - { path: ^/standings, role: ROLE_USER }
+        - { path: ^/standing, role: ROLE_USER }
+        - { path: ^/rules, role: ROLE_USER }
         - { path: ^/admin/, role: ROLE_ADMIN }
         - { path: ^/api$, role: PUBLIC_ACCESS }
         - { path: ^/api, roles: [ IS_AUTHENTICATED_FULLY ] }
