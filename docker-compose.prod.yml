@@ -12,6 +12,7 @@ services:
       db:
         condition: service_healthy
     volumes:
+      - /etc/localtime:/etc/localtime:ro
       - bundle-assets:/app/public/bundles
       - prod-cache:/app/var/cache
       - team-logos:/app/public/img/team_logos
@@ -29,6 +30,7 @@ services:
       init:
         condition: service_completed_successfully
     volumes:
+      - /etc/localtime:/etc/localtime:ro
       - bundle-assets:/app/public/bundles
       - prod-cache:/app/var/cache
       - team-logos:/app/public/img/team_logos
@@ -48,6 +50,7 @@ services:
     ports:
       - "${HTTP_PORT:-8080}:80"
     volumes:
+      - /etc/localtime:/etc/localtime:ro
       - bundle-assets:/app/public/bundles:ro
       - team-logos:/app/public/img/team_logos:ro
       - tournament-logos:/app/public/img/tournament_logos:ro
@@ -59,6 +62,7 @@ services:
     env_file:
       - .env
     volumes:
+      - /etc/localtime:/etc/localtime:ro
       - db-data:/var/lib/mysql
     healthcheck:
       test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -P 3306 -u\"$${MYSQL_USER}\" -p\"$${MYSQL_PASSWORD}\""]

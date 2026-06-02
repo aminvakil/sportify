@@ -2,11 +2,11 @@
 
 ## Current status
 
-One production Docker timezone task is pending.
+No pending modernization tasks are currently listed.
 
 ## Pending
 
-- Mount the host `/etc/localtime` into production Docker containers as read-only so container OS time follows the host timezone, e.g. `/etc/localtime:/etc/localtime:ro`.
+- None.
 
 ## Baseline
 
@@ -37,6 +37,7 @@ One production Docker timezone task is pending.
 - Production runtime uses php-fpm + httpd. Node/npm are used only in the asset build stage and are not included in final runtime images.
 - Production app configuration remains host-provided through `app/config/parameters.yml`; infrastructure settings are documented in `.env.example`.
 - Production includes an idempotent `init` service that waits for the database, creates/updates schema, installs bundle assets, and clears/warms prod cache before app startup.
+- Production containers mount the host `/etc/localtime` read-only so container OS time follows the host timezone.
 - First admin creation uses `sportify:user:create-admin`; regular user creation for deployments without SMTP uses `sportify:user:create`; password resets without SMTP use `sportify:user:reset-password`.
 - Deployment documentation covers required local config files, first deployment, upgrades, scheduled commands, and smoke checks.
 
