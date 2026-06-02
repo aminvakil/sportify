@@ -2,11 +2,11 @@
 
 ## Current status
 
-No product hardening tasks are pending.
+One deployment hardening task is pending.
 
 ## Pending
 
-- None.
+- Make all production persistent Docker volumes external so `docker compose down -v` does not remove data that must survive restarts/redeploys. This includes the database volume and app-managed uploaded assets such as tournament/team logos; mount uploaded assets writable in PHP and read-only in httpd, and document that admins must create required external volumes before initial deployment.
 
 ## Baseline
 
