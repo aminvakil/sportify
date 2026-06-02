@@ -2,11 +2,11 @@
 
 ## Current status
 
-One production timezone configuration task is pending.
+No pending items.
 
 ## Pending
 
-- Make the production container timezone configurable through an environment variable or documented deployment variable, and use it consistently for container `TZ` and PHP `date.timezone` instead of hardcoding a timezone in Docker files.
+- None.
 
 ## Baseline
 
@@ -29,6 +29,7 @@ One production timezone configuration task is pending.
 - Upgraded Docker MySQL from 5.7 to 9.7 with explicit utf8mb4 defaults. Schema validation, reserved-word checks, SQL mode, and charset/collation checks are clean.
 - Moved the public document root from `web/` to `public/` across Docker, httpd, frontend asset output, tests, and deployment docs.
 - Completed structural backend modernization milestones for discovery, kernel/autoload, config layout, and public document-root modernization.
+- Made production timezone configuration deployment-variable driven through `APP_TIMEZONE`.
 
 ## Deployment status
 
@@ -37,7 +38,7 @@ One production timezone configuration task is pending.
 - Production runtime uses php-fpm + httpd. Node/npm are used only in the asset build stage and are not included in final runtime images.
 - Production app configuration remains host-provided through `app/config/parameters.yml`; infrastructure settings are documented in `.env.example`.
 - Production includes an idempotent `init` service that waits for the database, creates/updates schema, installs bundle assets, and clears/warms prod cache before app startup.
-- Production containers mount the host `/etc/localtime` read-only so container OS time follows the host timezone.
+- Production timezone is configured with `APP_TIMEZONE`, passed to containers as `TZ`, and reused by PHP for `date.timezone`.
 - First admin creation uses `sportify:user:create-admin`; regular user creation for deployments without SMTP uses `sportify:user:create`; password resets without SMTP use `sportify:user:reset-password`.
 - Deployment documentation covers required local config files, first deployment, upgrades, scheduled commands, and smoke checks.
 
