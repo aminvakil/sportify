@@ -2,11 +2,11 @@
 
 ## Current status
 
-No pending upgrade tasks are currently listed.
+One production Docker timezone task is pending.
 
 ## Pending
 
-- None.
+- Mount the host `/etc/localtime` into production Docker containers as read-only so container OS time follows the host timezone, e.g. `/etc/localtime:/etc/localtime:ro`.
 
 ## Baseline
 
