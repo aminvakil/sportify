@@ -175,13 +175,13 @@ class RepositoryAndHelperTest extends DatabaseTestCase
         $predictionChampionRepository = $this->em->getRepository(PredictionChampion::class);
         $this->assertSame($rightPrediction->getId(), $predictionChampionRepository->getByUserAndTournament($rightUser, $tournament)->getId());
         $this->assertSame(array(), $predictionChampionRepository->getNotScoredByTournament($tournament));
-        $this->assertSame(5, $rightPrediction->getPoints());
+        $this->assertSame(PredictionChampion::POINTS_WIN, $rightPrediction->getPoints());
         $this->assertSame(0, $wrongPrediction->getPoints());
         $this->assertTrue((bool) $rightPrediction->getScoreAdded());
         $this->assertTrue((bool) $wrongPrediction->getScoreAdded());
 
         $scoreRepository = $this->em->getRepository(Score::class);
-        $this->assertSame(5, $scoreRepository->getByUserAndTournament($rightUser, $tournament)->getPoints());
+        $this->assertSame(PredictionChampion::POINTS_WIN, $scoreRepository->getByUserAndTournament($rightUser, $tournament)->getPoints());
         $this->assertSame(0, $scoreRepository->getByUserAndTournament($wrongUser, $tournament)->getPoints());
     }
 

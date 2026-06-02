@@ -272,7 +272,7 @@ class EntityBehaviourTest extends \PHPUnit\Framework\TestCase
         $winningPrediction->setUserId($user);
         $winningPrediction->setTournamentId($tournament);
         $winningPrediction->setTeamId($champion);
-        $winningPrediction->setPoints(5);
+        $winningPrediction->setPoints(PredictionChampion::POINTS_WIN);
         $winningPrediction->setScoreAdded(1);
 
         $losingPrediction = new PredictionChampion();
@@ -281,7 +281,7 @@ class EntityBehaviourTest extends \PHPUnit\Framework\TestCase
 
         $this->assertSame(PredictionChampion::POINTS_WIN, $winningPrediction->calculatePoints());
         $this->assertSame(0, $losingPrediction->calculatePoints());
-        $this->assertSame(5, $winningPrediction->getPoints());
+        $this->assertSame(PredictionChampion::POINTS_WIN, $winningPrediction->getPoints());
         $this->assertTrue((bool) $winningPrediction->getScoreAdded());
         $this->assertSame('champion_user', $winningPrediction->getUsername());
         $this->assertSame('champion@example.com', $winningPrediction->getUserEmail());

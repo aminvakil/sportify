@@ -50,6 +50,7 @@ No pending items.
 - Submitted predictions can be sent to the configured Telegram chat shortly after kickoff with `sportify:telegram:send-predictions`.
 - Data update Telegram notifications use the app-owned Telegram service/config instead of legacy hardcoded send/pin URLs. Sent messages are pinned by default and can be disabled with `telegram.pin_messages: false`.
 - Probability-weighted scoring v1 is implemented with match scoring snapshots, stored prediction scoring breakdowns, exact-prediction percentages based on scored results, and floor-based underdog bonus rounding.
+- Rules page documents World Cup 2026 knockout-stage base scoring recommendations and champion prediction scoring is 15 points.
 - Football-Data integration uses v4, including the v4 teams/fixtures parser fields.
 - Upcoming fixture import uses `football-data.org` plus The Odds API snapshots and skips fixtures when complete odds are unavailable.
 - The prediction page shows probability snapshots, probability bonus chips, and points available for each outcome.

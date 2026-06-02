@@ -5,7 +5,7 @@ namespace Devlabs\SportifyBundle\Entity;
 
 class PredictionChampion
 {
-    const POINTS_WIN = 5;
+    const POINTS_WIN = 15;
 
     private $id;
 
