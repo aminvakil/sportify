@@ -9,6 +9,7 @@ use Devlabs\SportifyBundle\Services\Odds\TheOddsApi;
 use GuzzleHttp\Client;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
+use GuzzleHttp\Middleware;
 use GuzzleHttp\Psr7\Response;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\Container;
@@ -59,7 +60,7 @@ class TheOddsApiTest extends TestCase
         );
     }
 
-    public function testReturnsNullForSuccessfulOddsResponseWithoutCompleteSnapshot()
+    public function testReturnsNullForSuccessfulOddsResponseWithoutCompleteNinetyMinuteSnapshot()
     {
         $api = $this->createApi(array(
             $this->sportsResponse(),
@@ -76,6 +77,33 @@ class TheOddsApiTest extends TestCase
             $this->team('Mexico'),
             $this->team('South Africa')
         ));
+    }
+
+    public function testRequestsSoccerHeadToHeadMarketWithDrawInsteadOfOutrightsOutcome()
+    {
+        $history = array();
+        $api = $this->createApiWithHistory(array(
+            $this->sportsResponse(),
+            $this->eventsResponse(),
+            $this->oddsResponse(array(
+                array('name' => 'Mexico', 'price' => 2.0),
+                array('name' => 'Draw', 'price' => 4.0),
+                array('name' => 'South Africa', 'price' => 4.0),
+            )),
+        ), $history);
+
+        $snapshot = $api->findProbabilitiesForFixture(
+            $this->fixtureData(),
+            $this->tournament(),
+            $this->team('Mexico'),
+            $this->team('South Africa')
+        );
+
+        $this->assertSame('the_odds_api:soccer_fifa_world_cup:event-1:pinnacle:h2h', $snapshot['source']);
+        $oddsRequest = $history[2]['request'];
+        parse_str($oddsRequest->getUri()->getQuery(), $query);
+        $this->assertSame('h2h', $query['markets']);
+        $this->assertNotSame('outrights', $query['markets']);
     }
 
     public function testReturnsNullWhenTokenIsNotConfigured()
@@ -95,6 +123,17 @@ class TheOddsApiTest extends TestCase
         $container = new Container();
         $container->setParameter('odds_api.token', $token);
         $client = new Client(array('handler' => HandlerStack::create(new MockHandler($responses))));
+
+        return new TheOddsApi($container, new OddsProbabilityNormalizer(), 'https://api.example.test', $client);
+    }
+
+    private function createApiWithHistory(array $responses, array &$history)
+    {
+        $container = new Container();
+        $container->setParameter('odds_api.token', 'test-token');
+        $handler = HandlerStack::create(new MockHandler($responses));
+        $handler->push(Middleware::history($history));
+        $client = new Client(array('handler' => $handler));
 
         return new TheOddsApi($container, new OddsProbabilityNormalizer(), 'https://api.example.test', $client);
     }
