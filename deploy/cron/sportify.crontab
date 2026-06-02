@@ -1,0 +1,21 @@
+# Sportify production scheduled jobs.
+#
+# Merge these entries into the deployment host's crontab.
+# If this host has no existing crontab, install with:
+#   crontab deploy/cron/sportify.crontab
+#
+# Adjust SPORTIFY_DIR and log paths for your host. Run from the repository
+# checkout so Docker Compose can read .env and docker-compose.prod.yml.
+
+SHELL=/bin/sh
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+SPORTIFY_DIR=/path/to/sportify
+
+# Fetch match fixtures for the next 7 days every morning.
+15 6 * * * cd "$SPORTIFY_DIR" && docker compose -f docker-compose.prod.yml exec -T php php bin/console --env=prod --no-debug sportify:data:update matches-fixtures 7 >> /var/log/sportify-data-updates.log 2>&1
+
+# Send submitted predictions to the configured Telegram group after kickoff.
+5,35 * * * * cd "$SPORTIFY_DIR" && docker compose -f docker-compose.prod.yml exec -T php php bin/console --env=prod --no-debug sportify:telegram:send-predictions >> /var/log/sportify-telegram.log 2>&1
+
+# Check recently ended matches and update scores/standings when results arrive.
+10,40 * * * * cd "$SPORTIFY_DIR" && docker compose -f docker-compose.prod.yml exec -T php php bin/console --env=prod --no-debug sportify:data:update matches-results 1 >> /var/log/sportify-data-updates.log 2>&1
