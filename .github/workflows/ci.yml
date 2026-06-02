@@ -96,6 +96,12 @@ jobs:
           MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD
           EOF
 
+      - name: Create production external volumes
+        run: |
+          docker volume create sportify-prod-db-data
+          docker volume create sportify-prod-team-logos
+          docker volume create sportify-prod-tournament-logos
+
       - name: Build Docker images
         run: docker compose -f docker-compose.prod.yml build
 

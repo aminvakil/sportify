@@ -1,7 +1,7 @@
 # Production deployment
 
 This guide describes the Docker Compose production stack in `docker-compose.prod.yml`.
-The stack builds immutable `php` and `httpd` runtime images from `docker/Dockerfile.prod` and runs MySQL in a named Docker volume.
+The stack builds immutable `php` and `httpd` runtime images from `docker/Dockerfile.prod` and stores production database/upload data in required external Docker volumes.
 
 ## Prerequisites
 
@@ -64,6 +64,14 @@ At minimum, set:
 
 ## First deployment
 
+Create the required external volumes before starting the stack:
+
+```sh
+docker volume create sportify-prod-db-data
+docker volume create sportify-prod-team-logos
+docker volume create sportify-prod-tournament-logos
+```
+
 Build and start the production stack:
 
 ```sh
@@ -71,7 +79,7 @@ docker compose -f docker-compose.prod.yml build
 docker compose -f docker-compose.prod.yml up -d
 ```
 
-The `init` service runs before `php` and `httpd`. It waits for MySQL, creates the configured database if needed, updates the schema, installs bundle assets into the shared `public/bundles` volume, and clears/warms the prod cache.
+The `init` service runs before `php` and `httpd`. It waits for MySQL, creates the configured database if needed, updates the schema, installs bundle assets into the shared `public/bundles` volume, and clears/warms the prod cache. Uploaded team and tournament logos are stored in external volumes; PHP mounts them writable and httpd mounts them read-only.
 
 Check the stack:
 
@@ -159,7 +167,7 @@ The `init` service reruns during `up -d` when its image changed. To rerun the id
 docker compose -f docker-compose.prod.yml run --rm init
 ```
 
-Before upgrades that may change schema or data, take a database backup using your normal backup process.
+Before upgrades that may change schema or data, take a database backup using your normal backup process. `docker compose -f docker-compose.prod.yml down -v` removes only Compose-managed cache/bundle-asset volumes; the external database and logo volumes remain until an admin explicitly removes them with `docker volume rm`.
 
 ## Smoke checks
 

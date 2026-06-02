@@ -76,8 +76,8 @@ COPY --chown=www-data:www-data --from=asset-build /app/public/js /app/public/js
 COPY docker/prod/init.sh /usr/local/bin/sportify-prod-init
 RUN set -eux; \
     chmod +x /usr/local/bin/sportify-prod-init; \
-    mkdir -p var/cache var/logs var/sessions public/bundles; \
-    chown -R www-data:www-data var public/bundles
+    mkdir -p var/cache var/logs var/sessions public/bundles public/img/team_logos public/img/tournament_logos; \
+    chown -R www-data:www-data var public/bundles public/img/team_logos public/img/tournament_logos
 USER www-data
 EXPOSE 9000
 CMD ["php-fpm"]

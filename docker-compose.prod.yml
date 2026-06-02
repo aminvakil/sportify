@@ -14,6 +14,8 @@ services:
     volumes:
       - bundle-assets:/app/public/bundles
       - prod-cache:/app/var/cache
+      - team-logos:/app/public/img/team_logos
+      - tournament-logos:/app/public/img/tournament_logos
 
   php:
     build:
@@ -29,6 +31,8 @@ services:
     volumes:
       - bundle-assets:/app/public/bundles
       - prod-cache:/app/var/cache
+      - team-logos:/app/public/img/team_logos
+      - tournament-logos:/app/public/img/tournament_logos
     expose:
       - "9000"
     restart: unless-stopped
@@ -45,6 +49,8 @@ services:
       - "${HTTP_PORT:-8080}:80"
     volumes:
       - bundle-assets:/app/public/bundles:ro
+      - team-logos:/app/public/img/team_logos:ro
+      - tournament-logos:/app/public/img/tournament_logos:ro
     restart: unless-stopped
 
   db:
@@ -65,3 +71,11 @@ volumes:
   bundle-assets:
   prod-cache:
   db-data:
+    external: true
+    name: sportify-prod-db-data
+  team-logos:
+    external: true
+    name: sportify-prod-team-logos
+  tournament-logos:
+    external: true
+    name: sportify-prod-tournament-logos

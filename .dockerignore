@@ -7,3 +7,7 @@ var/logs
 var/sessions
 npm-debug.log
 .DS_Store
+public/img/team_logos/*
+!public/img/team_logos/.gitignore
+public/img/tournament_logos/*
+!public/img/tournament_logos/.gitignore
