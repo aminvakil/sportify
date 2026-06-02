@@ -144,6 +144,14 @@ services:
         tags:
             - { name: console.command }
 
+    app.command.reset_user_password:
+        class: Devlabs\SportifyBundle\Command\ResetUserPasswordCommand
+        arguments:
+            - '@doctrine.orm.entity_manager'
+            - '@security.user_password_hasher'
+        tags:
+            - { name: console.command }
+
     app.command.create_oauth_client:
         class: Devlabs\SportifyBundle\Command\CreateOAuthClientCommand
         arguments: ['@doctrine.orm.entity_manager']
