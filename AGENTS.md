@@ -49,6 +49,10 @@ Read-only inspection commands are allowed, but summarize findings before proposi
 ## Output and token discipline
 
 - Avoid pasting huge command outputs into chat. Redirect noisy test/build output to a temp file, then inspect only the relevant summary or error lines.
+- Never print production or local credential files, including `.env`, `app/config/parameters.yml`, copied temp configs, or command output that dumps Symfony parameters/container config.
+- When verifying secrets or tokens, report only presence/status such as `configured`, `missing`, or HTTP/API success metadata. Do not echo values, prefixes, suffixes, hashes, chat IDs, database passwords, app secrets, API tokens, or bot tokens.
+- Before running one-off PHP/Symfony verification snippets, ensure they cannot accidentally print parameters or return arrays containing secrets; explicitly select and redact non-secret fields.
+- If a secret is accidentally exposed, stop repeating it, identify only the affected secret classes, and recommend/perform rotation where authorized.
 - For failing PHPUnit/Symfony runs, prefer extracting concise failure sections (for example, grep around `^[0-9]+)`), not full HTML error pages or full logs.
 - Keep searches targeted. Use narrower `rg` patterns, `--count`, or `head` before printing large match sets.
 - Prefer `git diff --stat` plus targeted diffs for risky files instead of printing broad diffs.
