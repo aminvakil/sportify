@@ -2,11 +2,11 @@
 
 ## Current status
 
-No deployment hardening tasks are pending.
+One console-command hardening task is pending.
 
 ## Pending
 
-- None.
+- Fix `sportify:user:create-admin` when the password prompt is submitted blank. It currently passes `null` into `UserPasswordHasher::hashPassword()` and crashes with a Symfony `TypeError`; it should show a clear app-level validation error such as `Password cannot be blank.` instead.
 
 ## Baseline
 
