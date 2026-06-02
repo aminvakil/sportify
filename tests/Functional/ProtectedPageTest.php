@@ -32,6 +32,20 @@ class ProtectedPageTest extends FunctionalTestCase
         $this->assertTrue($this->client->getResponse()->isSuccessful());
     }
 
+    public function testRulesPageShowsKnockoutAndChampionScoring()
+    {
+        $this->createUser('rules_user', 'testpass');
+        $this->login('rules_user@example.com', 'testpass');
+
+        $crawler = $this->client->request('GET', '/rules');
+
+        $this->assertTrue($this->client->getResponse()->isSuccessful());
+        $this->assertStringContainsString('Final champion predicted - 15 points', $crawler->text());
+        $this->assertStringContainsString('Round of 32', $crawler->text());
+        $this->assertStringContainsString('Semi-final', $crawler->text());
+        $this->assertStringContainsString('Final', $crawler->text());
+    }
+
     public function protectedPageProvider()
     {
         return array(
