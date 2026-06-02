@@ -18,4 +18,4 @@ SPORTIFY_DIR=/path/to/sportify
 5,35 * * * * cd "$SPORTIFY_DIR" && docker compose -f docker-compose.prod.yml exec -T php php bin/console --env=prod --no-debug sportify:telegram:send-predictions >> /var/log/sportify-telegram.log 2>&1
 
 # Check recently ended matches and update scores/standings when results arrive.
-10,40 * * * * cd "$SPORTIFY_DIR" && docker compose -f docker-compose.prod.yml exec -T php php bin/console --env=prod --no-debug sportify:data:update matches-results 1 >> /var/log/sportify-data-updates.log 2>&1
+*/10 * * * * cd "$SPORTIFY_DIR" && docker compose -f docker-compose.prod.yml exec -T php php bin/console --env=prod --no-debug sportify:data:update matches-results 1 >> /var/log/sportify-data-updates.log 2>&1
