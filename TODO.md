@@ -2,11 +2,11 @@
 
 ## Current status
 
-No pending items.
+One database collation standardization task is pending.
 
 ## Pending
 
-- None.
+- Plan and implement a database collation standardization migration so legacy `utf8mb4_unicode_ci` columns and MySQL 8/9 default `utf8mb4_0900_ai_ci` strings do not cause comparison errors in raw SQL, ad-hoc maintenance scripts, or future schema changes.
 
 ## Baseline
 
