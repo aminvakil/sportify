@@ -2,11 +2,7 @@
 
 ## Current status
 
-One database collation standardization task is pending.
-
-## Pending
-
-- Plan and implement a database collation standardization migration so legacy `utf8mb4_unicode_ci` columns and MySQL 8/9 default `utf8mb4_0900_ai_ci` strings do not cause comparison errors in raw SQL, ad-hoc maintenance scripts, or future schema changes.
+No pending modernization tasks are tracked here.
 
 ## Baseline
 
@@ -26,7 +22,7 @@ One database collation standardization task is pending.
 - Migrated `phpunit.xml.dist` to the PHPUnit 9.6 schema.
 - Symfony 7.4 deprecation re-check is clean for self and direct notices. The remaining indirect notices are from Doctrine DBAL schema events and require a future DBAL major upgrade.
 - Modernized frontend tooling from Node 6/npm 3/Bower/Gulp 3/Laravel Elixir/`node-sass` to Node 26/npm 11, npm-managed dependencies, Gulp 4, and Dart Sass.
-- Upgraded Docker MySQL from 5.7 to 9.7 with explicit utf8mb4 defaults. Schema validation, reserved-word checks, SQL mode, and charset/collation checks are clean.
+- Upgraded Docker MySQL from 5.7 to 9.7 with explicit `utf8mb4` / `utf8mb4_unicode_ci` defaults. Schema validation, reserved-word checks, SQL mode, and charset/collation checks are clean.
 - Moved the public document root from `web/` to `public/` across Docker, httpd, frontend asset output, tests, and deployment docs.
 - Completed structural backend modernization milestones for discovery, kernel/autoload, config layout, and public document-root modernization.
 - Made production timezone configuration deployment-variable driven through `APP_TIMEZONE`.
@@ -62,4 +58,4 @@ One database collation standardization task is pending.
 
 ## Notes
 
-- For future verification, see the "Verification rule" section of `AGENTS.md`. Documentation-only changes, including `AGENTS.md`, `TODO.md`, and files under `docs/`, do not need local Docker verification unless explicitly requested.
+- For future verification, see the "Verification rule" section of `AGENTS.md`.
