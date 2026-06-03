@@ -9,6 +9,7 @@ Current baseline:
 - PHP 8.5 in Docker
 - Apache httpd 2.4 in Docker serving `public/` and proxying dynamic requests to PHP
 - MySQL 9.7 in Docker
+- Database charset/collation standard: `utf8mb4` / `utf8mb4_unicode_ci` for MySQL and MariaDB compatibility
 - Composer 2.2.x in Docker
 - Node 26 / npm 11 / Gulp 4 in Docker; frontend dependencies install through npm
 
@@ -22,6 +23,7 @@ The project is intentionally old. Do not modernize broad areas unless the curren
 - If PR tests fail, investigate, fix the failure on the same branch, push the fix, and re-check the PR tests.
 - Do not merge PRs; the user will handle merging.
 - Do not combine unrelated upgrades.
+- Do not switch the project to MySQL-only collations such as `utf8mb4_0900_ai_ci` unless explicitly requested.
 - Do not refactor opportunistically.
 - If an approved plan hits a blocker or an expected tool is unavailable, stop and ask the user how to proceed instead of silently changing to a different implementation path.
 - Keep Docker as the source of truth for local verification.
