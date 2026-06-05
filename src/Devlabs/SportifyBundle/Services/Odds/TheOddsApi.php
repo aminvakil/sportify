@@ -4,6 +4,7 @@ namespace Devlabs\SportifyBundle\Services\Odds;
 
 use Devlabs\SportifyBundle\Entity\Team;
 use Devlabs\SportifyBundle\Entity\Tournament;
+use Devlabs\SportifyBundle\Services\Telegram;
 use GuzzleHttp\Client;
 use GuzzleHttp\ClientInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -14,12 +15,15 @@ class TheOddsApi
     const MARKET = 'h2h';
     const ODDS_FORMAT = 'decimal';
     const MATCH_TOLERANCE_SECONDS = 600;
+    const MAX_ODDS_UNAVAILABLE_ALERT_FIXTURES = 10;
 
     private $container;
     private $httpClient;
     private $baseUri;
     private $normalizer;
+    private $telegram;
     private $activeSportKeys;
+    private $oddsUnavailableNotifications = array();
 
     private $sportKeyCandidates = array(
         'world cup' => array('soccer_fifa_world_cup'),
@@ -37,42 +41,62 @@ class TheOddsApi
 
     private $preferredBookmakers = array('pinnacle', 'betfair', 'williamhill', 'bet365');
 
-    public function __construct(ContainerInterface $container, OddsProbabilityNormalizer $normalizer, $baseUri, ?ClientInterface $httpClient = null)
+    public function __construct(ContainerInterface $container, OddsProbabilityNormalizer $normalizer, $baseUri, ?ClientInterface $httpClient = null, ?Telegram $telegram = null)
     {
         $this->container = $container;
         $this->normalizer = $normalizer;
         $this->baseUri = rtrim((string) $baseUri, '/');
         $this->httpClient = $httpClient ?: new Client();
+        $this->telegram = $telegram;
     }
 
     public function findProbabilitiesForFixture(array $fixtureData, Tournament $tournament, Team $homeTeam, Team $awayTeam)
     {
-        $apiToken = $this->getApiToken();
-        if ($apiToken === '') {
-            return null;
-        }
+        try {
+            $apiToken = $this->getApiToken();
+            if ($apiToken === '') {
+                $this->notifyOddsUnavailable($fixtureData, $tournament, $homeTeam, $awayTeam, 'The Odds API token is not configured.');
 
-        $sportKey = $this->getSportKey($tournament, $apiToken);
-        if ($sportKey === null) {
-            return null;
-        }
+                return null;
+            }
 
-        $event = $this->findMatchingEvent($sportKey, $apiToken, $fixtureData, $homeTeam, $awayTeam);
-        if ($event === null || !isset($event->id)) {
-            return null;
-        }
+            $sportKey = $this->getSportKey($tournament, $apiToken);
+            if ($sportKey === null) {
+                $this->notifyOddsUnavailable($fixtureData, $tournament, $homeTeam, $awayTeam, 'No active The Odds API sport key matched the tournament.');
 
-        $oddsEvent = $this->fetchJson('/v4/sports/'.$sportKey.'/events/'.$event->id.'/odds', array(
-            'apiKey' => $apiToken,
-            'regions' => self::REGION,
-            'markets' => self::MARKET,
-            'oddsFormat' => self::ODDS_FORMAT,
-        ));
-        if ($oddsEvent === null) {
-            return null;
-        }
+                return null;
+            }
 
-        return $this->extractSnapshot($oddsEvent, $sportKey, $event->id, $homeTeam, $awayTeam);
+            $event = $this->findMatchingEvent($sportKey, $apiToken, $fixtureData, $homeTeam, $awayTeam);
+            if ($event === null || !isset($event->id)) {
+                $this->notifyOddsUnavailable($fixtureData, $tournament, $homeTeam, $awayTeam, 'No matching The Odds API event was found.');
+
+                return null;
+            }
+
+            $oddsEvent = $this->fetchJson('/v4/sports/'.$sportKey.'/events/'.$event->id.'/odds', array(
+                'apiKey' => $apiToken,
+                'regions' => self::REGION,
+                'markets' => self::MARKET,
+                'oddsFormat' => self::ODDS_FORMAT,
+            ));
+            if ($oddsEvent === null) {
+                $this->notifyOddsUnavailable($fixtureData, $tournament, $homeTeam, $awayTeam, 'The Odds API odds response was empty.');
+
+                return null;
+            }
+
+            $snapshot = $this->extractSnapshot($oddsEvent, $sportKey, $event->id, $homeTeam, $awayTeam);
+            if ($snapshot === null) {
+                $this->notifyOddsUnavailable($fixtureData, $tournament, $homeTeam, $awayTeam, 'No complete home/draw/away odds snapshot was found.');
+            }
+
+            return $snapshot;
+        } catch (\RuntimeException $e) {
+            $this->notifyOddsUnavailable($fixtureData, $tournament, $homeTeam, $awayTeam, $e->getMessage());
+
+            throw $e;
+        }
     }
 
     private function getApiToken()
@@ -240,6 +264,50 @@ class TheOddsApi
         }
 
         return null;
+    }
+
+    public function flushOddsUnavailableNotifications()
+    {
+        if (!$this->oddsUnavailableNotifications) {
+            return null;
+        }
+
+        $notifications = $this->oddsUnavailableNotifications;
+        $this->oddsUnavailableNotifications = array();
+        if ($this->telegram === null) {
+            return null;
+        }
+
+        $count = count($notifications);
+        $text = $count === 1
+            ? "Fixture skipped because odds snapshot is unavailable."
+            : $count." fixtures skipped because odds snapshots are unavailable.";
+
+        $shownNotifications = array_slice($notifications, 0, self::MAX_ODDS_UNAVAILABLE_ALERT_FIXTURES);
+        foreach ($shownNotifications as $notification) {
+            $text .= "\n\nTournament: ".$notification['tournament']
+                ."\nMatch: ".$notification['match']
+                ."\nKickoff: ".$notification['kickoff']
+                ."\nFootball-Data match id: ".$notification['match_id']
+                ."\nReason: ".$notification['reason'];
+        }
+
+        if ($count > self::MAX_ODDS_UNAVAILABLE_ALERT_FIXTURES) {
+            $text .= "\n\n...and ".($count - self::MAX_ODDS_UNAVAILABLE_ALERT_FIXTURES)." more.";
+        }
+
+        return $this->telegram->sendAdminMessage($text);
+    }
+
+    private function notifyOddsUnavailable(array $fixtureData, Tournament $tournament, Team $homeTeam, Team $awayTeam, $reason)
+    {
+        $this->oddsUnavailableNotifications[] = array(
+            'tournament' => $tournament->getName(),
+            'match' => $homeTeam->getName().' vs '.$awayTeam->getName(),
+            'kickoff' => isset($fixtureData['match_local_time']) ? $fixtureData['match_local_time'] : 'unknown',
+            'match_id' => isset($fixtureData['match_id']) ? $fixtureData['match_id'] : 'unknown',
+            'reason' => $reason,
+        );
     }
 
     private function fetchJson($path, array $query)

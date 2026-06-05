@@ -62,10 +62,12 @@ class OddsFixtureImportTest extends DatabaseTestCase
         $this->createApiMapping($homeTeam, 'Team', 'football_data_org', 10);
         $this->createApiMapping($awayTeam, 'Team', 'football_data_org', 20);
 
-        $importer = $this->createImporter(new FakeFixtureOddsProvider(array()));
+        $oddsProvider = new FakeFixtureOddsProvider(array());
+        $importer = $this->createImporter($oddsProvider);
 
         $status = $importer->importFixtures(array($this->scheduledFixture(501)), $tournament, 'football_data_org');
 
+        $this->assertSame(1, $oddsProvider->flushCount);
         $this->assertSame(0, $status['fixtures_added']);
         $this->assertSame(array(), $status['added_fixtures']);
         $this->assertNull($this->em->getRepository(ApiMapping::class)
@@ -117,6 +119,7 @@ class OddsFixtureImportTest extends DatabaseTestCase
 
 class FakeFixtureOddsProvider
 {
+    public $flushCount = 0;
     private $snapshots;
 
     public function __construct(array $snapshots)
@@ -131,5 +134,10 @@ class FakeFixtureOddsProvider
         }
 
         return $this->snapshots[$fixtureData['match_id']];
+    }
+
+    public function flushOddsUnavailableNotifications()
+    {
+        $this->flushCount++;
     }
 }

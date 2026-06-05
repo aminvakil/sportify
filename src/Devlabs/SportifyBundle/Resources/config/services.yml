@@ -73,7 +73,7 @@ services:
 
     app.odds.the_odds_api:
         class: Devlabs\SportifyBundle\Services\Odds\TheOddsApi
-        arguments: ['@service_container', '@app.odds_probability_normalizer', '%odds_api.base_uri%']
+        arguments: ['@service_container', '@app.odds_probability_normalizer', '%odds_api.base_uri%', null, '@app.telegram']
 
     app.scoring_defaults:
         class: Devlabs\SportifyBundle\Services\ScoringDefaults
@@ -123,7 +123,7 @@ services:
 
     app.data_updates.fetchers.football_data_org:
         class: Devlabs\SportifyBundle\Services\DataUpdates\Fetchers\FootballDataOrg
-        arguments: ['@request_stack', '%football_api.base_uri%', '%football_api.token%']
+        arguments: ['@request_stack', '%football_api.base_uri%', '%football_api.token%', '@app.telegram']
 
     app.data_updates.parsers.football_data_org:
         class: Devlabs\SportifyBundle\Services\DataUpdates\Parsers\FootballDataOrg

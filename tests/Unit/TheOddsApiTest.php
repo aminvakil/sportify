@@ -6,6 +6,7 @@ use Devlabs\SportifyBundle\Entity\Team;
 use Devlabs\SportifyBundle\Entity\Tournament;
 use Devlabs\SportifyBundle\Services\Odds\OddsProbabilityNormalizer;
 use Devlabs\SportifyBundle\Services\Odds\TheOddsApi;
+use Devlabs\SportifyBundle\Services\Telegram;
 use GuzzleHttp\Client;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
@@ -43,25 +44,37 @@ class TheOddsApiTest extends TestCase
 
     public function testThrowsWhenOddsEndpointFails()
     {
+        $telegram = new FakeTheOddsApiAdminTelegram();
         $api = $this->createApi(array(
             $this->sportsResponse(),
             $this->eventsResponse(),
             new Response(429),
-        ));
+        ), 'test-token', $telegram);
 
-        $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('The Odds API request failed for "/v4/sports/soccer_fifa_world_cup/events/event-1/odds" (HTTP 429');
+        try {
+            $api->findProbabilitiesForFixture(
+                $this->fixtureData(),
+                $this->tournament(),
+                $this->team('Mexico'),
+                $this->team('South Africa')
+            );
+            $this->fail('Expected The Odds API failure to throw.');
+        } catch (\RuntimeException $e) {
+            $this->assertStringContainsString('The Odds API request failed for "/v4/sports/soccer_fifa_world_cup/events/event-1/odds" (HTTP 429', $e->getMessage());
+        }
 
-        $api->findProbabilitiesForFixture(
-            $this->fixtureData(),
-            $this->tournament(),
-            $this->team('Mexico'),
-            $this->team('South Africa')
-        );
+        $this->assertCount(0, $telegram->adminMessages);
+        $api->flushOddsUnavailableNotifications();
+
+        $this->assertCount(1, $telegram->adminMessages);
+        $this->assertStringContainsString('Fixture skipped because odds snapshot is unavailable.', $telegram->adminMessages[0]);
+        $this->assertStringContainsString('Match: Mexico vs South Africa', $telegram->adminMessages[0]);
+        $this->assertStringContainsString('Reason: The Odds API request failed for "/v4/sports/soccer_fifa_world_cup/events/event-1/odds" (HTTP 429', $telegram->adminMessages[0]);
     }
 
     public function testReturnsNullForSuccessfulOddsResponseWithoutCompleteNinetyMinuteSnapshot()
     {
+        $telegram = new FakeTheOddsApiAdminTelegram();
         $api = $this->createApi(array(
             $this->sportsResponse(),
             $this->eventsResponse(),
@@ -69,7 +82,7 @@ class TheOddsApiTest extends TestCase
                 array('name' => 'Mexico', 'price' => 2.0),
                 array('name' => 'South Africa', 'price' => 4.0),
             )),
-        ));
+        ), 'test-token', $telegram);
 
         $this->assertNull($api->findProbabilitiesForFixture(
             $this->fixtureData(),
@@ -77,6 +90,43 @@ class TheOddsApiTest extends TestCase
             $this->team('Mexico'),
             $this->team('South Africa')
         ));
+        $this->assertCount(0, $telegram->adminMessages);
+
+        $api->flushOddsUnavailableNotifications();
+
+        $this->assertCount(1, $telegram->adminMessages);
+        $this->assertStringContainsString('Fixture skipped because odds snapshot is unavailable.', $telegram->adminMessages[0]);
+        $this->assertStringContainsString('Football-Data match id: 500', $telegram->adminMessages[0]);
+        $this->assertStringContainsString('Reason: No complete home/draw/away odds snapshot was found.', $telegram->adminMessages[0]);
+    }
+
+    public function testBatchesUnavailableOddsNotificationsUntilFlush()
+    {
+        $telegram = new FakeTheOddsApiAdminTelegram();
+        $api = $this->createApi(array(), 'check_the_README_file', $telegram);
+
+        $this->assertNull($api->findProbabilitiesForFixture(
+            $this->fixtureData(500),
+            $this->tournament(),
+            $this->team('Mexico'),
+            $this->team('South Africa')
+        ));
+        $this->assertNull($api->findProbabilitiesForFixture(
+            $this->fixtureData(501),
+            $this->tournament(),
+            $this->team('Canada'),
+            $this->team('Morocco')
+        ));
+        $this->assertCount(0, $telegram->adminMessages);
+
+        $api->flushOddsUnavailableNotifications();
+
+        $this->assertCount(1, $telegram->adminMessages);
+        $this->assertStringContainsString('2 fixtures skipped because odds snapshots are unavailable.', $telegram->adminMessages[0]);
+        $this->assertStringContainsString('Match: Mexico vs South Africa', $telegram->adminMessages[0]);
+        $this->assertStringContainsString('Football-Data match id: 500', $telegram->adminMessages[0]);
+        $this->assertStringContainsString('Match: Canada vs Morocco', $telegram->adminMessages[0]);
+        $this->assertStringContainsString('Football-Data match id: 501', $telegram->adminMessages[0]);
     }
 
     public function testRequestsSoccerHeadToHeadMarketWithDrawInsteadOfOutrightsOutcome()
@@ -118,13 +168,13 @@ class TheOddsApiTest extends TestCase
         ));
     }
 
-    private function createApi(array $responses, $token = 'test-token')
+    private function createApi(array $responses, $token = 'test-token', ?Telegram $telegram = null)
     {
         $container = new Container();
         $container->setParameter('odds_api.token', $token);
         $client = new Client(array('handler' => HandlerStack::create(new MockHandler($responses))));
 
-        return new TheOddsApi($container, new OddsProbabilityNormalizer(), 'https://api.example.test', $client);
+        return new TheOddsApi($container, new OddsProbabilityNormalizer(), 'https://api.example.test', $client, $telegram);
     }
 
     private function createApiWithHistory(array $responses, array &$history)
@@ -175,9 +225,10 @@ class TheOddsApiTest extends TestCase
         )));
     }
 
-    private function fixtureData()
+    private function fixtureData($matchId = 500)
     {
         return array(
+            'match_id' => $matchId,
             'match_local_time' => '2026-06-11 19:00:00',
         );
     }
@@ -196,5 +247,21 @@ class TheOddsApiTest extends TestCase
         $team->setName($name);
 
         return $team;
+    }
+}
+
+class FakeTheOddsApiAdminTelegram extends Telegram
+{
+    public $adminMessages = array();
+
+    public function __construct()
+    {
+    }
+
+    public function sendAdminMessage($text)
+    {
+        $this->adminMessages[] = $text;
+
+        return new Response(200);
     }
 }

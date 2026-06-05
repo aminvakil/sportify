@@ -110,7 +110,8 @@ class Importer
         $status['fixtures_updated'] = 0;
         $status['added_fixtures'] = array();
 
-        foreach ($fixtures as $fixtureData) {
+        try {
+            foreach ($fixtures as $fixtureData) {
             $apiMatchId = $fixtureData['match_id'];
 
             $matchApiMapping = $this->em->getRepository(ApiMapping::class)
@@ -133,9 +134,12 @@ class Importer
                     ->findOneById($awayTeamId);
 
                 $datetime = \DateTime::createFromFormat('Y-m-d H:i:s', $fixtureData['match_local_time']);
-                $oddsSnapshot = $this->getOddsSnapshot($fixtureData, $tournament, $homeTeam, $awayTeam);
-                if ($this->needsOddsSnapshot($fixtureData) && $oddsSnapshot === null) {
-                    continue;
+                $oddsSnapshot = null;
+                if ($this->needsOddsSnapshot($fixtureData)) {
+                    $oddsSnapshot = $this->getOddsSnapshot($fixtureData, $tournament, $homeTeam, $awayTeam);
+                    if ($oddsSnapshot === null) {
+                        continue;
+                    }
                 }
 
                 // create new match object by using the parsed data
@@ -207,8 +211,11 @@ class Importer
                 $this->em->persist($match);
             }
 
-            // execute queries
-            $this->em->flush();
+                // execute queries
+                $this->em->flush();
+            }
+        } finally {
+            $this->flushOddsUnavailableNotifications();
         }
 
         return $status;
@@ -226,6 +233,15 @@ class Importer
         }
 
         return $this->oddsProvider->findProbabilitiesForFixture($fixtureData, $tournament, $homeTeam, $awayTeam);
+    }
+
+    private function flushOddsUnavailableNotifications()
+    {
+        if ($this->oddsProvider === null || !method_exists($this->oddsProvider, 'flushOddsUnavailableNotifications')) {
+            return;
+        }
+
+        $this->oddsProvider->flushOddsUnavailableNotifications();
     }
 
     private function applyOddsSnapshot(MatchEntity $match, array $oddsSnapshot)

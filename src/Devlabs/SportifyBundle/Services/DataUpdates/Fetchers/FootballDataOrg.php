@@ -2,10 +2,12 @@
 
 namespace Devlabs\SportifyBundle\Services\DataUpdates\Fetchers;
 
+use Devlabs\SportifyBundle\Services\Telegram;
 use Symfony\Component\HttpFoundation\RequestStack;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\Exception\TransferException;
 
 /**
  * Class FootballDataOrg
@@ -17,14 +19,18 @@ class FootballDataOrg
     private $options;
     private $baseUri;
     private $requestStack;
+    private $telegram;
+    private $lastRequestUrl;
+    private $lastRequestFailureMessage;
 
-    public function __construct(RequestStack $requestStack, $baseUri, $apiToken)
+    public function __construct(RequestStack $requestStack, $baseUri, $apiToken, ?Telegram $telegram = null)
     {
         $this->requestStack = $requestStack;
         $this->httpClient = new Client();
         $this->options = array();
         $this->options['headers']['X-Auth-Token'] = $apiToken;
         $this->baseUri = $baseUri;
+        $this->telegram = $telegram;
     }
 
     /**
@@ -39,10 +45,18 @@ class FootballDataOrg
             return new Response(400);
         }
 
+        $this->lastRequestUrl = $url;
+        $this->lastRequestFailureMessage = null;
+
         try {
             $response = $this->httpClient->get($url, $this->options);
-        } catch (RequestException $e) {
-            $response = $e->getResponse();
+        } catch (TransferException $e) {
+            if ($e instanceof RequestException && $e->getResponse() !== null) {
+                $response = $e->getResponse();
+            } else {
+                $this->lastRequestFailureMessage = $e->getMessage();
+                $response = new Response(500, array(), null, '1.1', 'Request Failed');
+            }
         }
 
         return $response;
@@ -63,6 +77,11 @@ class FootballDataOrg
                 $response->getStatusCode(),
                 $response->getReasonPhrase()
             );
+            if ($this->lastRequestFailureMessage) {
+                $message .= ' Reason: '.$this->lastRequestFailureMessage;
+            }
+
+            $this->notifyAdmin($message);
 
             $request = $this->requestStack->getCurrentRequest();
             if ($request && $request->hasSession()) {
@@ -77,6 +96,20 @@ class FootballDataOrg
         return ($bodyProperty)
             ? json_decode($response->getBody())->$bodyProperty
             : json_decode($response->getBody());
+    }
+
+    private function notifyAdmin($message)
+    {
+        if ($this->telegram === null) {
+            return;
+        }
+
+        $text = "External API failure: football-data.org\n".$message;
+        if ($this->lastRequestUrl) {
+            $text .= "\nURL: ".$this->lastRequestUrl;
+        }
+
+        $this->telegram->sendAdminMessage($text);
     }
 
     /**
