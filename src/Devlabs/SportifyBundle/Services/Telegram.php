@@ -42,16 +42,25 @@ class Telegram
     public function sendAdminMessage($text)
     {
         try {
-            return $this->sendToChat($this->getAdminChatId(), $text, null);
+            $response = $this->sendToChat($this->getAdminChatId(), $text, null);
         } catch (\Exception $e) {
-            return new Response(
+            $response = new Response(
                 500,
                 array(),
                 null,
                 '1.1',
                 'Telegram admin notification failed'
             );
+            $this->logAdminNotificationFailure($response, $e);
+
+            return $response;
         }
+
+        if ($response->getStatusCode() < 200 || $response->getStatusCode() >= 300) {
+            $this->logAdminNotificationFailure($response);
+        }
+
+        return $response;
     }
 
     /**
@@ -117,6 +126,20 @@ class Telegram
             && $chatId
             && $this->botToken !== 'check_the_README_file'
             && $chatId !== 'check_the_README_file';
+    }
+
+    private function logAdminNotificationFailure(Response $response, \Exception $exception = null)
+    {
+        $message = sprintf(
+            'Telegram admin notification failed (HTTP %d %s).',
+            $response->getStatusCode(),
+            $response->getReasonPhrase()
+        );
+        if ($exception !== null) {
+            $message .= ' '.$exception->getMessage();
+        }
+
+        error_log($message);
     }
 
     private function getAdminChatId()

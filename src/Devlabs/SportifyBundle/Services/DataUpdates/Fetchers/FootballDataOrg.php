@@ -7,6 +7,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\Exception\TransferException;
 
 /**
  * Class FootballDataOrg
@@ -20,6 +21,7 @@ class FootballDataOrg
     private $requestStack;
     private $telegram;
     private $lastRequestUrl;
+    private $lastRequestFailureMessage;
 
     public function __construct(RequestStack $requestStack, $baseUri, $apiToken, ?Telegram $telegram = null)
     {
@@ -44,11 +46,17 @@ class FootballDataOrg
         }
 
         $this->lastRequestUrl = $url;
+        $this->lastRequestFailureMessage = null;
 
         try {
             $response = $this->httpClient->get($url, $this->options);
-        } catch (RequestException $e) {
-            $response = $e->getResponse() ?: new Response(500, array(), null, '1.1', 'Request Failed');
+        } catch (TransferException $e) {
+            if ($e instanceof RequestException && $e->getResponse() !== null) {
+                $response = $e->getResponse();
+            } else {
+                $this->lastRequestFailureMessage = $e->getMessage();
+                $response = new Response(500, array(), null, '1.1', 'Request Failed');
+            }
         }
 
         return $response;
@@ -69,6 +77,9 @@ class FootballDataOrg
                 $response->getStatusCode(),
                 $response->getReasonPhrase()
             );
+            if ($this->lastRequestFailureMessage) {
+                $message .= ' Reason: '.$this->lastRequestFailureMessage;
+            }
 
             $this->notifyAdmin($message);
 

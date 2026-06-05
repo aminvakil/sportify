@@ -27,10 +27,43 @@ class TelegramTest extends TestCase
     {
         $telegram = $this->createTelegram(new FailingTelegramHttpClient());
 
-        $response = $telegram->sendAdminMessage('External API failure');
+        list($response, $log) = $this->captureErrorLog(function () use ($telegram) {
+            return $telegram->sendAdminMessage('External API failure');
+        });
 
         $this->assertSame(500, $response->getStatusCode());
         $this->assertSame('Telegram admin notification failed', $response->getReasonPhrase());
+        $this->assertStringContainsString('Telegram admin notification failed (HTTP 500 Telegram admin notification failed). Connection failed', $log);
+    }
+
+    public function testSendAdminMessageLogsNonSuccessResponse()
+    {
+        $telegram = $this->createTelegram(new UnsuccessfulTelegramHttpClient());
+
+        list($response, $log) = $this->captureErrorLog(function () use ($telegram) {
+            return $telegram->sendAdminMessage('External API failure');
+        });
+
+        $this->assertSame(400, $response->getStatusCode());
+        $this->assertStringContainsString('Telegram admin notification failed (HTTP 400 Bad Request).', $log);
+    }
+
+    private function captureErrorLog(callable $callback)
+    {
+        $logFile = tempnam(sys_get_temp_dir(), 'telegram-error-log-');
+        $previousLog = ini_set('error_log', $logFile);
+
+        try {
+            $result = $callback();
+            $log = file_exists($logFile) ? file_get_contents($logFile) : '';
+        } finally {
+            ini_set('error_log', $previousLog);
+            if (file_exists($logFile)) {
+                unlink($logFile);
+            }
+        }
+
+        return array($result, $log);
     }
 
     private function createTelegram($client)
@@ -73,5 +106,13 @@ class FailingTelegramHttpClient
     public function post($url, array $options)
     {
         throw new ConnectException('Connection failed', new Request('POST', $url));
+    }
+}
+
+class UnsuccessfulTelegramHttpClient
+{
+    public function post($url, array $options)
+    {
+        return new Response(400, array(), null, '1.1', 'Bad Request');
     }
 }
