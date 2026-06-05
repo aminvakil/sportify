@@ -2,7 +2,15 @@
 
 ## Current status
 
-No pending modernization tasks are tracked here.
+Pending task:
+
+- Add centralized external API error notifications to Telegram admin chat:
+  - Add a config parameter such as `telegram.admin_chat_id`.
+  - Reuse/extend the existing Telegram service to send admin-only messages.
+  - Notify from the centralized external API request boundaries, not every caller/function:
+    - `src/Devlabs/SportifyBundle/Services/DataUpdates/Fetchers/FootballDataOrg.php`
+    - `src/Devlabs/SportifyBundle/Services/Odds/TheOddsApi.php`
+  - Cover football-data.org and The Odds API failures without duplicating alerts in higher-level import/update code.
 
 ## Baseline
 
