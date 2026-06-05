@@ -136,7 +136,7 @@ class Telegram
             $response->getReasonPhrase()
         );
         if ($exception !== null) {
-            $message .= ' '.$exception->getMessage();
+            $message .= ' Exception: '.get_class($exception);
         }
 
         error_log($message);

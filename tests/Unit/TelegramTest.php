@@ -33,7 +33,9 @@ class TelegramTest extends TestCase
 
         $this->assertSame(500, $response->getStatusCode());
         $this->assertSame('Telegram admin notification failed', $response->getReasonPhrase());
-        $this->assertStringContainsString('Telegram admin notification failed (HTTP 500 Telegram admin notification failed). Connection failed', $log);
+        $this->assertStringContainsString('Telegram admin notification failed (HTTP 500 Telegram admin notification failed). Exception: GuzzleHttp\\Exception\\ConnectException', $log);
+        $this->assertStringNotContainsString('bot-token', $log);
+        $this->assertStringNotContainsString('/botbot-token/sendMessage', $log);
     }
 
     public function testSendAdminMessageLogsNonSuccessResponse()
