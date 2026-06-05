@@ -41,7 +41,17 @@ class Telegram
      */
     public function sendAdminMessage($text)
     {
-        return $this->sendToChat($this->getAdminChatId(), $text);
+        try {
+            return $this->sendToChat($this->getAdminChatId(), $text, null);
+        } catch (\Exception $e) {
+            return new Response(
+                500,
+                array(),
+                null,
+                '1.1',
+                'Telegram admin notification failed'
+            );
+        }
     }
 
     /**
@@ -70,21 +80,25 @@ class Telegram
         }
     }
 
-    private function sendToChat($chatId, $text)
+    private function sendToChat($chatId, $text, $parseMode = 'Markdown')
     {
         if (!$this->isEnabled($chatId)) {
             return $this->disabledResponse();
+        }
+
+        $formParams = array(
+            'chat_id' => $chatId,
+            'text' => $text,
+        );
+        if ($parseMode !== null) {
+            $formParams['parse_mode'] = $parseMode;
         }
 
         try {
             return $this->httpClient->post(
                 'https://api.telegram.org/bot'.$this->botToken.'/sendMessage',
                 array(
-                    'form_params' => array(
-                        'chat_id' => $chatId,
-                        'text' => $text,
-                        'parse_mode' => 'Markdown',
-                    ),
+                    'form_params' => $formParams,
                     'allow_redirects' => false,
                     'timeout' => 5,
                 )
