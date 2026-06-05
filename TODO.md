@@ -2,15 +2,7 @@
 
 ## Current status
 
-Pending task:
-
-- Add centralized external API error notifications to Telegram admin chat:
-  - Add a config parameter such as `telegram.admin_chat_id`.
-  - Reuse/extend the existing Telegram service to send admin-only messages.
-  - Notify from the centralized external API request boundaries, not every caller/function:
-    - `src/Devlabs/SportifyBundle/Services/DataUpdates/Fetchers/FootballDataOrg.php`
-    - `src/Devlabs/SportifyBundle/Services/Odds/TheOddsApi.php`
-  - Cover football-data.org and The Odds API failures without duplicating alerts in higher-level import/update code.
+Pending task: none.
 
 ## Baseline
 
@@ -60,6 +52,7 @@ Pending task:
 - The prediction page shows probability snapshots, probability bonus chips, and points available for each outcome.
 - Telegram fixture-added, prediction, and result/scoring messages include probability and scoring details.
 - Admin Data Updates handles non-200 Football-Data responses with a flash message instead of a Symfony 500.
+- External API failures and unavailable odds snapshots notify the configured Telegram admin chat in prod.
 - FIFA World Cup logo import/display on `/matches` is fixed.
 - Public web registration is configurable with `APP_PUBLIC_REGISTRATION_ENABLED` and defaults to enabled.
 - `sportify:user:create-admin` reports `Password cannot be blank.` instead of crashing when its interactive password prompt is submitted blank.

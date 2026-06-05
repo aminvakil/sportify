@@ -53,6 +53,7 @@ Best practice is to use a transactional mail service, like Mailgun, Amazon SES, 
 `odds_api.token` - Configure this with a The Odds API token to import probability snapshots for new upcoming fixtures.
 ` slack.url, slack.channel` - Generate them in [Slack](https://slack.com/apps/A0F7XDUAZ-incoming-webhooks) in order to get notifications.  
 `telegram.bot_token, telegram.chat_id` - Configure these to send scheduled Telegram notifications.
+`telegram.admin_chat_id` - Configure this to send admin-only external API failure alerts.
 `telegram.pin_messages` - Set to `false` to disable pinning Telegram data update notifications. Defaults to `true`.
 `secret` - Symfony variable - generate it by going [here](http://nux.net/secret) or running in shell `openssl rand -hex 20`
 

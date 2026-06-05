@@ -2,6 +2,7 @@
 
 namespace Devlabs\SportifyBundle\Services\DataUpdates\Fetchers;
 
+use Devlabs\SportifyBundle\Services\Telegram;
 use Symfony\Component\HttpFoundation\RequestStack;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
@@ -17,14 +18,17 @@ class FootballDataOrg
     private $options;
     private $baseUri;
     private $requestStack;
+    private $telegram;
+    private $lastRequestUrl;
 
-    public function __construct(RequestStack $requestStack, $baseUri, $apiToken)
+    public function __construct(RequestStack $requestStack, $baseUri, $apiToken, ?Telegram $telegram = null)
     {
         $this->requestStack = $requestStack;
         $this->httpClient = new Client();
         $this->options = array();
         $this->options['headers']['X-Auth-Token'] = $apiToken;
         $this->baseUri = $baseUri;
+        $this->telegram = $telegram;
     }
 
     /**
@@ -39,10 +43,12 @@ class FootballDataOrg
             return new Response(400);
         }
 
+        $this->lastRequestUrl = $url;
+
         try {
             $response = $this->httpClient->get($url, $this->options);
         } catch (RequestException $e) {
-            $response = $e->getResponse();
+            $response = $e->getResponse() ?: new Response(500, array(), null, '1.1', 'Request Failed');
         }
 
         return $response;
@@ -64,6 +70,8 @@ class FootballDataOrg
                 $response->getReasonPhrase()
             );
 
+            $this->notifyAdmin($message);
+
             $request = $this->requestStack->getCurrentRequest();
             if ($request && $request->hasSession()) {
                 $request->getSession()->getFlashBag()->add('message', $message);
@@ -77,6 +85,20 @@ class FootballDataOrg
         return ($bodyProperty)
             ? json_decode($response->getBody())->$bodyProperty
             : json_decode($response->getBody());
+    }
+
+    private function notifyAdmin($message)
+    {
+        if ($this->telegram === null) {
+            return;
+        }
+
+        $text = "External API failure: football-data.org\n".$message;
+        if ($this->lastRequestUrl) {
+            $text .= "\nURL: ".$this->lastRequestUrl;
+        }
+
+        $this->telegram->sendAdminMessage($text);
     }
 
     /**

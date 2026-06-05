@@ -61,6 +61,7 @@ At minimum, set:
 - `odds_api.token` from The Odds API if upcoming fixture imports should add probability snapshots
 - `slack.url` and `slack.channel` if Slack notifications are used
 - `telegram.bot_token` and `telegram.chat_id` if Telegram notifications are used
+- `telegram.admin_chat_id` if admin-only external API failure alerts are used
 - `sportify_api.client_id` and `sportify_api.client_secret` only if the API token flow is used
 
 `app/config/parameters.yml` is copied into the production image at build time. Rebuild and redeploy the images after changing it.

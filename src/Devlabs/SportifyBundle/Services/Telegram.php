@@ -33,26 +33,15 @@ class Telegram
      */
     public function sendMessage($text)
     {
-        if (!$this->isEnabled()) {
-            return $this->disabledResponse();
-        }
+        return $this->sendToChat($this->chatId, $text);
+    }
 
-        try {
-            return $this->httpClient->post(
-                'https://api.telegram.org/bot'.$this->botToken.'/sendMessage',
-                array(
-                    'form_params' => array(
-                        'chat_id' => $this->chatId,
-                        'text' => $text,
-                        'parse_mode' => 'Markdown',
-                    ),
-                    'allow_redirects' => false,
-                    'timeout' => 5,
-                )
-            );
-        } catch (RequestException $e) {
-            return $e->getResponse() ?: new Response(500);
-        }
+    /**
+     * Send a Telegram message to the admin chat.
+     */
+    public function sendAdminMessage($text)
+    {
+        return $this->sendToChat($this->getAdminChatId(), $text);
     }
 
     /**
@@ -60,7 +49,7 @@ class Telegram
      */
     public function pinMessage($messageId)
     {
-        if (!$this->isEnabled()) {
+        if (!$this->isEnabled($this->chatId)) {
             return $this->disabledResponse();
         }
 
@@ -81,15 +70,48 @@ class Telegram
         }
     }
 
-    private function isEnabled()
+    private function sendToChat($chatId, $text)
+    {
+        if (!$this->isEnabled($chatId)) {
+            return $this->disabledResponse();
+        }
+
+        try {
+            return $this->httpClient->post(
+                'https://api.telegram.org/bot'.$this->botToken.'/sendMessage',
+                array(
+                    'form_params' => array(
+                        'chat_id' => $chatId,
+                        'text' => $text,
+                        'parse_mode' => 'Markdown',
+                    ),
+                    'allow_redirects' => false,
+                    'timeout' => 5,
+                )
+            );
+        } catch (RequestException $e) {
+            return $e->getResponse() ?: new Response(500);
+        }
+    }
+
+    private function isEnabled($chatId)
     {
         $env = $this->container->get('kernel')->getEnvironment();
 
         return $env === 'prod'
             && $this->botToken
-            && $this->chatId
+            && $chatId
             && $this->botToken !== 'check_the_README_file'
-            && $this->chatId !== 'check_the_README_file';
+            && $chatId !== 'check_the_README_file';
+    }
+
+    private function getAdminChatId()
+    {
+        if (!$this->container->hasParameter('telegram.admin_chat_id')) {
+            return null;
+        }
+
+        return $this->container->getParameter('telegram.admin_chat_id');
     }
 
     private function disabledResponse()

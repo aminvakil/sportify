@@ -133,9 +133,12 @@ class Importer
                     ->findOneById($awayTeamId);
 
                 $datetime = \DateTime::createFromFormat('Y-m-d H:i:s', $fixtureData['match_local_time']);
-                $oddsSnapshot = $this->getOddsSnapshot($fixtureData, $tournament, $homeTeam, $awayTeam);
-                if ($this->needsOddsSnapshot($fixtureData) && $oddsSnapshot === null) {
-                    continue;
+                $oddsSnapshot = null;
+                if ($this->needsOddsSnapshot($fixtureData)) {
+                    $oddsSnapshot = $this->getOddsSnapshot($fixtureData, $tournament, $homeTeam, $awayTeam);
+                    if ($oddsSnapshot === null) {
+                        continue;
+                    }
                 }
 
                 // create new match object by using the parsed data
