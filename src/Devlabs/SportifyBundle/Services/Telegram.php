@@ -41,8 +41,13 @@ class Telegram
      */
     public function sendAdminMessage($text)
     {
+        $adminChatId = $this->getAdminChatId();
+        if (!$this->isEnabled($adminChatId)) {
+            return $this->disabledResponse();
+        }
+
         try {
-            $response = $this->sendToChat($this->getAdminChatId(), $text, null);
+            $response = $this->sendToChat($adminChatId, $text, null);
         } catch (\Exception $e) {
             $response = new Response(
                 500,
@@ -128,7 +133,7 @@ class Telegram
             && $chatId !== 'check_the_README_file';
     }
 
-    private function logAdminNotificationFailure(Response $response, \Exception $exception = null)
+    private function logAdminNotificationFailure(Response $response, ?\Exception $exception = null)
     {
         $message = sprintf(
             'Telegram admin notification failed (HTTP %d %s).',

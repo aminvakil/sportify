@@ -15,6 +15,7 @@ class TheOddsApi
     const MARKET = 'h2h';
     const ODDS_FORMAT = 'decimal';
     const MATCH_TOLERANCE_SECONDS = 600;
+    const MAX_ODDS_UNAVAILABLE_ALERT_FIXTURES = 10;
 
     private $container;
     private $httpClient;
@@ -22,6 +23,7 @@ class TheOddsApi
     private $normalizer;
     private $telegram;
     private $activeSportKeys;
+    private $oddsUnavailableNotifications = array();
 
     private $sportKeyCandidates = array(
         'world cup' => array('soccer_fifa_world_cup'),
@@ -264,22 +266,48 @@ class TheOddsApi
         return null;
     }
 
-    private function notifyOddsUnavailable(array $fixtureData, Tournament $tournament, Team $homeTeam, Team $awayTeam, $reason)
+    public function flushOddsUnavailableNotifications()
     {
-        if ($this->telegram === null) {
-            return;
+        if (!$this->oddsUnavailableNotifications) {
+            return null;
         }
 
-        $matchId = isset($fixtureData['match_id']) ? $fixtureData['match_id'] : 'unknown';
-        $kickoff = isset($fixtureData['match_local_time']) ? $fixtureData['match_local_time'] : 'unknown';
-        $text = "Fixture skipped because odds snapshot is unavailable."
-            ."\nTournament: ".$tournament->getName()
-            ."\nMatch: ".$homeTeam->getName().' vs '.$awayTeam->getName()
-            ."\nKickoff: ".$kickoff
-            ."\nFootball-Data match id: ".$matchId
-            ."\nReason: ".$reason;
+        $notifications = $this->oddsUnavailableNotifications;
+        $this->oddsUnavailableNotifications = array();
+        if ($this->telegram === null) {
+            return null;
+        }
 
-        $this->telegram->sendAdminMessage($text);
+        $count = count($notifications);
+        $text = $count === 1
+            ? "Fixture skipped because odds snapshot is unavailable."
+            : $count." fixtures skipped because odds snapshots are unavailable.";
+
+        $shownNotifications = array_slice($notifications, 0, self::MAX_ODDS_UNAVAILABLE_ALERT_FIXTURES);
+        foreach ($shownNotifications as $notification) {
+            $text .= "\n\nTournament: ".$notification['tournament']
+                ."\nMatch: ".$notification['match']
+                ."\nKickoff: ".$notification['kickoff']
+                ."\nFootball-Data match id: ".$notification['match_id']
+                ."\nReason: ".$notification['reason'];
+        }
+
+        if ($count > self::MAX_ODDS_UNAVAILABLE_ALERT_FIXTURES) {
+            $text .= "\n\n...and ".($count - self::MAX_ODDS_UNAVAILABLE_ALERT_FIXTURES)." more.";
+        }
+
+        return $this->telegram->sendAdminMessage($text);
+    }
+
+    private function notifyOddsUnavailable(array $fixtureData, Tournament $tournament, Team $homeTeam, Team $awayTeam, $reason)
+    {
+        $this->oddsUnavailableNotifications[] = array(
+            'tournament' => $tournament->getName(),
+            'match' => $homeTeam->getName().' vs '.$awayTeam->getName(),
+            'kickoff' => isset($fixtureData['match_local_time']) ? $fixtureData['match_local_time'] : 'unknown',
+            'match_id' => isset($fixtureData['match_id']) ? $fixtureData['match_id'] : 'unknown',
+            'reason' => $reason,
+        );
     }
 
     private function fetchJson($path, array $query)

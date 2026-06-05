@@ -50,6 +50,18 @@ class TelegramTest extends TestCase
         $this->assertStringContainsString('Telegram admin notification failed (HTTP 400 Bad Request).', $log);
     }
 
+    public function testSendAdminMessageDoesNotLogWhenAdminChatIsDisabled()
+    {
+        $telegram = $this->createTelegram(new FailingTelegramHttpClient(), 'check_the_README_file');
+
+        list($response, $log) = $this->captureErrorLog(function () use ($telegram) {
+            return $telegram->sendAdminMessage('External API failure');
+        });
+
+        $this->assertSame(400, $response->getStatusCode());
+        $this->assertSame('', $log);
+    }
+
     private function captureErrorLog(callable $callback)
     {
         $logFile = tempnam(sys_get_temp_dir(), 'telegram-error-log-');
@@ -68,11 +80,11 @@ class TelegramTest extends TestCase
         return array($result, $log);
     }
 
-    private function createTelegram($client)
+    private function createTelegram($client, $adminChatId = 'admin-chat')
     {
         $container = new Container();
         $container->set('kernel', new FakeTelegramKernel());
-        $container->setParameter('telegram.admin_chat_id', 'admin-chat');
+        $container->setParameter('telegram.admin_chat_id', $adminChatId);
 
         $telegram = new Telegram($container, 'bot-token', 'main-chat');
         $property = new \ReflectionProperty(Telegram::class, 'httpClient');

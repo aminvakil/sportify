@@ -63,6 +63,9 @@ class TheOddsApiTest extends TestCase
             $this->assertStringContainsString('The Odds API request failed for "/v4/sports/soccer_fifa_world_cup/events/event-1/odds" (HTTP 429', $e->getMessage());
         }
 
+        $this->assertCount(0, $telegram->adminMessages);
+        $api->flushOddsUnavailableNotifications();
+
         $this->assertCount(1, $telegram->adminMessages);
         $this->assertStringContainsString('Fixture skipped because odds snapshot is unavailable.', $telegram->adminMessages[0]);
         $this->assertStringContainsString('Match: Mexico vs South Africa', $telegram->adminMessages[0]);
@@ -87,10 +90,43 @@ class TheOddsApiTest extends TestCase
             $this->team('Mexico'),
             $this->team('South Africa')
         ));
+        $this->assertCount(0, $telegram->adminMessages);
+
+        $api->flushOddsUnavailableNotifications();
+
         $this->assertCount(1, $telegram->adminMessages);
         $this->assertStringContainsString('Fixture skipped because odds snapshot is unavailable.', $telegram->adminMessages[0]);
         $this->assertStringContainsString('Football-Data match id: 500', $telegram->adminMessages[0]);
         $this->assertStringContainsString('Reason: No complete home/draw/away odds snapshot was found.', $telegram->adminMessages[0]);
+    }
+
+    public function testBatchesUnavailableOddsNotificationsUntilFlush()
+    {
+        $telegram = new FakeTheOddsApiAdminTelegram();
+        $api = $this->createApi(array(), 'check_the_README_file', $telegram);
+
+        $this->assertNull($api->findProbabilitiesForFixture(
+            $this->fixtureData(500),
+            $this->tournament(),
+            $this->team('Mexico'),
+            $this->team('South Africa')
+        ));
+        $this->assertNull($api->findProbabilitiesForFixture(
+            $this->fixtureData(501),
+            $this->tournament(),
+            $this->team('Canada'),
+            $this->team('Morocco')
+        ));
+        $this->assertCount(0, $telegram->adminMessages);
+
+        $api->flushOddsUnavailableNotifications();
+
+        $this->assertCount(1, $telegram->adminMessages);
+        $this->assertStringContainsString('2 fixtures skipped because odds snapshots are unavailable.', $telegram->adminMessages[0]);
+        $this->assertStringContainsString('Match: Mexico vs South Africa', $telegram->adminMessages[0]);
+        $this->assertStringContainsString('Football-Data match id: 500', $telegram->adminMessages[0]);
+        $this->assertStringContainsString('Match: Canada vs Morocco', $telegram->adminMessages[0]);
+        $this->assertStringContainsString('Football-Data match id: 501', $telegram->adminMessages[0]);
     }
 
     public function testRequestsSoccerHeadToHeadMarketWithDrawInsteadOfOutrightsOutcome()
@@ -189,10 +225,10 @@ class TheOddsApiTest extends TestCase
         )));
     }
 
-    private function fixtureData()
+    private function fixtureData($matchId = 500)
     {
         return array(
-            'match_id' => 500,
+            'match_id' => $matchId,
             'match_local_time' => '2026-06-11 19:00:00',
         );
     }
