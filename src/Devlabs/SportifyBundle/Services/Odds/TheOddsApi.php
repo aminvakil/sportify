@@ -2,15 +2,18 @@
 
 namespace Devlabs\SportifyBundle\Services\Odds;
 
+use Devlabs\SportifyBundle\Entity\OddsProviderTeamMapping;
 use Devlabs\SportifyBundle\Entity\Team;
 use Devlabs\SportifyBundle\Entity\Tournament;
 use Devlabs\SportifyBundle\Services\Telegram;
+use Doctrine\ORM\EntityManagerInterface;
 use GuzzleHttp\Client;
 use GuzzleHttp\ClientInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class TheOddsApi
 {
+    const PROVIDER = 'the_odds_api';
     const REGION = 'eu';
     const MARKET = 'h2h';
     const ODDS_FORMAT = 'decimal';
@@ -22,7 +25,9 @@ class TheOddsApi
     private $baseUri;
     private $normalizer;
     private $telegram;
+    private $entityManager;
     private $activeSportKeys;
+    private $lastEventMatchingReason;
     private $oddsUnavailableNotifications = array();
 
     private $sportKeyCandidates = array(
@@ -41,13 +46,14 @@ class TheOddsApi
 
     private $preferredBookmakers = array('pinnacle', 'betfair', 'williamhill', 'bet365');
 
-    public function __construct(ContainerInterface $container, OddsProbabilityNormalizer $normalizer, $baseUri, ?ClientInterface $httpClient = null, ?Telegram $telegram = null)
+    public function __construct(ContainerInterface $container, OddsProbabilityNormalizer $normalizer, $baseUri, ?ClientInterface $httpClient = null, ?Telegram $telegram = null, ?EntityManagerInterface $entityManager = null)
     {
         $this->container = $container;
         $this->normalizer = $normalizer;
         $this->baseUri = rtrim((string) $baseUri, '/');
         $this->httpClient = $httpClient ?: new Client();
         $this->telegram = $telegram;
+        $this->entityManager = $entityManager;
     }
 
     public function findProbabilitiesForFixture(array $fixtureData, Tournament $tournament, Team $homeTeam, Team $awayTeam)
@@ -67,9 +73,9 @@ class TheOddsApi
                 return null;
             }
 
-            $event = $this->findMatchingEvent($sportKey, $apiToken, $fixtureData, $homeTeam, $awayTeam);
+            $event = $this->findMatchingEvent($sportKey, $apiToken, $fixtureData, $tournament, $homeTeam, $awayTeam);
             if ($event === null || !isset($event->id)) {
-                $this->notifyOddsUnavailable($fixtureData, $tournament, $homeTeam, $awayTeam, 'No matching The Odds API event was found.');
+                $this->notifyOddsUnavailable($fixtureData, $tournament, $homeTeam, $awayTeam, $this->lastEventMatchingReason ?: 'No matching The Odds API event was found.');
 
                 return null;
             }
@@ -86,7 +92,7 @@ class TheOddsApi
                 return null;
             }
 
-            $snapshot = $this->extractSnapshot($oddsEvent, $sportKey, $event->id, $homeTeam, $awayTeam);
+            $snapshot = $this->extractSnapshot($oddsEvent, $sportKey, $event->id, $event->home_team, $event->away_team);
             if ($snapshot === null) {
                 $this->notifyOddsUnavailable($fixtureData, $tournament, $homeTeam, $awayTeam, 'No complete home/draw/away odds snapshot was found.');
             }
@@ -150,10 +156,13 @@ class TheOddsApi
         return isset($this->activeSportKeys[$sportKey]);
     }
 
-    private function findMatchingEvent($sportKey, $apiToken, array $fixtureData, Team $homeTeam, Team $awayTeam)
+    private function findMatchingEvent($sportKey, $apiToken, array $fixtureData, Tournament $tournament, Team $homeTeam, Team $awayTeam)
     {
+        $this->lastEventMatchingReason = 'No matching The Odds API event was found.';
         $matchTime = strtotime($fixtureData['match_local_time']);
         if ($matchTime === false) {
+            $this->lastEventMatchingReason = 'Football-Data fixture kickoff time could not be parsed.';
+
             return null;
         }
 
@@ -166,8 +175,8 @@ class TheOddsApi
             return null;
         }
 
-        $homeName = $this->normalizeName($homeTeam->getName());
-        $awayName = $this->normalizeName($awayTeam->getName());
+        $matches = array();
+        $reasons = array();
         foreach ($events as $event) {
             if (!isset($event->home_team, $event->away_team, $event->commence_time)) {
                 continue;
@@ -177,15 +186,212 @@ class TheOddsApi
                 continue;
             }
 
-            if ($this->normalizeName($event->home_team) === $homeName && $this->normalizeName($event->away_team) === $awayName) {
-                return $event;
+            $teamMatch = $this->matchEventTeams($event, $fixtureData, $tournament, $homeTeam, $awayTeam);
+            if ($teamMatch['matched']) {
+                $matches[] = array('event' => $event, 'mappings' => $teamMatch['mappings']);
+            } elseif ($teamMatch['reason'] !== '') {
+                $reasons[] = $teamMatch['reason'];
             }
+        }
+
+        if (count($matches) === 1) {
+            $this->persistLearnedMappings($matches[0]['mappings'], $tournament);
+
+            return $matches[0]['event'];
+        }
+
+        if (count($matches) > 1) {
+            $this->lastEventMatchingReason = 'Ambiguous The Odds API event match: multiple events matched the Football-Data kickoff and team metadata.';
+
+            return null;
+        }
+
+        if ($reasons) {
+            $this->lastEventMatchingReason = 'No safely matched The Odds API event was found. '.$this->summarizeReasons($reasons);
         }
 
         return null;
     }
 
-    private function extractSnapshot($event, $sportKey, $eventId, Team $homeTeam, Team $awayTeam)
+    private function matchEventTeams($event, array $fixtureData, Tournament $tournament, Team $homeTeam, Team $awayTeam)
+    {
+        $homeMatch = $this->matchProviderTeamNameToFixtureSide($event->home_team, $fixtureData, $tournament, $homeTeam, $awayTeam, 'home');
+        $awayMatch = $this->matchProviderTeamNameToFixtureSide($event->away_team, $fixtureData, $tournament, $homeTeam, $awayTeam, 'away');
+
+        if ($homeMatch['matched'] && $awayMatch['matched']) {
+            return array(
+                'matched' => true,
+                'mappings' => array_merge($homeMatch['mappings'], $awayMatch['mappings']),
+                'reason' => '',
+            );
+        }
+
+        $reason = 'Event "'.$event->home_team.' vs '.$event->away_team.'": ';
+        $sideReasons = array();
+        if (!$homeMatch['matched'] && $homeMatch['reason'] !== '') {
+            $sideReasons[] = $homeMatch['reason'];
+        }
+        if (!$awayMatch['matched'] && $awayMatch['reason'] !== '') {
+            $sideReasons[] = $awayMatch['reason'];
+        }
+
+        return array('matched' => false, 'mappings' => array(), 'reason' => $reason.implode(' ', $sideReasons));
+    }
+
+    private function matchProviderTeamNameToFixtureSide($providerTeamName, array $fixtureData, Tournament $tournament, Team $homeTeam, Team $awayTeam, $expectedSide)
+    {
+        $expectedTeam = $expectedSide === 'home' ? $homeTeam : $awayTeam;
+        $mappedTeamId = $this->getMappedTeamId($tournament, $providerTeamName);
+        if ($mappedTeamId !== null) {
+            if ((int) $mappedTeamId === (int) $expectedTeam->getId()) {
+                return array('matched' => true, 'mappings' => array(), 'reason' => '');
+            }
+
+            return array(
+                'matched' => false,
+                'mappings' => array(),
+                'reason' => 'Provider team "'.$providerTeamName.'" is already mapped to "'.$this->getTeamNameById($mappedTeamId).'", not fixture '.$expectedSide.' team "'.$expectedTeam->getName().'".',
+            );
+        }
+
+        $normalizedProviderTeamName = $this->normalizeName($providerTeamName);
+        $matchingSides = array();
+        foreach (array('home' => $homeTeam, 'away' => $awayTeam) as $side => $team) {
+            $candidateNames = $this->getTeamCandidateNames($fixtureData, $side, $team);
+            if (isset($candidateNames[$normalizedProviderTeamName])) {
+                $matchingSides[] = $side;
+            }
+        }
+
+        if (count($matchingSides) > 1) {
+            return array(
+                'matched' => false,
+                'mappings' => array(),
+                'reason' => 'Provider team "'.$providerTeamName.'" ambiguously matches both Football-Data fixture teams.',
+            );
+        }
+
+        if (!$matchingSides) {
+            return array(
+                'matched' => false,
+                'mappings' => array(),
+                'reason' => 'Missing The Odds API team mapping for provider team "'.$providerTeamName.'".',
+            );
+        }
+
+        if ($matchingSides[0] !== $expectedSide) {
+            $matchedTeam = $matchingSides[0] === 'home' ? $homeTeam : $awayTeam;
+
+            return array(
+                'matched' => false,
+                'mappings' => array(),
+                'reason' => 'Provider team "'.$providerTeamName.'" matches Football-Data metadata for "'.$matchedTeam->getName().'", not fixture '.$expectedSide.' team "'.$expectedTeam->getName().'".',
+            );
+        }
+
+        $mappings = array();
+        if ($tournament->getId() !== null && $expectedTeam->getId() !== null) {
+            $mappings[] = array(
+                'provider_team_name' => $providerTeamName,
+                'normalized_provider_team_name' => $normalizedProviderTeamName,
+                'team_id' => $expectedTeam->getId(),
+            );
+        }
+
+        return array('matched' => true, 'mappings' => $mappings, 'reason' => '');
+    }
+
+    private function getMappedTeamId(Tournament $tournament, $providerTeamName)
+    {
+        $mapping = $this->getProviderTeamMapping($tournament, $providerTeamName);
+
+        return $mapping === null ? null : $mapping->getTeamId();
+    }
+
+    private function getProviderTeamMapping(Tournament $tournament, $providerTeamName)
+    {
+        if ($this->entityManager === null || $tournament->getId() === null) {
+            return null;
+        }
+
+        return $this->entityManager->getRepository(OddsProviderTeamMapping::class)
+            ->getByTournamentProviderAndNormalizedName($tournament->getId(), self::PROVIDER, $this->normalizeName($providerTeamName));
+    }
+
+    private function persistLearnedMappings(array $mappings, Tournament $tournament)
+    {
+        if ($this->entityManager === null || $tournament->getId() === null) {
+            return;
+        }
+
+        $persisted = false;
+        foreach ($mappings as $mappingData) {
+            $existingMapping = $this->entityManager->getRepository(OddsProviderTeamMapping::class)
+                ->getByTournamentProviderAndNormalizedName($tournament->getId(), self::PROVIDER, $mappingData['normalized_provider_team_name']);
+            if ($existingMapping !== null) {
+                continue;
+            }
+
+            $mapping = new OddsProviderTeamMapping();
+            $mapping->setTournamentId($tournament->getId());
+            $mapping->setProvider(self::PROVIDER);
+            $mapping->setProviderTeamName($mappingData['provider_team_name']);
+            $mapping->setNormalizedProviderTeamName($mappingData['normalized_provider_team_name']);
+            $mapping->setTeamId($mappingData['team_id']);
+
+            $this->entityManager->persist($mapping);
+            $persisted = true;
+        }
+
+        if ($persisted) {
+            $this->entityManager->flush();
+        }
+    }
+
+    private function getTeamNameById($teamId)
+    {
+        if ($this->entityManager === null) {
+            return '#'.$teamId;
+        }
+
+        $team = $this->entityManager->getRepository(Team::class)->find($teamId);
+
+        return $team === null ? '#'.$teamId : $team->getName();
+    }
+
+    private function summarizeReasons(array $reasons)
+    {
+        $uniqueReasons = array_values(array_unique($reasons));
+        $text = implode(' ', array_slice($uniqueReasons, 0, 3));
+        if (count($uniqueReasons) > 3) {
+            $text .= ' ...and '.(count($uniqueReasons) - 3).' more candidate event(s).';
+        }
+
+        return $text;
+    }
+
+    private function getTeamCandidateNames(array $fixtureData, $side, Team $team)
+    {
+        $names = array($team->getName());
+        foreach (array('name', 'short_name', 'tla', 'area_name', 'area_code') as $field) {
+            $key = $side.'_team_'.$field;
+            if (isset($fixtureData[$key]) && $fixtureData[$key]) {
+                $names[] = $fixtureData[$key];
+            }
+        }
+
+        $candidateNames = array();
+        foreach ($names as $name) {
+            $normalizedName = $this->normalizeName($name);
+            if ($normalizedName !== '') {
+                $candidateNames[$normalizedName] = $name;
+            }
+        }
+
+        return $candidateNames;
+    }
+
+    private function extractSnapshot($event, $sportKey, $eventId, $providerHomeTeamName, $providerAwayTeamName)
     {
         if (!isset($event->bookmakers) || !is_array($event->bookmakers)) {
             return null;
@@ -193,7 +399,7 @@ class TheOddsApi
 
         $bookmakers = $this->sortBookmakers($event->bookmakers);
         foreach ($bookmakers as $bookmaker) {
-            $prices = $this->extractPrices($bookmaker, $homeTeam, $awayTeam);
+            $prices = $this->extractPrices($bookmaker, $providerHomeTeamName, $providerAwayTeamName);
             if ($prices === null) {
                 continue;
             }
@@ -204,7 +410,7 @@ class TheOddsApi
             }
 
             $bookmakerKey = isset($bookmaker->key) ? $bookmaker->key : 'unknown';
-            $probabilities['source'] = 'the_odds_api:'.$sportKey.':'.$eventId.':'.$bookmakerKey.':h2h';
+            $probabilities['source'] = self::PROVIDER.':'.$sportKey.':'.$eventId.':'.$bookmakerKey.':h2h';
 
             return $probabilities;
         }
@@ -229,7 +435,7 @@ class TheOddsApi
         return $rank === false ? 100 : $rank;
     }
 
-    private function extractPrices($bookmaker, Team $homeTeam, Team $awayTeam)
+    private function extractPrices($bookmaker, $providerHomeTeamName, $providerAwayTeamName)
     {
         if (!isset($bookmaker->markets) || !is_array($bookmaker->markets)) {
             return null;
@@ -241,8 +447,8 @@ class TheOddsApi
             }
 
             $prices = array('home' => null, 'draw' => null, 'away' => null);
-            $homeName = $this->normalizeName($homeTeam->getName());
-            $awayName = $this->normalizeName($awayTeam->getName());
+            $homeName = $this->normalizeName($providerHomeTeamName);
+            $awayName = $this->normalizeName($providerAwayTeamName);
             foreach ($market->outcomes as $outcome) {
                 if (!isset($outcome->name, $outcome->price)) {
                     continue;

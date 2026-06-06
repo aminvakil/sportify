@@ -42,6 +42,64 @@ class TheOddsApiTest extends TestCase
         ));
     }
 
+    public function testMatchesProviderTeamsWithFootballDataMetadata()
+    {
+        $api = $this->createApi(array(
+            $this->sportsResponse(),
+            $this->eventsResponse('USA', 'RSA'),
+            $this->oddsResponse(array(
+                array('name' => 'USA', 'price' => 2.0),
+                array('name' => 'Draw', 'price' => 4.0),
+                array('name' => 'RSA', 'price' => 4.0),
+            )),
+        ));
+
+        $this->assertSame(array(
+            'home_win_probability_percent' => 50,
+            'draw_probability_percent' => 25,
+            'away_win_probability_percent' => 25,
+            'source' => 'the_odds_api:soccer_fifa_world_cup:event-1:pinnacle:h2h',
+        ), $api->findProbabilitiesForFixture(
+            $this->fixtureData(500, array(
+                'home_team_name' => 'United States',
+                'home_team_short_name' => 'USA',
+                'home_team_tla' => 'USA',
+                'home_team_area_name' => 'United States',
+                'home_team_area_code' => 'USA',
+                'away_team_name' => 'South Africa',
+                'away_team_short_name' => 'RSA',
+                'away_team_tla' => 'RSA',
+                'away_team_area_name' => 'South Africa',
+                'away_team_area_code' => 'RSA',
+            )),
+            $this->tournament(),
+            $this->team('United States'),
+            $this->team('South Africa')
+        ));
+    }
+
+    public function testNotifiesAdminWhenProviderTeamMappingIsMissing()
+    {
+        $telegram = new FakeTheOddsApiAdminTelegram();
+        $api = $this->createApi(array(
+            $this->sportsResponse(),
+            $this->eventsResponse('USA', 'South Africa'),
+        ), 'test-token', $telegram);
+
+        $this->assertNull($api->findProbabilitiesForFixture(
+            $this->fixtureData(),
+            $this->tournament(),
+            $this->team('United States'),
+            $this->team('South Africa')
+        ));
+
+        $api->flushOddsUnavailableNotifications();
+
+        $this->assertCount(1, $telegram->adminMessages);
+        $this->assertStringContainsString('Reason: No safely matched The Odds API event was found.', $telegram->adminMessages[0]);
+        $this->assertStringContainsString('Missing The Odds API team mapping for provider team "USA".', $telegram->adminMessages[0]);
+    }
+
     public function testThrowsWhenOddsEndpointFails()
     {
         $telegram = new FakeTheOddsApiAdminTelegram();
@@ -195,14 +253,14 @@ class TheOddsApiTest extends TestCase
         )));
     }
 
-    private function eventsResponse()
+    private function eventsResponse($homeTeam = 'Mexico', $awayTeam = 'South Africa')
     {
         return new Response(200, array(), json_encode(array(
             array(
                 'id' => 'event-1',
                 'commence_time' => '2026-06-11T19:00:00Z',
-                'home_team' => 'Mexico',
-                'away_team' => 'South Africa',
+                'home_team' => $homeTeam,
+                'away_team' => $awayTeam,
             ),
         )));
     }
@@ -225,12 +283,12 @@ class TheOddsApiTest extends TestCase
         )));
     }
 
-    private function fixtureData($matchId = 500)
+    private function fixtureData($matchId = 500, array $data = array())
     {
-        return array(
+        return array_merge(array(
             'match_id' => $matchId,
             'match_local_time' => '2026-06-11 19:00:00',
-        );
+        ), $data);
     }
 
     private function tournament()

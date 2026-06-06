@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity repository-class="Devlabs\SportifyBundle\Entity\OddsProviderTeamMappingRepository" name="Devlabs\SportifyBundle\Entity\OddsProviderTeamMapping" table="odds_provider_team_mappings">
+    <unique-constraints>
+      <unique-constraint name="tournament_provider_team_name" columns="tournament_id,provider,normalized_provider_team_name"/>
+    </unique-constraints>
+    <id name="id" type="integer" column="id">
+      <generator strategy="IDENTITY"/>
+    </id>
+    <field name="tournamentId" type="integer" column="tournament_id" nullable="false"/>
+    <field name="provider" type="string" column="provider" length="50" nullable="false"/>
+    <field name="providerTeamName" type="string" column="provider_team_name" length="100" nullable="false"/>
+    <field name="normalizedProviderTeamName" type="string" column="normalized_provider_team_name" length="100" nullable="false"/>
+    <field name="teamId" type="integer" column="team_id" nullable="false"/>
+  </entity>
+</doctrine-mapping>
