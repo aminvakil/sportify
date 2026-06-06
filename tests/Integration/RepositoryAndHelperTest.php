@@ -78,6 +78,10 @@ class RepositoryAndHelperTest extends DatabaseTestCase
         $this->assertSame('2020-01-01', $inputData['date_from']);
         $this->assertSame('2020-01-31', $inputData['date_to']);
 
+        $postedInputData = $filterHelper->getFormInputData(new Request(array(), array('filter' => array('tournament' => $league->getId()))), $urlParams, array('tournament', 'user'), $sourceData);
+        $this->assertNull($postedInputData['tournament']['data']);
+        $this->assertNull($postedInputData['user']['data']);
+
         $tournamentsHelper->leaveTournament($alice, $league);
         $this->assertSame(array($cup->getId()), $this->ids($tournamentRepository->getJoined($alice)));
     }
