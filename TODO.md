@@ -2,7 +2,11 @@
 
 ## Current status
 
-Pending task: none.
+Pending task: fix Symfony 7 filter form POST handling.
+
+## Pending
+
+- Fix shared filter form POST handling so submitted `filter[...]` arrays do not trigger Symfony 7 `InputBag::get()` 400 errors (`Input value "filter" contains a non-scalar value`). Use an existence check such as `$request->request->has('filter')` instead of reading the `filter` array as a scalar. This affects matches and may also affect standings, history, champion, and admin match filters.
 
 ## Baseline
 
