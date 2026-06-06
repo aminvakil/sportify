@@ -75,12 +75,12 @@ class FilterHelper
         $formInputData = array();
 
         if (in_array('tournament', $fields)) {
-            $formInputData['tournament']['data'] = ($request->request->get('filter')) ? null : $formSourceData['tournament_selected'];
+            $formInputData['tournament']['data'] = ($request->request->has('filter')) ? null : $formSourceData['tournament_selected'];
             $formInputData['tournament']['choices'] = $formSourceData['tournament_choices'];
         }
 
         if (in_array('user', $fields)) {
-            $formInputData['user']['data'] = ($request->request->get('filter')) ? null : $formSourceData['user_selected'];
+            $formInputData['user']['data'] = ($request->request->has('filter')) ? null : $formSourceData['user_selected'];
             $formInputData['user']['choices'] = $formSourceData['user_choices'];
         }
 

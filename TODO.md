@@ -2,11 +2,11 @@
 
 ## Current status
 
-Pending task: fix Symfony 7 filter form POST handling.
+Pending task: none.
 
 ## Pending
 
-- Fix shared filter form POST handling so submitted `filter[...]` arrays do not trigger Symfony 7 `InputBag::get()` 400 errors (`Input value "filter" contains a non-scalar value`). Use an existence check such as `$request->request->has('filter')` instead of reading the `filter` array as a scalar. This affects matches and may also affect standings, history, champion, and admin match filters.
+- None.
 
 ## Baseline
 
@@ -60,6 +60,7 @@ Pending task: fix Symfony 7 filter form POST handling.
 - FIFA World Cup logo import/display on `/matches` is fixed.
 - Public web registration is configurable with `APP_PUBLIC_REGISTRATION_ENABLED` and defaults to enabled.
 - `sportify:user:create-admin` reports `Password cannot be blank.` instead of crashing when its interactive password prompt is submitted blank.
+- Shared filter forms handle submitted `filter[...]` arrays without Symfony 7 `InputBag::get()` scalar access errors.
 
 ## Notes
 
