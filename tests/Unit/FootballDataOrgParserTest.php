@@ -88,6 +88,37 @@ class FootballDataOrgParserTest extends \PHPUnit\Framework\TestCase
         ), $parsed[1]);
     }
 
+    public function testParseFixturesIncludesTeamMatchingMetadataWhenPresent()
+    {
+        $fixture = $this->createFixture(1, 'SCHEDULED', '2020-01-02T12:00:00Z');
+        $fixture->homeTeam->name = 'United States';
+        $fixture->homeTeam->shortName = 'USA';
+        $fixture->homeTeam->tla = 'USA';
+        $fixture->homeTeam->area = new \stdClass();
+        $fixture->homeTeam->area->name = 'United States';
+        $fixture->homeTeam->area->code = 'USA';
+        $fixture->awayTeam->name = 'South Africa';
+        $fixture->awayTeam->shortName = 'RSA';
+        $fixture->awayTeam->tla = 'RSA';
+        $fixture->awayTeam->area = new \stdClass();
+        $fixture->awayTeam->area->name = 'South Africa';
+        $fixture->awayTeam->area->code = 'RSA';
+
+        $parser = new FootballDataOrg();
+        $parsed = $parser->parseFixtures(array($fixture));
+
+        $this->assertSame('United States', $parsed[0]['home_team_name']);
+        $this->assertSame('USA', $parsed[0]['home_team_short_name']);
+        $this->assertSame('USA', $parsed[0]['home_team_tla']);
+        $this->assertSame('United States', $parsed[0]['home_team_area_name']);
+        $this->assertSame('USA', $parsed[0]['home_team_area_code']);
+        $this->assertSame('South Africa', $parsed[0]['away_team_name']);
+        $this->assertSame('RSA', $parsed[0]['away_team_short_name']);
+        $this->assertSame('RSA', $parsed[0]['away_team_tla']);
+        $this->assertSame('South Africa', $parsed[0]['away_team_area_name']);
+        $this->assertSame('RSA', $parsed[0]['away_team_area_code']);
+    }
+
     public function testParseFixturesAcceptsV4ScoreProperties()
     {
         $finished = $this->createFixture(2, 'FINISHED', '2020-01-03T12:00:00Z', 4, 3, null, null, null, null, true);

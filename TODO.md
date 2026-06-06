@@ -2,11 +2,11 @@
 
 ## Current status
 
-Pending task: improve cross-provider team matching for fixture odds imports.
+Pending task: none currently tracked.
 
 ## Pending
 
-- Design and implement canonical team/provider mapping for Odds API fixture matching. Keep Football-Data teams as canonical app teams, store reusable Odds API team-name mappings per tournament/provider, auto-learn safe mappings from Football-Data metadata (`name`, `shortName`, `tla`, `area.name`, `area.code`) plus kickoff/home-away constraints, and notify the admin when a mapping is missing or ambiguous instead of relying on hardcoded aliases.
+- None.
 
 ## Baseline
 
@@ -61,6 +61,7 @@ Pending task: improve cross-provider team matching for fixture odds imports.
 - Public web registration is configurable with `APP_PUBLIC_REGISTRATION_ENABLED` and defaults to enabled.
 - `sportify:user:create-admin` reports `Password cannot be blank.` instead of crashing when its interactive password prompt is submitted blank.
 - Shared filter forms handle submitted `filter[...]` arrays without Symfony 7 `InputBag::get()` scalar access errors.
+- Fixture odds imports keep Football-Data teams canonical, auto-learn reusable The Odds API team-name mappings per tournament/provider from safe Football-Data metadata plus kickoff/home-away constraints, and notify the admin when provider team mappings are missing or ambiguous.
 
 ## Notes
 

@@ -22,6 +22,7 @@ class FootballDataOrg
             $parsedTeam['team_id'] = $team->id;
             $parsedTeam['name'] = $team->name;
             $parsedTeam['team_logo'] = $this->getImageUrl($team, array('crest', 'crestUrl'));
+            $parsedTeam = array_merge($parsedTeam, $this->getTeamMetadata($team));
 
             $team = $parsedTeam;
         }
@@ -46,6 +47,8 @@ class FootballDataOrg
             $parsedFixture['tournament_id'] = $fixture->season->id;
             $parsedFixture['home_team_id'] = $fixture->homeTeam->id;
             $parsedFixture['away_team_id'] = $fixture->awayTeam->id;
+            $parsedFixture = array_merge($parsedFixture, $this->getFixtureTeamMetadata($fixture->homeTeam, 'home'));
+            $parsedFixture = array_merge($parsedFixture, $this->getFixtureTeamMetadata($fixture->awayTeam, 'away'));
 
             // NOTE: v2 used team id 757 as a placeholder, while v4 uses null
             // team ids for unresolved scheduled teams.
@@ -120,6 +123,42 @@ class FootballDataOrg
         $property = property_exists($score, $team) ? $team : $team.'Team';
 
         return $score->$property;
+    }
+
+    private function getFixtureTeamMetadata($team, $prefix)
+    {
+        $metadata = array();
+        foreach ($this->getTeamMetadata($team) as $key => $value) {
+            $metadata[$prefix.'_team_'.$key] = $value;
+        }
+
+        return $metadata;
+    }
+
+    private function getTeamMetadata($team)
+    {
+        $metadata = array();
+        foreach (array('name', 'shortName', 'tla') as $property) {
+            if (property_exists($team, $property) && $team->$property) {
+                $metadata[$this->camelToSnake($property)] = $team->$property;
+            }
+        }
+
+        if (property_exists($team, 'area') && is_object($team->area)) {
+            if (property_exists($team->area, 'name') && $team->area->name) {
+                $metadata['area_name'] = $team->area->name;
+            }
+            if (property_exists($team->area, 'code') && $team->area->code) {
+                $metadata['area_code'] = $team->area->code;
+            }
+        }
+
+        return $metadata;
+    }
+
+    private function camelToSnake($name)
+    {
+        return strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $name));
     }
 
     private function getImageUrl($object, array $properties)

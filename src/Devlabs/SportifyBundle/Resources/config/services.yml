@@ -73,7 +73,7 @@ services:
 
     app.odds.the_odds_api:
         class: Devlabs\SportifyBundle\Services\Odds\TheOddsApi
-        arguments: ['@service_container', '@app.odds_probability_normalizer', '%odds_api.base_uri%', null, '@app.telegram']
+        arguments: ['@service_container', '@app.odds_probability_normalizer', '%odds_api.base_uri%', null, '@app.telegram', '@doctrine.orm.entity_manager']
 
     app.scoring_defaults:
         class: Devlabs\SportifyBundle\Services\ScoringDefaults
