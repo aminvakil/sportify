@@ -2,11 +2,11 @@
 
 ## Current status
 
-Pending task: none.
+Pending task: improve cross-provider team matching for fixture odds imports.
 
 ## Pending
 
-- None.
+- Design and implement canonical team/provider mapping for Odds API fixture matching. Keep Football-Data teams as canonical app teams, store reusable Odds API team-name mappings per tournament/provider, auto-learn safe mappings from Football-Data metadata (`name`, `shortName`, `tla`, `area.name`, `area.code`) plus kickoff/home-away constraints, and notify the admin when a mapping is missing or ambiguous instead of relying on hardcoded aliases.
 
 ## Baseline
 
