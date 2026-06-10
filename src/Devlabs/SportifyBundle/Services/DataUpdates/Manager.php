@@ -6,6 +6,7 @@ use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Doctrine\ORM\EntityManager;
 use Devlabs\SportifyBundle\Entity\ApiMapping;
+use Devlabs\SportifyBundle\Entity\MatchEntity;
 use Devlabs\SportifyBundle\Entity\Tournament;
 
 /**
@@ -69,17 +70,28 @@ class Manager
         $this->dataImporter->importTeams($parsedTeams, $tournament, $this->footballApi);
     }
 
+    public function updateResults($dateFrom, $dateTo)
+    {
+        $status = $this->createFixturesStatus();
+
+        if (!$this->em->getRepository(MatchEntity::class)->hasResultUpdateCandidates(
+            $this->createDateTime($dateFrom, false),
+            $this->createDateTime($dateTo, true),
+            new \DateTime()
+        )) {
+            return $status;
+        }
+
+        return $this->updateFixtures($dateFrom, $dateTo);
+    }
+
     /**
      * Update fixtures data via API Fetch, Parse and Import services
      * for a given time range (start date and end date)
      */
     public function updateFixtures($dateFrom, $dateTo)
     {
-        $status = array();
-        $status['total_fetched'] = 0;
-        $status['total_added'] = 0;
-        $status['total_updated'] = 0;
-        $status['added_fixtures'] = array();
+        $status = $this->createFixturesStatus();
 
         // get all tournaments
         $tournaments = $this->em->getRepository(Tournament::class)->findAll();
@@ -118,6 +130,30 @@ class Manager
         }
 
         return $status;
+    }
+
+    private function createFixturesStatus()
+    {
+        return array(
+            'total_fetched' => 0,
+            'total_added' => 0,
+            'total_updated' => 0,
+            'added_fixtures' => array(),
+        );
+    }
+
+    private function createDateTime($date, $endOfDay)
+    {
+        if ($date instanceof \DateTime) {
+            return $date;
+        }
+
+        if (strpos($date, ' ') !== false) {
+            return new \DateTime($date);
+        }
+
+        $time = $endOfDay ? '23:59:59' : '00:00:00';
+        return new \DateTime($date.' '.$time);
     }
 
     /**

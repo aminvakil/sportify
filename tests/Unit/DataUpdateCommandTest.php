@@ -202,7 +202,7 @@ class FakeDataUpdatesManager
 
 class FakeResultsDataUpdatesManager
 {
-    public function updateFixtures($dateFrom, $dateTo)
+    public function updateResults($dateFrom, $dateTo)
     {
         return array(
             'total_added' => 0,
