@@ -83,6 +83,31 @@ class MatchRepository extends \Doctrine\ORM\EntityRepository
     }
 
     /**
+     * Check if local matches can need final result updates.
+     *
+     * @param $dateFrom
+     * @param $dateTo
+     * @param \DateTime $now
+     * @return bool
+     */
+    public function hasResultUpdateCandidates($dateFrom, $dateTo, \DateTime $now)
+    {
+        $count = $this->getEntityManager()->createQueryBuilder()
+            ->select('COUNT(m.id)')
+            ->from(MatchEntity::class, 'm')
+            ->where('m.homeGoals IS NULL OR m.awayGoals IS NULL')
+            ->andWhere('m.datetime >= :date_from AND m.datetime <= :date_to')
+            ->andWhere('m.datetime <= :now')
+            ->setParameter('date_from', $dateFrom)
+            ->setParameter('date_to', $dateTo)
+            ->setParameter('now', $now)
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        return (int) $count > 0;
+    }
+
+    /**
      * Get a list of matches which have final score
      * but there are NOT SCORED predictions for these matches
      *

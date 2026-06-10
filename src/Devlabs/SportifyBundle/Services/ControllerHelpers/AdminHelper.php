@@ -94,7 +94,7 @@ class AdminHelper
             // set dateFrom and dateTo to respectively 'number of days' before and today
             $dateFrom = date("Y-m-d", time() - (3600 * 24 * $data['days']));
             $dateTo = date("Y-m-d");
-            $status = $dataUpdatesManager->updateFixtures($dateFrom, $dateTo);
+            $status = $dataUpdatesManager->updateResults($dateFrom, $dateTo);
 
             if ($status['total_updated'] > 0) {
                 // Get the ScoreUpdater service and update all scores

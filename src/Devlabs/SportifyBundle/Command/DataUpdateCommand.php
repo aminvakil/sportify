@@ -71,7 +71,7 @@ class DataUpdateCommand extends Command
             // set dateFrom and dateTo to respectively 'number of days' before and today
             $dateFrom = date("Y-m-d", time() - (3600 * 24 * $days));
             $dateTo = date("Y-m-d");
-            $status = $dataUpdatesManager->updateFixtures($dateFrom, $dateTo);
+            $status = $dataUpdatesManager->updateResults($dateFrom, $dateTo);
 
             if ($status['total_updated'] > 0) {
                 $em = $this->container->get('doctrine.orm.entity_manager');
