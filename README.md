@@ -119,7 +119,7 @@ Create tournament by navigating to: **Admin Panel -> Tournaments**. After the to
     `5,35 * * * *    php /var/www/sportify/bin/console --env=prod sportify:notify users-not-predicted >> /var/www/sportify/var/log_notify.txt`
     + Every hour at 5 and 35 minutes of the clock, send submitted predictions to Telegram for matches that just started (and log this to log_telegram.txt):
 
-    `5,35 * * * *    php /var/www/sportify/bin/console --env=prod sportify:telegram:send-predictions >> /var/www/sportify/var/log_telegram.txt`
+    `5,35 * * * *    php /var/www/sportify/bin/console --env=prod sportify:telegram:send-predictions --lookback-minutes=10 >> /var/www/sportify/var/log_telegram.txt`
     + Every Monday at 8:00 AM, fetch matches fixtures for the next 14 days (and log this to log_data_updates.txt)
     
     `0 8 * * 1       php /var/www/sportify/bin/console --env=prod sportify:data:update matches-fixtures 14 >> /var/www/sportify/var/log_data_updates.txt`
