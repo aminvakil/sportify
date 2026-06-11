@@ -2,11 +2,12 @@
 
 ## Current status
 
-Pending task: reduce unnecessary match-results API calls by checking local result-update candidates before querying football-data.org.
+Pending tasks: reduce unnecessary match-results API calls before querying football-data.org; widen Telegram prediction cron lookback to avoid boundary misses.
 
 ## Pending
 
 - Update `update matches-results` so it checks the local database first and skips football-data.org when the database indicates nothing can possibly need result updates.
+- Update the production Telegram prediction cron entry to call `sportify:telegram:send-predictions --lookback-minutes=10` so matches exactly five minutes before a `:05`/`:35` run are not missed by small cron execution delays.
 
 ## Baseline
 
