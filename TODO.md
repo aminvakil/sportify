@@ -2,7 +2,12 @@
 
 ## Current status
 
-Pending tasks: none known.
+Pending tasks: simplify Telegram prediction messages and verify multi-match prediction notifications.
+
+## Pending
+
+- Remove the redundant `outcome` column from Telegram prediction messages.
+- Check whether `sportify:telegram:send-predictions` handles multiple recently started matches correctly in one run.
 
 ## Baseline
 
