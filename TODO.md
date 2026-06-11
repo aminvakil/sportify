@@ -2,12 +2,11 @@
 
 ## Current status
 
-Pending tasks: simplify Telegram prediction messages and verify multi-match prediction notifications.
+Pending tasks: none.
 
 ## Pending
 
-- Remove the redundant `outcome` column from Telegram prediction messages.
-- Check whether `sportify:telegram:send-predictions` handles multiple recently started matches correctly in one run.
+- None.
 
 ## Baseline
 
@@ -56,6 +55,7 @@ Pending tasks: simplify Telegram prediction messages and verify multi-match pred
 - Upcoming fixture import uses `football-data.org` plus The Odds API snapshots and skips fixtures when complete odds are unavailable.
 - The prediction page shows probability snapshots, probability bonus chips, and points available for each outcome.
 - Telegram fixture-added, prediction, and result/scoring messages include probability and scoring details.
+- Telegram prediction messages show prediction bonus points instead of redundant outcome labels, and multi-match prediction notifications are covered by tests.
 - Admin Data Updates handles non-200 Football-Data responses with a flash message instead of a Symfony 500.
 - External API failures and unavailable odds snapshots notify the configured Telegram admin chat in prod.
 - FIFA World Cup logo import/display on `/matches` is fixed.

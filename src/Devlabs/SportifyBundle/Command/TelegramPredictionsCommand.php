@@ -99,8 +99,8 @@ class TelegramPredictionsCommand extends Command
         foreach ($matches as $match) {
             $lines[] = $match->getHomeTeamName().' - '.$match->getAwayTeamName();
             $lines[] = 'Probabilities: '.$this->formatProbabilitySnapshot($match);
-            $lines[] = 'user                 pred   outcome';
-            $lines[] = '-------------------  -----  --------';
+            $lines[] = 'user                 pred   bonus pts';
+            $lines[] = '-------------------  -----  ---------';
 
             if (!isset($predictionsByMatch[$match->getId()])) {
                 $lines[] = 'No predictions.';
@@ -114,7 +114,7 @@ class TelegramPredictionsCommand extends Command
                     $this->shorten($prediction->getUserId()->getUsername(), 19),
                     $prediction->getHomeGoals(),
                     $prediction->getAwayGoals(),
-                    $this->formatOutcome($prediction->getResultOutcome())
+                    $this->formatBonus($match->getProbabilityBonusForOutcome($prediction->getResultOutcome()))
                 );
             }
             $lines[] = '';
@@ -145,16 +145,13 @@ class TelegramPredictionsCommand extends Command
         return $percent.'%';
     }
 
-    private function formatOutcome($outcome)
+    private function formatBonus($bonus)
     {
-        if ($outcome === '1') {
-            return 'home win';
-        }
-        if ($outcome === '2') {
-            return 'away win';
+        if ($bonus <= 0) {
+            return '-';
         }
 
-        return 'draw';
+        return '+'.$bonus;
     }
 
     private function shorten($value, $length)
