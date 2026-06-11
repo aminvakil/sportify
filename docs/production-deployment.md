@@ -142,7 +142,7 @@ SPORTIFY_DIR=/path/to/sportify
 15 6 * * * cd "$SPORTIFY_DIR" && docker compose -f docker-compose.prod.yml exec -T php php bin/console --env=prod --no-debug sportify:data:update matches-fixtures 7 >> /var/log/sportify-data-updates.log 2>&1
 
 # Send submitted predictions to the configured Telegram group after kickoff.
-5,35 * * * * cd "$SPORTIFY_DIR" && docker compose -f docker-compose.prod.yml exec -T php php bin/console --env=prod --no-debug sportify:telegram:send-predictions >> /var/log/sportify-telegram.log 2>&1
+5,35 * * * * cd "$SPORTIFY_DIR" && docker compose -f docker-compose.prod.yml exec -T php php bin/console --env=prod --no-debug sportify:telegram:send-predictions --lookback-minutes=10 >> /var/log/sportify-telegram.log 2>&1
 
 # Check recently ended matches and update scores/standings when results arrive.
 */10 * * * * cd "$SPORTIFY_DIR" && docker compose -f docker-compose.prod.yml exec -T php php bin/console --env=prod --no-debug sportify:data:update matches-results 1 >> /var/log/sportify-data-updates.log 2>&1
