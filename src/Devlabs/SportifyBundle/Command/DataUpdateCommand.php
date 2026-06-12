@@ -175,9 +175,9 @@ class DataUpdateCommand extends Command
             foreach ($predictionsByMatch[$match->getId()] as $prediction) {
                 $text .= "\n\t"
                     .$prediction->getUserId()->getUsername()
-                    .' predicted '
+                    .' '
                     .$prediction->getHomeGoals().'-'.$prediction->getAwayGoals()
-                    .' ('.$this->formatOutcome($prediction->getResultOutcome()).'): '
+                    .' : '
                     .$this->formatScoringBreakdown($prediction);
             }
         }
@@ -187,19 +187,14 @@ class DataUpdateCommand extends Command
 
     private function formatScoringBreakdown(Prediction $prediction)
     {
-        if ($prediction->getScoringResult() === Prediction::SCORING_RESULT_EXACT) {
-            return 'exact score, base '.$prediction->getBasePoints()
-                .' + probability bonus '.$prediction->getProbabilityBonus()
+        if ($prediction->getScoringResult() === Prediction::SCORING_RESULT_EXACT
+            || $prediction->getScoringResult() === Prediction::SCORING_RESULT_OUTCOME) {
+            return $prediction->getBasePoints()
+                .' + '.$prediction->getProbabilityBonus()
                 .' = '.$prediction->getTotalPoints();
         }
 
-        if ($prediction->getScoringResult() === Prediction::SCORING_RESULT_OUTCOME) {
-            return 'correct outcome, base '.$prediction->getBasePoints()
-                .' + probability bonus '.$prediction->getProbabilityBonus()
-                .' = '.$prediction->getTotalPoints();
-        }
-
-        return 'wrong outcome, 0 points';
+        return '0';
     }
 
     private function formatProbabilitySnapshot(MatchEntity $match)
@@ -213,17 +208,6 @@ class DataUpdateCommand extends Command
             .', away '.$this->formatProbability($match->getAwayWinProbabilityPercent());
     }
 
-    private function formatOutcome($outcome)
-    {
-        if ($outcome === '1') {
-            return 'home win';
-        }
-        if ($outcome === '2') {
-            return 'away win';
-        }
-
-        return 'draw';
-    }
 
     private function formatAddedFixtures(array $addedFixtures)
     {
