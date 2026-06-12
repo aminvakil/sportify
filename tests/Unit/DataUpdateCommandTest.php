@@ -82,9 +82,9 @@ class DataUpdateCommandTest extends TestCase
         $this->assertStringContainsString('Result Cup', $telegram->messages[0]);
         $this->assertStringContainsString('Home FC 2-1 Away FC', $telegram->messages[0]);
         $this->assertStringContainsString('Probabilities: home 45%, draw 25%, away 65%', $telegram->messages[0]);
-        $this->assertStringContainsString('alice predicted 2-1 (home win): exact score, base 5 + probability bonus 0 = 5', $telegram->messages[0]);
-        $this->assertStringContainsString('bob predicted 1-0 (home win): correct outcome, base 2 + probability bonus 0 = 2', $telegram->messages[0]);
-        $this->assertStringContainsString('charlie predicted 0-1 (away win): wrong outcome, 0 points', $telegram->messages[0]);
+        $this->assertStringContainsString('alice 2-1 : 5 + 0 = 5', $telegram->messages[0]);
+        $this->assertStringContainsString('bob 1-0 : 2 + 0 = 2', $telegram->messages[0]);
+        $this->assertStringContainsString('charlie 0-1 : 0', $telegram->messages[0]);
         $this->assertStringContainsString('Standings changes:', $telegram->messages[0]);
         $this->assertStringContainsString('alice: Position: 1 (previous: 2), Points: 12 (gained: 5)', $telegram->messages[0]);
     }
