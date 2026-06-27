@@ -70,6 +70,42 @@ class AdminPredictionFlowTest extends FunctionalTestCase
         $this->assertSame($awayTeam->getId(), $championPrediction->getTeamId()->getId());
     }
 
+    public function testStaleBetFormUpdatesExistingPrediction()
+    {
+        $admin = $this->createUser('admin_stale_prediction', 'testpass', true, array('ROLE_ADMIN'));
+        list(, , , $match) = $this->createTournamentWithMatch();
+
+        $this->login('admin_stale_prediction@example.com', 'testpass');
+        $this->assertTrue($this->client->getResponse()->isRedirect());
+
+        $crawler = $this->client->request('GET', '/tournaments');
+        $this->client->submit($crawler->selectButton('JOIN')->form());
+        $this->assertTrue($this->client->getResponse()->isRedirect('/tournaments'));
+
+        $crawler = $this->client->request('GET', '/matches');
+        $staleForm = $crawler->filter('button.match-btn')->form(array(
+            'prediction[homeGoals]' => 2,
+            'prediction[awayGoals]' => 1,
+        ));
+
+        $this->client->submit($staleForm);
+        $this->assertTrue($this->client->getResponse()->isRedirect());
+
+        $this->client->submit($staleForm, array(
+            'prediction[homeGoals]' => 3,
+            'prediction[awayGoals]' => 2,
+        ));
+        $this->assertTrue($this->client->getResponse()->isRedirect());
+
+        $prediction = $this->em->getRepository(Prediction::class)->getOneByUserAndMatch($admin, $match);
+        $this->assertSame(3, $prediction->getHomeGoals());
+        $this->assertSame(2, $prediction->getAwayGoals());
+        $this->assertCount(1, $this->em->getRepository(Prediction::class)->findBy(array(
+            'userId' => $admin,
+            'matchId' => $match,
+        )));
+    }
+
     private function createTournamentWithMatch()
     {
         $tournament = new Tournament();

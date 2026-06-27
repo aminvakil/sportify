@@ -2,11 +2,11 @@
 
 ## Current status
 
-Pending tasks: 1.
+Pending tasks: 0.
 
 ## Pending
 
-- Fix prediction form duplicate-submit/stale-form 500: `MatchesController::betAction` can try to insert a new prediction when a user already has one for the match, causing `Duplicate entry '<user_id>-<match_id>' for key 'predictions.user_match'`. Reuse the existing prediction or handle the duplicate gracefully.
+None.
 
 ## Baseline
 
@@ -62,6 +62,7 @@ Pending tasks: 1.
 - Public web registration is configurable with `APP_PUBLIC_REGISTRATION_ENABLED` and defaults to enabled.
 - `sportify:user:create-admin` reports `Password cannot be blank.` instead of crashing when its interactive password prompt is submitted blank.
 - Shared filter forms handle submitted `filter[...]` arrays without Symfony 7 `InputBag::get()` scalar access errors.
+- Prediction forms reuse an existing user/match prediction on stale or duplicate BET submits instead of triggering a duplicate-key 500.
 - Fixture odds imports keep Football-Data teams canonical, auto-learn reusable The Odds API team-name mappings per tournament/provider from safe Football-Data metadata plus kickoff/home-away constraints, and notify the admin when provider team mappings are missing or ambiguous.
 
 ## Notes
