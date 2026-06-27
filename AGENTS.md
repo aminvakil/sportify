@@ -49,6 +49,10 @@ Routine container lifecycle actions for an approved deployment do not require se
 
 Read-only inspection commands are allowed, but summarize findings before proposing the next change.
 
+For production cron issues, inspect the installed `/etc/cron.d/sportify`; it may differ from `deploy/cron/sportify.crontab`.
+
+Manual production DB corrections must be audited first, applied in one transaction, then verified with read-only queries before notifying users.
+
 ## Output and token discipline
 
 - Avoid pasting huge command outputs into chat. Redirect noisy test/build output to a temp file, then inspect only the relevant summary or error lines.
