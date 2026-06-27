@@ -2,11 +2,11 @@
 
 ## Current status
 
-Pending tasks: none.
+Pending tasks: 1.
 
 ## Pending
 
-- None.
+- Fix prediction form duplicate-submit/stale-form 500: `MatchesController::betAction` can try to insert a new prediction when a user already has one for the match, causing `Duplicate entry '<user_id>-<match_id>' for key 'predictions.user_match'`. Reuse the existing prediction or handle the duplicate gracefully.
 
 ## Baseline
 
