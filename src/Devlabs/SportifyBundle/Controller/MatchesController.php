@@ -104,19 +104,22 @@ class MatchesController extends AbstractController
         $match = $em->getRepository(MatchEntity::class)
             ->findOneById($submittedPrediction['matchId']);
 
-        // set the prediction object based on whether it's new or existing one
-        if ($submittedPrediction['id']) {
-            $prediction = $em->getRepository(Prediction::class)
-                ->findOneById($submittedPrediction['id']);
-            $prediction->setHomeGoals($submittedPrediction['homeGoals']);
-            $prediction->setAwayGoals($submittedPrediction['awayGoals']);
-        } else {
+        // set the prediction object based on whether the user already has one for this match
+        $prediction = $em->getRepository(Prediction::class)
+            ->findOneBy(array(
+                'userId' => $user,
+                'matchId' => $match,
+            ));
+
+        if (!$prediction) {
             $prediction = new Prediction();
             $prediction->setMatchId($match);
             $prediction->setUserId($user);
-            $prediction->setHomeGoals($submittedPrediction['homeGoals']);
-            $prediction->setAwayGoals($submittedPrediction['awayGoals']);
         }
+
+        $submittedPrediction['id'] = $prediction->getId();
+        $submittedPrediction['action'] = $prediction->getId() ? 'EDIT' : 'BET';
+        $request->request->set('prediction', $submittedPrediction);
 
         $buttonAction = $submittedPrediction['action'];
 
