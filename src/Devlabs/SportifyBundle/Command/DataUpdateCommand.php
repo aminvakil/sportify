@@ -130,7 +130,14 @@ class DataUpdateCommand extends Command
                 $telegramResult = json_decode((string) $telegramResponse->getBody(), true);
 
                 if ($this->shouldPinTelegramMessages() && isset($telegramResult['result']['message_id'])) {
-                    $telegram->pinMessage($telegramResult['result']['message_id']);
+                    $pinResponse = $telegram->pinMessage($telegramResult['result']['message_id']);
+                    if ($pinResponse->getStatusCode() < 200 || $pinResponse->getStatusCode() >= 300) {
+                        error_log(sprintf(
+                            'Telegram message pinning failed (HTTP %d %s).',
+                            $pinResponse->getStatusCode(),
+                            $pinResponse->getReasonPhrase()
+                        ));
+                    }
                 }
             }
         } else {
@@ -237,6 +244,11 @@ class DataUpdateCommand extends Command
             return true;
         }
 
-        return filter_var($this->container->getParameter('telegram.pin_messages'), FILTER_VALIDATE_BOOLEAN);
+        $value = $this->container->getParameter('telegram.pin_messages');
+        if ($value === null || $value === '') {
+            return true;
+        }
+
+        return filter_var($value, FILTER_VALIDATE_BOOLEAN);
     }
 }

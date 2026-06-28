@@ -2,11 +2,11 @@
 
 ## Current status
 
-Pending tasks: 1.
+Pending tasks: 0.
 
 ## Pending
 
-- Clarify and improve Telegram message pinning: document that `telegram.pin_messages` currently applies only to `sportify:data:update` fixture/result notifications, log pin failures, and decide whether prediction/manual Telegram messages should support pinning too.
+None.
 
 ## Baseline
 

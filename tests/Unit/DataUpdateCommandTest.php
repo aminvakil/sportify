@@ -39,6 +39,26 @@ class DataUpdateCommandTest extends TestCase
         $this->assertSame(array(321), $telegram->pinnedMessageIds);
     }
 
+    public function testBlankTelegramPinningParameterUsesDefault()
+    {
+        $container = new Container();
+        $slack = new FakeDataUpdateSlack();
+        $telegram = new FakeDataUpdateTelegram();
+
+        $this->configureContainer($container, $slack, $telegram);
+        $container->setParameter('telegram.pin_messages', null);
+
+        $tester = new CommandTester(new DataUpdateCommand($container));
+        $tester->execute(array(
+            'type' => 'matches-fixtures',
+            'days' => 3,
+        ));
+
+        $this->assertSame(Command::SUCCESS, $tester->getStatusCode());
+        $this->assertCount(1, $telegram->messages);
+        $this->assertSame(array(321), $telegram->pinnedMessageIds);
+    }
+
     public function testCanDisableTelegramMessagePinning()
     {
         $container = new Container();
