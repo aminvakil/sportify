@@ -109,6 +109,32 @@ class DataUpdateCommandTest extends TestCase
         $this->assertStringContainsString('alice: Position: 1 (previous: 2), Points: 12 (gained: 5)', $telegram->messages[0]);
     }
 
+    public function testResultUpdateWithoutScoringChangesDoesNotSendNotification()
+    {
+        $container = new Container();
+        $slack = new FakeDataUpdateSlack();
+        $telegram = new FakeDataUpdateTelegram();
+        $fixture = $this->createScoredFixture();
+
+        $container->set('app.data_updates.manager', new FakeResultsDataUpdatesManager());
+        $container->set('app.score_updater', new FakeNoScoringDataUpdateScoreUpdater());
+        $container->set('doctrine.orm.entity_manager', new FakeDataUpdateEntityManager($fixture['match'], array(), $fixture['score']));
+        $container->set('app.slack', $slack);
+        $container->set('app.telegram', $telegram);
+
+        $tester = new CommandTester(new DataUpdateCommand($container));
+        $tester->execute(array(
+            'type' => 'matches-results',
+            'days' => 1,
+        ));
+
+        $this->assertSame(Command::SUCCESS, $tester->getStatusCode());
+        $this->assertNull($slack->text);
+        $this->assertSame(array(), $telegram->messages);
+        $this->assertSame(array(), $telegram->pinnedMessageIds);
+        $this->assertStringContainsString('Match results updated, but no predictions or standings changed.', $tester->getDisplay());
+    }
+
     private function createScoredFixture()
     {
         $tournament = new Tournament();
@@ -250,6 +276,14 @@ class FakeDataUpdateScoreUpdater
     public function getLastScoredMatchIds()
     {
         return array($this->match->getId());
+    }
+}
+
+class FakeNoScoringDataUpdateScoreUpdater
+{
+    public function updateAll()
+    {
+        return array();
     }
 }
 
