@@ -79,6 +79,12 @@ class DataUpdateCommand extends Command
                 // Get the ScoreUpdater service and update all scores
                 $scoreUpdater = $this->container->get('app.score_updater');
                 $tournamentsModified = $scoreUpdater->updateAll();
+                if (!$tournamentsModified) {
+                    $output->writeln($logText."\n".'Match results updated, but no predictions or standings changed.');
+
+                    return 0;
+                }
+
                 $scoredMatches = $this->getScoredMatches($em, $scoreUpdater->getLastScoredMatchIds());
                 $scoredPredictions = $em->getRepository(Prediction::class)
                     ->getByMatches($scoredMatches);
