@@ -2,11 +2,11 @@
 
 ## Current status
 
-Pending tasks: 0.
+Pending tasks: 1.
 
 ## Pending
 
-None.
+- Fix misleading Telegram result-update notifications: `sportify:data:update matches-results` currently sends “Match results and standings updated” whenever fixture import reports `total_updated > 0`, even if `ScoreUpdater` finds no scored predictions or standings changes (for example finished matches with zero predictions). Only send a result/standings Telegram message when scoring/standings actually changed, or make the no-scoring case explicit.
 
 ## Baseline
 
