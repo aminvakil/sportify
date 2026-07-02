@@ -68,6 +68,7 @@ class FootballDataOrgParserTest extends \PHPUnit\Framework\TestCase
         $this->assertSame(array(
             'match_id' => 1,
             'tournament_id' => 99,
+            'stage' => 'GROUP_STAGE',
             'home_team_id' => 10,
             'away_team_id' => 20,
             'match_local_time' => date('Y-m-d H:i:s', strtotime('2020-01-02T12:00:00Z')),
@@ -79,6 +80,7 @@ class FootballDataOrgParserTest extends \PHPUnit\Framework\TestCase
         $this->assertSame(array(
             'match_id' => 2,
             'tournament_id' => 99,
+            'stage' => 'GROUP_STAGE',
             'home_team_id' => 10,
             'away_team_id' => 20,
             'match_local_time' => date('Y-m-d H:i:s', strtotime('2020-01-03T12:00:00Z')),
@@ -154,12 +156,13 @@ class FootballDataOrgParserTest extends \PHPUnit\Framework\TestCase
         $this->assertSame(1, $parsed[0]['match_id']);
     }
 
-    private function createFixture($id, $status, $utcDate, $fullTimeHome = null, $fullTimeAway = null, $extraTimeHome = null, $extraTimeAway = null, $penaltiesHome = null, $penaltiesAway = null, $useV4ScoreProperties = false, $homeTeamId = 10, $awayTeamId = 20)
+    private function createFixture($id, $status, $utcDate, $fullTimeHome = null, $fullTimeAway = null, $extraTimeHome = null, $extraTimeAway = null, $penaltiesHome = null, $penaltiesAway = null, $useV4ScoreProperties = false, $homeTeamId = 10, $awayTeamId = 20, $stage = 'GROUP_STAGE')
     {
         $fixture = new \stdClass();
         $fixture->id = $id;
         $fixture->utcDate = $utcDate;
         $fixture->status = $status;
+        $fixture->stage = $stage;
 
         $fixture->season = new \stdClass();
         $fixture->season->id = 99;

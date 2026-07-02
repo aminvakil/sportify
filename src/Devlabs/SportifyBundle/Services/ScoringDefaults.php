@@ -45,14 +45,13 @@ class ScoringDefaults
     {
         $match->setBaseOutcomePoints($this->getOutcomePoints());
         $match->setBaseExactPoints($this->getExactPoints());
-        $this->applyTournamentScoringRules($match);
 
         return $match;
     }
 
-    public function applyTournamentScoringRules(MatchEntity $match)
+    public function applyFootballDataStageScoring(MatchEntity $match, $stage)
     {
-        $points = $this->getWorldCup2026Points($match);
+        $points = $this->getWorldCup2026StagePoints($match, $stage);
         if ($points === null) {
             return $match;
         }
@@ -63,30 +62,23 @@ class ScoringDefaults
         return $match;
     }
 
-    private function getWorldCup2026Points(MatchEntity $match)
+    private function getWorldCup2026StagePoints(MatchEntity $match, $stage)
     {
         $tournament = $match->getTournamentId();
-        $datetime = $match->getDatetime();
-        if ($tournament === null || $datetime === null || stripos($tournament->getName(), 'World Cup') === false) {
+        if ($tournament === null || stripos($tournament->getName(), 'World Cup') === false) {
             return null;
         }
 
-        $localDatetime = $datetime->format('Y-m-d H:i:s');
         $stages = array(
-            array('from' => '2026-06-28 00:00:00', 'to' => '2026-07-04 20:30:00', 'outcome' => 3, 'exact' => 6),
-            array('from' => '2026-07-04 20:30:00', 'to' => '2026-07-09 00:00:00', 'outcome' => 4, 'exact' => 8),
-            array('from' => '2026-07-09 00:00:00', 'to' => '2026-07-14 00:00:00', 'outcome' => 4, 'exact' => 8),
-            array('from' => '2026-07-14 00:00:00', 'to' => '2026-07-17 00:00:00', 'outcome' => 5, 'exact' => 10),
-            array('from' => '2026-07-19 00:00:00', 'to' => '2026-07-20 00:00:00', 'outcome' => 5, 'exact' => 10),
+            'LAST_32' => array('outcome' => 3, 'exact' => 6),
+            'LAST_16' => array('outcome' => 4, 'exact' => 8),
+            'QUARTER_FINALS' => array('outcome' => 4, 'exact' => 8),
+            'SEMI_FINALS' => array('outcome' => 5, 'exact' => 10),
+            'THIRD_PLACE' => array('outcome' => 5, 'exact' => 10),
+            'FINAL' => array('outcome' => 5, 'exact' => 10),
         );
 
-        foreach ($stages as $stage) {
-            if ($localDatetime >= $stage['from'] && $localDatetime < $stage['to']) {
-                return $stage;
-            }
-        }
-
-        return null;
+        return isset($stages[$stage]) ? $stages[$stage] : null;
     }
 
     private function getSettings()

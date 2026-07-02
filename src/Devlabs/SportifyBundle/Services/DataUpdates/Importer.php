@@ -149,6 +149,7 @@ class Importer
                 $match->setHomeTeamId($homeTeam);
                 $match->setAwayTeamId($awayTeam);
                 $this->scoringDefaults->applyToMatch($match);
+                $this->scoringDefaults->applyFootballDataStageScoring($match, $this->getFootballDataStage($fixtureData));
                 if ($oddsSnapshot !== null) {
                     $this->applyOddsSnapshot($match, $oddsSnapshot);
                 }
@@ -189,7 +190,7 @@ class Importer
 
                 $previousBaseOutcomePoints = $match->getBaseOutcomePoints();
                 $previousBaseExactPoints = $match->getBaseExactPoints();
-                $this->scoringDefaults->applyTournamentScoringRules($match);
+                $this->scoringDefaults->applyFootballDataStageScoring($match, $this->getFootballDataStage($fixtureData));
                 if ($match->getBaseOutcomePoints() !== $previousBaseOutcomePoints || $match->getBaseExactPoints() !== $previousBaseExactPoints) {
                     $matchUpdated = true;
                 }
@@ -224,6 +225,11 @@ class Importer
     private function needsOddsSnapshot(array $fixtureData)
     {
         return $fixtureData['home_team_goals'] === null && $fixtureData['away_team_goals'] === null;
+    }
+
+    private function getFootballDataStage(array $fixtureData)
+    {
+        return isset($fixtureData['stage']) ? $fixtureData['stage'] : null;
     }
 
     private function getOddsSnapshot(array $fixtureData, Tournament $tournament, Team $homeTeam, Team $awayTeam)

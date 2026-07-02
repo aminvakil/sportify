@@ -45,6 +45,7 @@ class FootballDataOrg
 
             $parsedFixture['match_id'] = $fixture->id;
             $parsedFixture['tournament_id'] = $fixture->season->id;
+            $parsedFixture['stage'] = property_exists($fixture, 'stage') ? $fixture->stage : null;
             $parsedFixture['home_team_id'] = $fixture->homeTeam->id;
             $parsedFixture['away_team_id'] = $fixture->awayTeam->id;
             $parsedFixture = array_merge($parsedFixture, $this->getFixtureTeamMetadata($fixture->homeTeam, 'home'));
