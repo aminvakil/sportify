@@ -2,11 +2,12 @@
 
 ## Current status
 
-Pending tasks: 1.
+Pending tasks: 2.
 
 ## Pending
 
 - Fix misleading Telegram result-update notifications: `sportify:data:update matches-results` currently sends “Match results and standings updated” whenever fixture import reports `total_updated > 0`, even if `ScoreUpdater` finds no scored predictions or standings changes (for example finished matches with zero predictions). Only send a result/standings Telegram message when scoring/standings actually changed, or make the no-scoring case explicit.
+- Fix World Cup 2026 knockout-stage scoring boundaries. `ScoringDefaults` currently decides stages from the local calendar date only, so Tehran-time Round of 32 matches that fall on `2026-07-04` were incorrectly assigned Round of 16 base points (`4/8`) instead of Round of 32 base points (`3/6`). Replace the date-only ranges with explicit local datetime cutoffs or a stage-aware fixture rule so late Round of 32 matches stay `3/6` and the first true Round of 16 match starts `4/8`. Add regression tests for `2026-07-04 01:30`, `2026-07-04 05:00`, and `2026-07-04 20:30` as `3/6`, plus the first Round of 16 boundary as `4/8`.
 
 ## Baseline
 
