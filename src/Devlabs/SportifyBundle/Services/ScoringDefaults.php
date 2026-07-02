@@ -73,8 +73,8 @@ class ScoringDefaults
 
         $localDatetime = $datetime->format('Y-m-d H:i:s');
         $stages = array(
-            array('from' => '2026-06-28 00:00:00', 'to' => '2026-07-05 00:30:00', 'outcome' => 3, 'exact' => 6),
-            array('from' => '2026-07-05 00:30:00', 'to' => '2026-07-09 00:00:00', 'outcome' => 4, 'exact' => 8),
+            array('from' => '2026-06-28 00:00:00', 'to' => '2026-07-04 20:30:00', 'outcome' => 3, 'exact' => 6),
+            array('from' => '2026-07-04 20:30:00', 'to' => '2026-07-09 00:00:00', 'outcome' => 4, 'exact' => 8),
             array('from' => '2026-07-09 00:00:00', 'to' => '2026-07-14 00:00:00', 'outcome' => 4, 'exact' => 8),
             array('from' => '2026-07-14 00:00:00', 'to' => '2026-07-17 00:00:00', 'outcome' => 5, 'exact' => 10),
             array('from' => '2026-07-19 00:00:00', 'to' => '2026-07-20 00:00:00', 'outcome' => 5, 'exact' => 10),
