@@ -2,10 +2,11 @@
 
 ## Current status
 
-Pending tasks: 0.
+Pending tasks: 1.
 
 ## Pending
 
+- Replace World Cup 2026 knockout scoring date/time boundaries with Football-Data `stage` values. Live v4 match payloads include stages such as `GROUP_STAGE`, `LAST_32`, `LAST_16`, `QUARTER_FINALS`, `SEMI_FINALS`, `THIRD_PLACE`, and `FINAL`; use those as the scoring source of truth instead of local kickoff cutoffs. Map `LAST_32` to `3/6`, `LAST_16` and `QUARTER_FINALS` to `4/8`, and `SEMI_FINALS`/`FINAL` to `5/10`; decide explicitly whether `THIRD_PLACE` should be `5/10` or another value. Canada vs Morocco is `LAST_16` according to Football-Data, so it should be `4/8`, not manually forced to `3/6`. Implement by parsing/storing or passing fixture `stage` from Football-Data through import, applying stage-based scoring when adding/updating fixtures, and adding regression tests for `LAST_32` vs `LAST_16` boundary cases.
 
 ## Baseline
 
