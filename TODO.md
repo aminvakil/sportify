@@ -2,11 +2,11 @@
 
 ## Current status
 
-Pending tasks: 1.
+Pending tasks: 0.
 
 ## Pending
 
-- Replace World Cup 2026 knockout scoring date/time boundaries with Football-Data `stage` values. Live v4 match payloads include stages such as `GROUP_STAGE`, `LAST_32`, `LAST_16`, `QUARTER_FINALS`, `SEMI_FINALS`, `THIRD_PLACE`, and `FINAL`; use those as the scoring source of truth instead of local kickoff cutoffs. Map `LAST_32` to `3/6`, `LAST_16` and `QUARTER_FINALS` to `4/8`, and `SEMI_FINALS`/`FINAL` to `5/10`; decide explicitly whether `THIRD_PLACE` should be `5/10` or another value. Canada vs Morocco is `LAST_16` according to Football-Data, so it should be `4/8`, not manually forced to `3/6`. Implement by parsing/storing or passing fixture `stage` from Football-Data through import, applying stage-based scoring when adding/updating fixtures, and adding regression tests for `LAST_32` vs `LAST_16` boundary cases.
+None.
 
 ## Baseline
 
@@ -52,6 +52,7 @@ Pending tasks: 1.
 - Probability-weighted scoring v1 is implemented with match scoring snapshots, stored prediction scoring breakdowns, exact-prediction percentages based on scored results, and floor-based underdog bonus rounding.
 - Rules page documents World Cup 2026 knockout-stage base scoring recommendations and champion prediction scoring is 15 points.
 - Football-Data integration uses v4, including the v4 teams/fixtures parser fields.
+- World Cup 2026 knockout fixture scoring uses Football-Data `stage` values instead of kickoff date/time cutoffs, with the third-place match scored at 5/10.
 - Upcoming fixture import uses `football-data.org` plus The Odds API snapshots and skips fixtures when complete odds are unavailable.
 - The prediction page shows probability snapshots, probability bonus chips, and points available for each outcome.
 - Telegram fixture-added, prediction, and result/scoring messages include probability and scoring details.

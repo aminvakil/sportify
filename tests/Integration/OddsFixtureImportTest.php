@@ -54,6 +54,66 @@ class OddsFixtureImportTest extends DatabaseTestCase
         $this->assertSame('the_odds_api:soccer_test:event-1:pinnacle:h2h', $match->getProbabilitySource());
     }
 
+    public function testAddsWorldCup2026KnockoutFixtureWithFootballDataStageScoring()
+    {
+        $tournament = $this->createTournament('FIFA World Cup');
+        $homeTeam = $this->createTeam('Home Nation', $tournament);
+        $awayTeam = $this->createTeam('Away Nation', $tournament);
+        $this->createApiMapping($homeTeam, 'Team', 'football_data_org', 10);
+        $this->createApiMapping($awayTeam, 'Team', 'football_data_org', 20);
+
+        $importer = $this->createImporter(new FakeFixtureOddsProvider(array(
+            504 => array(
+                'home_win_probability_percent' => 45,
+                'draw_probability_percent' => 30,
+                'away_win_probability_percent' => 25,
+                'source' => 'the_odds_api:soccer_test:event-1:pinnacle:h2h',
+            ),
+        )));
+
+        $status = $importer->importFixtures(array($this->scheduledFixture(504, '2026-06-28 12:00:00', 'LAST_16')), $tournament, 'football_data_org');
+
+        $this->assertSame(1, $status['fixtures_added']);
+
+        $matchMapping = $this->em->getRepository(ApiMapping::class)
+            ->getByEntityTypeAndApiObjectId('Match', 'football_data_org', 504);
+        $match = $this->em->getRepository(MatchEntity::class)->find($matchMapping->getEntityId());
+
+        $this->assertSame(4, $match->getBaseOutcomePoints());
+        $this->assertSame(8, $match->getBaseExactPoints());
+    }
+
+    public function testWorldCupFixtureWithoutStageFailsBeforeImport()
+    {
+        $tournament = $this->createTournament('FIFA World Cup');
+        $homeTeam = $this->createTeam('Home Nation', $tournament);
+        $awayTeam = $this->createTeam('Away Nation', $tournament);
+        $this->createApiMapping($homeTeam, 'Team', 'football_data_org', 10);
+        $this->createApiMapping($awayTeam, 'Team', 'football_data_org', 20);
+
+        $fixture = $this->scheduledFixture(505, '2026-06-28 12:00:00');
+        unset($fixture['stage']);
+
+        $importer = $this->createImporter(new FakeFixtureOddsProvider(array(
+            505 => array(
+                'home_win_probability_percent' => 45,
+                'draw_probability_percent' => 30,
+                'away_win_probability_percent' => 25,
+                'source' => 'the_odds_api:soccer_test:event-1:pinnacle:h2h',
+            ),
+        )));
+
+        try {
+            $importer->importFixtures(array($fixture), $tournament, 'football_data_org');
+            $this->fail('Expected missing stage to fail.');
+        } catch (\InvalidArgumentException $e) {
+            $this->assertSame('Football-Data stage is required for World Cup scoring.', $e->getMessage());
+        }
+
+        $this->assertNull($this->em->getRepository(ApiMapping::class)
+            ->getByEntityTypeAndApiObjectId('Match', 'football_data_org', 505));
+    }
+
     public function testSkipsUpcomingFixtureWhenOddsSnapshotIsUnavailable()
     {
         $tournament = $this->createTournament('Skipped Odds Cup');
@@ -74,22 +134,29 @@ class OddsFixtureImportTest extends DatabaseTestCase
             ->getByEntityTypeAndApiObjectId('Match', 'football_data_org', 501));
     }
 
-    public function testExistingWorldCup2026KnockoutFixtureGetsRulesBaseScoringOnReimport()
+    public function testExistingWorldCup2026KnockoutFixturesUseFootballDataStageScoringOnReimport()
     {
         $tournament = $this->createTournament('FIFA World Cup');
         $homeTeam = $this->createTeam('Home Nation', $tournament);
         $awayTeam = $this->createTeam('Away Nation', $tournament);
-        $match = $this->createMatch($tournament, $homeTeam, $awayTeam, new \DateTime('2026-06-28 12:00:00'));
-        $this->createApiMapping($match, 'Match', 'football_data_org', 502);
+        $last16Match = $this->createMatch($tournament, $homeTeam, $awayTeam, new \DateTime('2026-06-28 12:00:00'));
+        $last32Match = $this->createMatch($tournament, $awayTeam, $homeTeam, new \DateTime('2026-07-04 20:30:00'));
+        $this->createApiMapping($last16Match, 'Match', 'football_data_org', 502);
+        $this->createApiMapping($last32Match, 'Match', 'football_data_org', 503);
 
         $importer = $this->createImporter(new FakeFixtureOddsProvider(array()));
 
-        $status = $importer->importFixtures(array($this->scheduledFixture(502, '2026-06-28 12:00:00')), $tournament, 'football_data_org');
+        $status = $importer->importFixtures(array(
+            $this->scheduledFixture(502, '2026-06-28 12:00:00', 'LAST_16'),
+            $this->scheduledFixture(503, '2026-07-04 20:30:00', 'LAST_32'),
+        ), $tournament, 'football_data_org');
 
         $this->assertSame(0, $status['fixtures_added']);
-        $this->assertSame(1, $status['fixtures_updated']);
-        $this->assertSame(3, $match->getBaseOutcomePoints());
-        $this->assertSame(6, $match->getBaseExactPoints());
+        $this->assertSame(2, $status['fixtures_updated']);
+        $this->assertSame(4, $last16Match->getBaseOutcomePoints());
+        $this->assertSame(8, $last16Match->getBaseExactPoints());
+        $this->assertSame(3, $last32Match->getBaseOutcomePoints());
+        $this->assertSame(6, $last32Match->getBaseExactPoints());
     }
 
     private function createImporter($oddsProvider)
@@ -102,11 +169,12 @@ class OddsFixtureImportTest extends DatabaseTestCase
         );
     }
 
-    private function scheduledFixture($matchId, $datetime = '2030-06-01 12:00:00')
+    private function scheduledFixture($matchId, $datetime = '2030-06-01 12:00:00', $stage = 'GROUP_STAGE')
     {
         return array(
             'match_id' => $matchId,
             'tournament_id' => 99,
+            'stage' => $stage,
             'home_team_id' => 10,
             'away_team_id' => 20,
             'match_local_time' => $datetime,
