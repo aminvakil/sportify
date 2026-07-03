@@ -83,6 +83,37 @@ class OddsFixtureImportTest extends DatabaseTestCase
         $this->assertSame(8, $match->getBaseExactPoints());
     }
 
+    public function testWorldCupFixtureWithoutStageFailsBeforeImport()
+    {
+        $tournament = $this->createTournament('FIFA World Cup');
+        $homeTeam = $this->createTeam('Home Nation', $tournament);
+        $awayTeam = $this->createTeam('Away Nation', $tournament);
+        $this->createApiMapping($homeTeam, 'Team', 'football_data_org', 10);
+        $this->createApiMapping($awayTeam, 'Team', 'football_data_org', 20);
+
+        $fixture = $this->scheduledFixture(505, '2026-06-28 12:00:00');
+        unset($fixture['stage']);
+
+        $importer = $this->createImporter(new FakeFixtureOddsProvider(array(
+            505 => array(
+                'home_win_probability_percent' => 45,
+                'draw_probability_percent' => 30,
+                'away_win_probability_percent' => 25,
+                'source' => 'the_odds_api:soccer_test:event-1:pinnacle:h2h',
+            ),
+        )));
+
+        try {
+            $importer->importFixtures(array($fixture), $tournament, 'football_data_org');
+            $this->fail('Expected missing stage to fail.');
+        } catch (\InvalidArgumentException $e) {
+            $this->assertSame('Football-Data stage is required for World Cup scoring.', $e->getMessage());
+        }
+
+        $this->assertNull($this->em->getRepository(ApiMapping::class)
+            ->getByEntityTypeAndApiObjectId('Match', 'football_data_org', 505));
+    }
+
     public function testSkipsUpcomingFixtureWhenOddsSnapshotIsUnavailable()
     {
         $tournament = $this->createTournament('Skipped Odds Cup');

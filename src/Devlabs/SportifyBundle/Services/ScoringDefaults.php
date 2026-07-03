@@ -69,6 +69,14 @@ class ScoringDefaults
             return null;
         }
 
+        if ($stage === null || $stage === '') {
+            throw new \InvalidArgumentException('Football-Data stage is required for World Cup scoring.');
+        }
+
+        if ($stage === 'GROUP_STAGE') {
+            return null;
+        }
+
         $stages = array(
             'LAST_32' => array('outcome' => 3, 'exact' => 6),
             'LAST_16' => array('outcome' => 4, 'exact' => 8),
@@ -78,7 +86,11 @@ class ScoringDefaults
             'FINAL' => array('outcome' => 5, 'exact' => 10),
         );
 
-        return isset($stages[$stage]) ? $stages[$stage] : null;
+        if (!isset($stages[$stage])) {
+            throw new \InvalidArgumentException('Unsupported Football-Data stage for World Cup scoring: '.$stage);
+        }
+
+        return $stages[$stage];
     }
 
     private function getSettings()

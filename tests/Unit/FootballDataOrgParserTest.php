@@ -90,6 +90,17 @@ class FootballDataOrgParserTest extends \PHPUnit\Framework\TestCase
         ), $parsed[1]);
     }
 
+    public function testParseFixturesRequiresStage()
+    {
+        $fixture = $this->createFixture(1, 'SCHEDULED', '2020-01-02T12:00:00Z');
+        unset($fixture->stage);
+
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Football-Data fixture 1 is missing stage.');
+
+        (new FootballDataOrg())->parseFixtures(array($fixture));
+    }
+
     public function testParseFixturesIncludesTeamMatchingMetadataWhenPresent()
     {
         $fixture = $this->createFixture(1, 'SCHEDULED', '2020-01-02T12:00:00Z');
