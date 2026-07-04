@@ -2,11 +2,11 @@
 
 ## Current status
 
-Pending tasks: 1.
+Pending tasks: 0.
 
 ## Pending
 
-- Fix Football-Data finished-score parsing so prediction scoring always uses the 90-minute result. Production audit showed regular 90-minute winners expose `score.fullTime` but no `score.regularTime`, while knockout matches that go beyond 90 minutes can expose `score.regularTime`; therefore parse `score.regularTime` when present, otherwise parse `score.fullTime`, and do not subtract `extraTime` or `penalties` from `fullTime`. The current subtraction logic produced Australia vs Egypt as `-1-1` from `fullTime=3-5`, `extraTime=0-0`, and `penalties=4-4`, even though `regularTime=1-1` was present. Add parser tests for regular-time wins without `regularTime`, regular-time draws followed by extra time/penalties with `regularTime`, and malformed penalty payloads.
+None.
 
 ## Baseline
 
