@@ -65,9 +65,23 @@ class FootballDataOrg
             $parsedFixture['status'] = $fixture->status;
 
             if ($fixture->status === 'FINISHED') {
-                $score = property_exists($fixture->score, 'regularTime') ? $fixture->score->regularTime : $fixture->score->fullTime;
-                $parsedFixture['home_team_goals'] = $this->getTeamScore($score, 'home');
-                $parsedFixture['away_team_goals'] = $this->getTeamScore($score, 'away');
+                if (property_exists($fixture->score, 'regularTime') && $this->hasTeamScores($fixture->score->regularTime)) {
+                    $parsedFixture['home_team_goals'] = $this->getTeamScore($fixture->score->regularTime, 'home');
+                    $parsedFixture['away_team_goals'] = $this->getTeamScore($fixture->score->regularTime, 'away');
+                } else {
+                    $parsedFixture['home_team_goals'] = $this->getTeamScore($fixture->score->fullTime, 'home');
+                    $parsedFixture['away_team_goals'] = $this->getTeamScore($fixture->score->fullTime, 'away');
+                    $extraTimeHomeGoals = property_exists($fixture->score, 'extraTime') ? $this->getTeamScore($fixture->score->extraTime, 'home') : null;
+                    if ($extraTimeHomeGoals !== null) {
+                        $parsedFixture['home_team_goals'] = $parsedFixture['home_team_goals'] - $extraTimeHomeGoals;
+                        $parsedFixture['away_team_goals'] = $parsedFixture['away_team_goals'] - $this->getTeamScore($fixture->score->extraTime, 'away');
+                    }
+                    $penaltyHomeGoals = property_exists($fixture->score, 'penalties') ? $this->getTeamScore($fixture->score->penalties, 'home') : null;
+                    if ($penaltyHomeGoals !== null) {
+                        $parsedFixture['home_team_goals'] = $parsedFixture['home_team_goals'] - $penaltyHomeGoals;
+                        $parsedFixture['away_team_goals'] = $parsedFixture['away_team_goals'] - $this->getTeamScore($fixture->score->penalties, 'away');
+                    }
+                }
             } else {
                 $parsedFixture['home_team_goals'] = null;
                 $parsedFixture['away_team_goals'] = null;
@@ -118,6 +132,22 @@ class FootballDataOrg
         $property = property_exists($score, $team) ? $team : $team.'Team';
 
         return $score->$property;
+    }
+
+    private function hasTeamScores($score)
+    {
+        return is_object($score) && $this->hasTeamScore($score, 'home') && $this->hasTeamScore($score, 'away');
+    }
+
+    private function hasTeamScore($score, $team)
+    {
+        if (property_exists($score, $team)) {
+            return $score->$team !== null;
+        }
+
+        $property = $team.'Team';
+
+        return property_exists($score, $property) && $score->$property !== null;
     }
 
     private function getFixtureTeamMetadata($team, $prefix)

@@ -143,9 +143,20 @@ class FootballDataOrgParserTest extends \PHPUnit\Framework\TestCase
         $this->assertSame(1, $parsed[0]['away_team_goals']);
     }
 
+    public function testParseFixturesDerivesNinetyMinuteScoreWhenRegularTimeIsMissing()
+    {
+        $finished = $this->createFixture(3, 'FINISHED', '2020-01-03T12:00:00Z', 4, 5, 0, 0, 3, 4);
+
+        $parser = new FootballDataOrg();
+        $parsed = $parser->parseFixtures(array($finished));
+
+        $this->assertSame(1, $parsed[0]['home_team_goals']);
+        $this->assertSame(1, $parsed[0]['away_team_goals']);
+    }
+
     public function testParseFixturesUsesRegularTimeWhenPresent()
     {
-        $finished = $this->createFixture(3, 'FINISHED', '2020-01-03T12:00:00Z', 4, 5, 0, 0, 3, 4, true);
+        $finished = $this->createFixture(4, 'FINISHED', '2020-01-03T12:00:00Z', 4, 5, 0, 0, 3, 4, true);
         $this->setRegularTimeScore($finished, 1, 1, true);
 
         $parser = new FootballDataOrg();
@@ -157,7 +168,7 @@ class FootballDataOrgParserTest extends \PHPUnit\Framework\TestCase
 
     public function testParseFixturesIgnoresMalformedPenaltiesWhenRegularTimeIsPresent()
     {
-        $finished = $this->createFixture(4, 'FINISHED', '2020-01-03T12:00:00Z', 3, 5, 0, 0, null, null, true);
+        $finished = $this->createFixture(5, 'FINISHED', '2020-01-03T12:00:00Z', 3, 5, 0, 0, null, null, true);
         $this->setRegularTimeScore($finished, 1, 1, true);
         $finished->score->penalties = 'malformed';
 
