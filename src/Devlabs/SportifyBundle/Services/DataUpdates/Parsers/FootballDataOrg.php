@@ -65,18 +65,9 @@ class FootballDataOrg
             $parsedFixture['status'] = $fixture->status;
 
             if ($fixture->status === 'FINISHED') {
-                $parsedFixture['home_team_goals'] = $this->getTeamScore($fixture->score->fullTime, 'home');
-                $parsedFixture['away_team_goals'] = $this->getTeamScore($fixture->score->fullTime, 'away');
-                $extraTimeHomeGoals = property_exists($fixture->score, 'extraTime') ? $this->getTeamScore($fixture->score->extraTime, 'home') : null;
-                if ($extraTimeHomeGoals !== null) {
-                    $parsedFixture['home_team_goals'] = $parsedFixture['home_team_goals'] - $extraTimeHomeGoals;
-                    $parsedFixture['away_team_goals'] = $parsedFixture['away_team_goals'] - $this->getTeamScore($fixture->score->extraTime, 'away');
-                }
-                $penaltyHomeGoals = property_exists($fixture->score, 'penalties') ? $this->getTeamScore($fixture->score->penalties, 'home') : null;
-                if ($penaltyHomeGoals !== null) {
-                    $parsedFixture['home_team_goals'] = $parsedFixture['home_team_goals'] - $penaltyHomeGoals;
-                    $parsedFixture['away_team_goals'] = $parsedFixture['away_team_goals'] - $this->getTeamScore($fixture->score->penalties, 'away');
-                }
+                $score = property_exists($fixture->score, 'regularTime') ? $fixture->score->regularTime : $fixture->score->fullTime;
+                $parsedFixture['home_team_goals'] = $this->getTeamScore($score, 'home');
+                $parsedFixture['away_team_goals'] = $this->getTeamScore($score, 'away');
             } else {
                 $parsedFixture['home_team_goals'] = null;
                 $parsedFixture['away_team_goals'] = null;

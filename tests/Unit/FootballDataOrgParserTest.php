@@ -60,7 +60,7 @@ class FootballDataOrgParserTest extends \PHPUnit\Framework\TestCase
     public function testParseFixturesMapsScheduledAndFinishedMatches()
     {
         $scheduled = $this->createFixture(1, 'SCHEDULED', '2020-01-02T12:00:00Z');
-        $finished = $this->createFixture(2, 'FINISHED', '2020-01-03T12:00:00Z', 4, 3, 1, 1, 1, 0);
+        $finished = $this->createFixture(2, 'FINISHED', '2020-01-03T12:00:00Z', 4, 3);
 
         $parser = new FootballDataOrg();
         $parsed = $parser->parseFixtures(array($scheduled, $finished));
@@ -85,8 +85,8 @@ class FootballDataOrgParserTest extends \PHPUnit\Framework\TestCase
             'away_team_id' => 20,
             'match_local_time' => date('Y-m-d H:i:s', strtotime('2020-01-03T12:00:00Z')),
             'status' => 'FINISHED',
-            'home_team_goals' => 2,
-            'away_team_goals' => 2,
+            'home_team_goals' => 4,
+            'away_team_goals' => 3,
         ), $parsed[1]);
     }
 
@@ -132,26 +132,40 @@ class FootballDataOrgParserTest extends \PHPUnit\Framework\TestCase
         $this->assertSame('RSA', $parsed[0]['away_team_area_code']);
     }
 
-    public function testParseFixturesAcceptsV4ScoreProperties()
+    public function testParseFixturesUsesV4FullTimeWhenRegularTimeIsMissing()
     {
-        $finished = $this->createFixture(2, 'FINISHED', '2020-01-03T12:00:00Z', 4, 3, null, null, null, null, true);
-
-        $parser = new FootballDataOrg();
-        $parsed = $parser->parseFixtures(array($finished));
-
-        $this->assertSame(4, $parsed[0]['home_team_goals']);
-        $this->assertSame(3, $parsed[0]['away_team_goals']);
-    }
-
-    public function testParseFixturesStoresNinetyMinuteScoreWhenExtraTimeOrPenaltiesContainZeroes()
-    {
-        $finished = $this->createFixture(3, 'FINISHED', '2020-01-03T12:00:00Z', 3, 3, 0, 1, 1, 0);
+        $finished = $this->createFixture(2, 'FINISHED', '2020-01-03T12:00:00Z', 2, 1, null, null, null, null, true);
 
         $parser = new FootballDataOrg();
         $parsed = $parser->parseFixtures(array($finished));
 
         $this->assertSame(2, $parsed[0]['home_team_goals']);
-        $this->assertSame(2, $parsed[0]['away_team_goals']);
+        $this->assertSame(1, $parsed[0]['away_team_goals']);
+    }
+
+    public function testParseFixturesUsesRegularTimeWhenPresent()
+    {
+        $finished = $this->createFixture(3, 'FINISHED', '2020-01-03T12:00:00Z', 4, 5, 0, 0, 3, 4, true);
+        $this->setRegularTimeScore($finished, 1, 1, true);
+
+        $parser = new FootballDataOrg();
+        $parsed = $parser->parseFixtures(array($finished));
+
+        $this->assertSame(1, $parsed[0]['home_team_goals']);
+        $this->assertSame(1, $parsed[0]['away_team_goals']);
+    }
+
+    public function testParseFixturesIgnoresMalformedPenaltiesWhenRegularTimeIsPresent()
+    {
+        $finished = $this->createFixture(4, 'FINISHED', '2020-01-03T12:00:00Z', 3, 5, 0, 0, null, null, true);
+        $this->setRegularTimeScore($finished, 1, 1, true);
+        $finished->score->penalties = 'malformed';
+
+        $parser = new FootballDataOrg();
+        $parsed = $parser->parseFixtures(array($finished));
+
+        $this->assertSame(1, $parsed[0]['home_team_goals']);
+        $this->assertSame(1, $parsed[0]['away_team_goals']);
     }
 
     public function testParseFixturesSkipsUnresolvedTeams()
@@ -206,5 +220,17 @@ class FootballDataOrgParserTest extends \PHPUnit\Framework\TestCase
         }
 
         return $fixture;
+    }
+
+    private function setRegularTimeScore($fixture, $home, $away, $useV4ScoreProperties = false)
+    {
+        $fixture->score->regularTime = new \stdClass();
+        if ($useV4ScoreProperties) {
+            $fixture->score->regularTime->home = $home;
+            $fixture->score->regularTime->away = $away;
+        } else {
+            $fixture->score->regularTime->homeTeam = $home;
+            $fixture->score->regularTime->awayTeam = $away;
+        }
     }
 }
