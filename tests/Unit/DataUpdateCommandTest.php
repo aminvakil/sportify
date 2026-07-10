@@ -11,6 +11,7 @@ use Devlabs\SportifyBundle\Entity\Tournament;
 use Devlabs\SportifyBundle\Entity\User;
 use GuzzleHttp\Psr7\Response;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\AbstractLogger;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\DependencyInjection\Container;
@@ -25,7 +26,7 @@ class DataUpdateCommandTest extends TestCase
 
         $this->configureContainer($container, $slack, $telegram);
 
-        $tester = new CommandTester(new DataUpdateCommand($container));
+        $tester = new CommandTester(new DataUpdateCommand($container, new FakeDataUpdateLogger()));
         $tester->execute(array(
             'type' => 'matches-fixtures',
             'days' => 3,
@@ -48,7 +49,7 @@ class DataUpdateCommandTest extends TestCase
         $this->configureContainer($container, $slack, $telegram);
         $container->setParameter('telegram.pin_messages', null);
 
-        $tester = new CommandTester(new DataUpdateCommand($container));
+        $tester = new CommandTester(new DataUpdateCommand($container, new FakeDataUpdateLogger()));
         $tester->execute(array(
             'type' => 'matches-fixtures',
             'days' => 3,
@@ -68,7 +69,7 @@ class DataUpdateCommandTest extends TestCase
         $this->configureContainer($container, $slack, $telegram);
         $container->setParameter('telegram.pin_messages', false);
 
-        $tester = new CommandTester(new DataUpdateCommand($container));
+        $tester = new CommandTester(new DataUpdateCommand($container, new FakeDataUpdateLogger()));
         $tester->execute(array(
             'type' => 'matches-fixtures',
             'days' => 3,
@@ -77,6 +78,33 @@ class DataUpdateCommandTest extends TestCase
         $this->assertSame(Command::SUCCESS, $tester->getStatusCode());
         $this->assertCount(1, $telegram->messages);
         $this->assertSame(array(), $telegram->pinnedMessageIds);
+    }
+
+    public function testLogsFailedTelegramMessagePinning()
+    {
+        $container = new Container();
+        $slack = new FakeDataUpdateSlack();
+        $telegram = new FakeDataUpdateTelegram();
+        $telegram->pinResponse = new Response(500, array(), null, '1.1', 'Pin Failed');
+        $logger = new FakeDataUpdateLogger();
+
+        $this->configureContainer($container, $slack, $telegram);
+
+        $tester = new CommandTester(new DataUpdateCommand($container, $logger));
+        $tester->execute(array(
+            'type' => 'matches-fixtures',
+            'days' => 3,
+        ));
+
+        $this->assertSame(Command::SUCCESS, $tester->getStatusCode());
+        $this->assertSame(array(array(
+            'level' => 'warning',
+            'message' => 'telegram_message_pinning_failed',
+            'context' => array(
+                'status_code' => 500,
+                'reason' => 'Pin Failed',
+            ),
+        )), $logger->records);
     }
 
     public function testResultUpdateNotificationIncludesScoringBreakdown()
@@ -92,7 +120,7 @@ class DataUpdateCommandTest extends TestCase
         $container->set('app.slack', $slack);
         $container->set('app.telegram', $telegram);
 
-        $tester = new CommandTester(new DataUpdateCommand($container));
+        $tester = new CommandTester(new DataUpdateCommand($container, new FakeDataUpdateLogger()));
         $tester->execute(array(
             'type' => 'matches-results',
             'days' => 1,
@@ -122,7 +150,7 @@ class DataUpdateCommandTest extends TestCase
         $container->set('app.slack', $slack);
         $container->set('app.telegram', $telegram);
 
-        $tester = new CommandTester(new DataUpdateCommand($container));
+        $tester = new CommandTester(new DataUpdateCommand($container, new FakeDataUpdateLogger()));
         $tester->execute(array(
             'type' => 'matches-results',
             'days' => 1,
@@ -376,10 +404,25 @@ class FakeDataUpdateSlack
     }
 }
 
+class FakeDataUpdateLogger extends AbstractLogger
+{
+    public $records = array();
+
+    public function log($level, $message, array $context = array()): void
+    {
+        $this->records[] = array(
+            'level' => $level,
+            'message' => $message,
+            'context' => $context,
+        );
+    }
+}
+
 class FakeDataUpdateTelegram
 {
     public $messages = array();
     public $pinnedMessageIds = array();
+    public $pinResponse;
 
     public function sendMessage($text)
     {
@@ -396,6 +439,6 @@ class FakeDataUpdateTelegram
     {
         $this->pinnedMessageIds[] = $messageId;
 
-        return new Response(200);
+        return $this->pinResponse ?: new Response(200);
     }
 }

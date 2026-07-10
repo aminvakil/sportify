@@ -5,6 +5,7 @@ namespace Devlabs\SportifyBundle\Command;
 use Devlabs\SportifyBundle\Entity\MatchEntity;
 use Devlabs\SportifyBundle\Entity\Prediction;
 use Devlabs\SportifyBundle\Entity\Score;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -18,11 +19,13 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class DataUpdateCommand extends Command
 {
     private $container;
+    private $logger;
 
-    public function __construct(ContainerInterface $container)
+    public function __construct(ContainerInterface $container, LoggerInterface $logger)
     {
         parent::__construct();
         $this->container = $container;
+        $this->logger = $logger;
     }
 
     protected function configure(): void
@@ -138,10 +141,9 @@ class DataUpdateCommand extends Command
                 if ($this->shouldPinTelegramMessages() && isset($telegramResult['result']['message_id'])) {
                     $pinResponse = $telegram->pinMessage($telegramResult['result']['message_id']);
                     if ($pinResponse->getStatusCode() < 200 || $pinResponse->getStatusCode() >= 300) {
-                        error_log(sprintf(
-                            'Telegram message pinning failed (HTTP %d %s).',
-                            $pinResponse->getStatusCode(),
-                            $pinResponse->getReasonPhrase()
+                        $this->logger->warning('telegram_message_pinning_failed', array(
+                            'status_code' => $pinResponse->getStatusCode(),
+                            'reason' => $pinResponse->getReasonPhrase(),
                         ));
                     }
                 }

@@ -4,7 +4,12 @@ monolog:
             type:         fingers_crossed
             action_level: error
             handler:      nested
-            channels:     ['!prediction']
+            channels:     ['!prediction', '!operations']
+        operational_warnings:
+            type:     stream
+            path:     "%kernel.logs_dir%/%kernel.environment%.log"
+            level:    warning
+            channels: ['operations']
         prediction_rejections:
             type:     stream
             path:     "%kernel.logs_dir%/%kernel.environment%.log"

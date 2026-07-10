@@ -5,6 +5,7 @@ namespace Devlabs\SportifyBundle\Services;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Psr7\Response;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -19,13 +20,15 @@ class Telegram
     private $httpClient;
     private $botToken;
     private $chatId;
+    private $logger;
 
-    public function __construct(ContainerInterface $container, $botToken, $chatId)
+    public function __construct(ContainerInterface $container, $botToken, $chatId, LoggerInterface $logger)
     {
         $this->httpClient = new Client();
         $this->botToken = $botToken;
         $this->chatId = $chatId;
         $this->container = $container;
+        $this->logger = $logger;
     }
 
     /**
@@ -135,16 +138,15 @@ class Telegram
 
     private function logAdminNotificationFailure(Response $response, ?\Exception $exception = null)
     {
-        $message = sprintf(
-            'Telegram admin notification failed (HTTP %d %s).',
-            $response->getStatusCode(),
-            $response->getReasonPhrase()
+        $context = array(
+            'status_code' => $response->getStatusCode(),
+            'reason' => $response->getReasonPhrase(),
         );
         if ($exception !== null) {
-            $message .= ' Exception: '.get_class($exception);
+            $context['exception_class'] = get_class($exception);
         }
 
-        error_log($message);
+        $this->logger->warning('telegram_admin_notification_failed', $context);
     }
 
     private function getAdminChatId()

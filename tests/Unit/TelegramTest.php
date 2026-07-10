@@ -7,10 +7,18 @@ use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\AbstractLogger;
 use Symfony\Component\DependencyInjection\Container;
 
 class TelegramTest extends TestCase
 {
+    private $logger;
+
+    protected function setUp(): void
+    {
+        $this->logger = new FakeTelegramLogger();
+    }
+
     public function testSendAdminMessageDoesNotUseMarkdownParseMode()
     {
         $telegram = $this->createTelegram($client = new FakeTelegramHttpClient());
@@ -27,57 +35,46 @@ class TelegramTest extends TestCase
     {
         $telegram = $this->createTelegram(new FailingTelegramHttpClient());
 
-        list($response, $log) = $this->captureErrorLog(function () use ($telegram) {
-            return $telegram->sendAdminMessage('External API failure');
-        });
+        $response = $telegram->sendAdminMessage('External API failure');
 
         $this->assertSame(500, $response->getStatusCode());
         $this->assertSame('Telegram admin notification failed', $response->getReasonPhrase());
-        $this->assertStringContainsString('Telegram admin notification failed (HTTP 500 Telegram admin notification failed). Exception: GuzzleHttp\\Exception\\ConnectException', $log);
-        $this->assertStringNotContainsString('bot-token', $log);
-        $this->assertStringNotContainsString('/botbot-token/sendMessage', $log);
+        $this->assertSame(array(array(
+            'level' => 'warning',
+            'message' => 'telegram_admin_notification_failed',
+            'context' => array(
+                'status_code' => 500,
+                'reason' => 'Telegram admin notification failed',
+                'exception_class' => ConnectException::class,
+            ),
+        )), $this->logger->records);
     }
 
     public function testSendAdminMessageLogsNonSuccessResponse()
     {
         $telegram = $this->createTelegram(new UnsuccessfulTelegramHttpClient());
 
-        list($response, $log) = $this->captureErrorLog(function () use ($telegram) {
-            return $telegram->sendAdminMessage('External API failure');
-        });
+        $response = $telegram->sendAdminMessage('External API failure');
 
         $this->assertSame(400, $response->getStatusCode());
-        $this->assertStringContainsString('Telegram admin notification failed (HTTP 400 Bad Request).', $log);
+        $this->assertSame(array(array(
+            'level' => 'warning',
+            'message' => 'telegram_admin_notification_failed',
+            'context' => array(
+                'status_code' => 400,
+                'reason' => 'Bad Request',
+            ),
+        )), $this->logger->records);
     }
 
     public function testSendAdminMessageDoesNotLogWhenAdminChatIsDisabled()
     {
         $telegram = $this->createTelegram(new FailingTelegramHttpClient(), 'check_the_README_file');
 
-        list($response, $log) = $this->captureErrorLog(function () use ($telegram) {
-            return $telegram->sendAdminMessage('External API failure');
-        });
+        $response = $telegram->sendAdminMessage('External API failure');
 
         $this->assertSame(400, $response->getStatusCode());
-        $this->assertSame('', $log);
-    }
-
-    private function captureErrorLog(callable $callback)
-    {
-        $logFile = tempnam(sys_get_temp_dir(), 'telegram-error-log-');
-        $previousLog = ini_set('error_log', $logFile);
-
-        try {
-            $result = $callback();
-            $log = file_exists($logFile) ? file_get_contents($logFile) : '';
-        } finally {
-            ini_set('error_log', $previousLog);
-            if (file_exists($logFile)) {
-                unlink($logFile);
-            }
-        }
-
-        return array($result, $log);
+        $this->assertSame(array(), $this->logger->records);
     }
 
     private function createTelegram($client, $adminChatId = 'admin-chat')
@@ -86,12 +83,26 @@ class TelegramTest extends TestCase
         $container->set('kernel', new FakeTelegramKernel());
         $container->setParameter('telegram.admin_chat_id', $adminChatId);
 
-        $telegram = new Telegram($container, 'bot-token', 'main-chat');
+        $telegram = new Telegram($container, 'bot-token', 'main-chat', $this->logger);
         $property = new \ReflectionProperty(Telegram::class, 'httpClient');
         $property->setAccessible(true);
         $property->setValue($telegram, $client);
 
         return $telegram;
+    }
+}
+
+class FakeTelegramLogger extends AbstractLogger
+{
+    public $records = array();
+
+    public function log($level, $message, array $context = array()): void
+    {
+        $this->records[] = array(
+            'level' => $level,
+            'message' => $message,
+            'context' => $context,
+        );
     }
 }
 
