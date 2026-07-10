@@ -2,18 +2,13 @@
 
 ## Current status
 
-Pending tasks: 2.
+Pending tasks: 1.
 
 ## Pending
 
-For each of the following two items only, add a focused test first, run it and confirm that it fails for the expected reason, implement the fix, then run the test again and confirm that it passes.
+For the following item, add a focused test first, run it and confirm that it fails for the expected reason, implement the fix, then run the test again and confirm that it passes.
 
-1. Log rejected prediction-form CSRF metadata server-side.
-   - Log a warning event such as `prediction_csrf_rejected` with the authenticated user ID, match ID, route, whether a CSRF token was present, whether the session was started, and whether the session cookie was present.
-   - Never log the CSRF token or its fingerprint, prediction values, cookies, session ID, request body, passwords, or authentication headers.
-   - Detect the Symfony CSRF form error by type rather than matching its translated message, and do not serialize the error cause because it contains the submitted token.
-
-2. Return explicit prediction-form error responses instead of silently redirecting.
+1. Return explicit prediction-form error responses instead of silently redirecting.
    - Return HTTP 403 with a dedicated error page when CSRF validation fails.
    - Clearly state that the prediction was not saved and provide a prominent GET link back to the same filtered Matches page so the user receives a fresh form and token before entering the prediction again. Do not tell the user to refresh the 403 POST response because that would resubmit the stale request.
    - Return HTTP 422 with equivalent retry guidance for other prediction-form validation failures.
