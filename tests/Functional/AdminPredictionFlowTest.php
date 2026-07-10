@@ -74,19 +74,30 @@ class AdminPredictionFlowTest extends FunctionalTestCase
     {
         $admin = $this->createUser('admin_rejected_prediction', 'testpass', true, array('ROLE_ADMIN'));
         list(, , , $match) = $this->createTournamentWithMatch();
+        $matchesPath = '/matches/index/all/'.date('Y-m-d').'/'.date('Y-m-d', strtotime('+14 days'));
 
         $this->login('admin_rejected_prediction@example.com', 'testpass');
 
         $crawler = $this->client->request('GET', '/tournaments');
         $this->client->submit($crawler->selectButton('JOIN')->form());
 
-        $crawler = $this->client->request('GET', '/matches');
+        $crawler = $this->client->request('GET', $matchesPath);
         $form = $crawler->filter('button.match-btn')->form(array(
             'prediction[homeGoals]' => 2,
             'prediction[awayGoals]' => 1,
             'prediction[_token]' => 'invalid-csrf-token',
         ));
-        $this->client->submit($form);
+        $crawler = $this->client->submit($form);
+
+        $this->assertSame(403, $this->client->getResponse()->getStatusCode());
+        $this->assertStringContainsString('Your prediction was not saved because the form could not be verified.', $crawler->text());
+        $this->assertSame(1, $crawler->filter('.prediction-error a.btn.green-btn')->count());
+        $this->assertSame($matchesPath, $crawler->selectLink('Return to Matches')->attr('href'));
+        $this->assertStringNotContainsString('refresh', strtolower($crawler->text()));
+        $this->assertNull($this->em->getRepository(Prediction::class)->findOneBy(array(
+            'userId' => $admin,
+            'matchId' => $match,
+        )));
 
         $records = array_values(array_filter(
             $this->client->getContainer()->get('monolog.handler.test')->getRecords(),
@@ -105,6 +116,35 @@ class AdminPredictionFlowTest extends FunctionalTestCase
             'session_started' => true,
             'session_cookie_present' => true,
         ), $records[0]->context);
+    }
+
+    public function testInvalidPredictionValuesReturnUnprocessableResponse()
+    {
+        $admin = $this->createUser('admin_invalid_prediction', 'testpass', true, array('ROLE_ADMIN'));
+        list(, , , $match) = $this->createTournamentWithMatch();
+        $matchesPath = '/matches/index/all/'.date('Y-m-d').'/'.date('Y-m-d', strtotime('+14 days'));
+
+        $this->login('admin_invalid_prediction@example.com', 'testpass');
+
+        $crawler = $this->client->request('GET', '/tournaments');
+        $this->client->submit($crawler->selectButton('JOIN')->form());
+
+        $crawler = $this->client->request('GET', $matchesPath);
+        $form = $crawler->filter('button.match-btn')->form(array(
+            'prediction[homeGoals]' => 'not-a-number',
+            'prediction[awayGoals]' => 1,
+        ));
+        $crawler = $this->client->submit($form);
+
+        $this->assertSame(422, $this->client->getResponse()->getStatusCode());
+        $this->assertStringContainsString('Your prediction was not saved because the submitted values were invalid.', $crawler->text());
+        $this->assertSame(1, $crawler->filter('.prediction-error a.btn.green-btn')->count());
+        $this->assertSame($matchesPath, $crawler->selectLink('Return to Matches')->attr('href'));
+        $this->assertStringNotContainsString('refresh', strtolower($crawler->text()));
+        $this->assertNull($this->em->getRepository(Prediction::class)->findOneBy(array(
+            'userId' => $admin,
+            'matchId' => $match,
+        )));
     }
 
     public function testStaleBetFormUpdatesExistingPrediction()
