@@ -8,6 +8,11 @@ services:
         calls:
             - [setContainer, ['@service_container']]
 
+    Devlabs\SportifyBundle\Controller\MatchesController:
+        arguments: ['@logger']
+        calls:
+            - [setContainer, ['@service_container']]
+
     app.form.type.prediction:
         class: Devlabs\SportifyBundle\Form\PredictionType
         arguments: ["@doctrine.orm.entity_manager"]
