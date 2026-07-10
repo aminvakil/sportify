@@ -9,7 +9,7 @@ services:
             - [setContainer, ['@service_container']]
 
     Devlabs\SportifyBundle\Controller\MatchesController:
-        arguments: ['@logger']
+        arguments: ['@monolog.logger.prediction']
         calls:
             - [setContainer, ['@service_container']]
 
