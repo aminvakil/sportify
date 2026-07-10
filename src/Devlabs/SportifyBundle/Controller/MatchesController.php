@@ -4,8 +4,10 @@ namespace Devlabs\SportifyBundle\Controller;
 
 use Devlabs\SportifyBundle\Entity\MatchEntity;
 use Devlabs\SportifyBundle\Entity\Prediction;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Csrf\CsrfToken;
 
 /**
  * Class MatchesController
@@ -13,6 +15,13 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class MatchesController extends AbstractController
 {
+    private $logger;
+
+    public function __construct(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+    }
+
     public function indexAction(Request $request, $tournament_id, $date_from, $date_to)
     {
         // if user is not logged in, redirect to login page
@@ -131,6 +140,26 @@ class MatchesController extends AbstractController
                 return $this->redirectToRoute('matches_index', $urlParams);
 
             $matchesHelper->actionOnFormSubmit($form);
+        }
+
+        if ($form->isSubmitted() && !$form->isValid()) {
+            foreach ($form->getErrors(true) as $error) {
+                if (!($error->getCause() instanceof CsrfToken)) {
+                    continue;
+                }
+
+                $session = $request->hasSession() ? $request->getSession() : null;
+                $this->logger->warning('prediction_csrf_rejected', array(
+                    'user_id' => $user->getId(),
+                    'match_id' => $match->getId(),
+                    'route' => $request->attributes->get('_route'),
+                    'csrf_token_present' => array_key_exists('_token', $submittedPrediction),
+                    'session_started' => $session && $session->isStarted(),
+                    'session_cookie_present' => $session && $request->cookies->has($session->getName()),
+                ));
+
+                break;
+            }
         }
 
         // clear the submitted POST data and reload the page

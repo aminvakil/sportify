@@ -70,6 +70,43 @@ class AdminPredictionFlowTest extends FunctionalTestCase
         $this->assertSame($awayTeam->getId(), $championPrediction->getTeamId()->getId());
     }
 
+    public function testRejectedPredictionCsrfTokenIsLoggedWithSafeMetadata()
+    {
+        $admin = $this->createUser('admin_rejected_prediction', 'testpass', true, array('ROLE_ADMIN'));
+        list(, , , $match) = $this->createTournamentWithMatch();
+
+        $this->login('admin_rejected_prediction@example.com', 'testpass');
+
+        $crawler = $this->client->request('GET', '/tournaments');
+        $this->client->submit($crawler->selectButton('JOIN')->form());
+
+        $crawler = $this->client->request('GET', '/matches');
+        $form = $crawler->filter('button.match-btn')->form(array(
+            'prediction[homeGoals]' => 2,
+            'prediction[awayGoals]' => 1,
+            'prediction[_token]' => 'invalid-csrf-token',
+        ));
+        $this->client->submit($form);
+
+        $records = array_values(array_filter(
+            $this->client->getContainer()->get('monolog.handler.test')->getRecords(),
+            static function ($record) {
+                return 'prediction_csrf_rejected' === $record->message;
+            }
+        ));
+
+        $this->assertCount(1, $records);
+        $this->assertSame('WARNING', $records[0]->level->getName());
+        $this->assertSame(array(
+            'user_id' => $admin->getId(),
+            'match_id' => $match->getId(),
+            'route' => 'matches_bet',
+            'csrf_token_present' => true,
+            'session_started' => true,
+            'session_cookie_present' => true,
+        ), $records[0]->context);
+    }
+
     public function testStaleBetFormUpdatesExistingPrediction()
     {
         $admin = $this->createUser('admin_stale_prediction', 'testpass', true, array('ROLE_ADMIN'));

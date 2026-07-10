@@ -8,3 +8,7 @@ monolog:
         console:
             type:   console
             channels: ['!event', '!doctrine']
+        test:
+            type: test
+            level: warning
+            channels: ['!event']
