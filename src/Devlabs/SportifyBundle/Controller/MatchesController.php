@@ -7,6 +7,7 @@ use Devlabs\SportifyBundle\Entity\Prediction;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Csrf\CsrfToken;
 
 /**
@@ -143,11 +144,13 @@ class MatchesController extends AbstractController
         }
 
         if ($form->isSubmitted() && !$form->isValid()) {
+            $csrfRejected = false;
             foreach ($form->getErrors(true) as $error) {
                 if (!($error->getCause() instanceof CsrfToken)) {
                     continue;
                 }
 
+                $csrfRejected = true;
                 $session = $request->hasSession() ? $request->getSession() : null;
                 $this->logger->warning('prediction_csrf_rejected', array(
                     'user_id' => $user->getId(),
@@ -160,6 +163,20 @@ class MatchesController extends AbstractController
 
                 break;
             }
+
+            $statusCode = $csrfRejected ? Response::HTTP_FORBIDDEN : Response::HTTP_UNPROCESSABLE_ENTITY;
+            $message = $csrfRejected
+                ? 'Your prediction was not saved because the form could not be verified.'
+                : 'Your prediction was not saved because the submitted values were invalid.';
+
+            return $this->render(
+                'Matches/prediction_error.html.twig',
+                array(
+                    'message' => $message,
+                    'retry_url' => $this->generateUrl('matches_index', $urlParams),
+                ),
+                new Response('', $statusCode)
+            );
         }
 
         // clear the submitted POST data and reload the page
