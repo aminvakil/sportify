@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+
+{% block nav_top %}
+    <h1 class="text-center">Prediction not saved</h1>
+{% endblock %}
+
+{% block body %}
+    <div class="container-fluid content">
+        <div class="prediction-error row text-center">
+            <div class="col-sm-8 col-sm-offset-2">
+                <h2>Prediction not saved</h2>
+                <p>{{ message }}</p>
+                <p>Return to Matches to load a fresh form before entering your prediction again.</p>
+                <a class="btn green-btn" href="{{ retry_url }}">Return to Matches</a>
+            </div>
+        </div>
+    </div>
+{% endblock %}
